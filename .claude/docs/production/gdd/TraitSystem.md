@@ -45,8 +45,8 @@ Trait abilities resolve in two passes:
 ```csharp
 struct StatMultiplierEffect {
     bool appliesToTrait;  // true: only students WITH this trait; false: all students
-    StatType stat;        // Attack, MaxHP, or Speed
-    float multiplier;     // applied as: bonusStat = (int)(totalStat * (multiplier - 1))
+    StatType stat;        // HP, ATK, DEF, MG, MR, SPD, or CRIT
+    float multiplier;     // applied as: bonusDelta = floor(totalStat * (multiplier - 1))
     int flatBonus;        // added after multiplier (integer; may be 0)
 }
 ```
@@ -56,10 +56,15 @@ struct StatMultiplierEffect {
 **BattleBehaviorFlag** — cached in `_activeBehaviors` for AutoBattleResolver to query:
 ```csharp
 struct BattleBehaviorFlag {
-    string flagName;       // e.g. "AOEAttack", "TakesReducedDamage", "FirstHitDouble"
-    bool appliesToTrait;   // true: only students WITH this trait receive the flag
+    string flagName;          // e.g. "AOEAttack", "FirstHitDouble", "ShadowSurge"
+    DamageType damageType;    // Physical (uses ATK vs DEF) or Magic (uses MG vs MR)
+    bool appliesToTrait;      // true: only students WITH this trait receive the flag
 }
+
+public enum DamageType { Physical, Magic }
 ```
+
+> Note: `TakesReducedDamage` is removed — physical and magic damage reduction are now handled natively by DEF and MR stats using the LoL formula (`ATK × 100 / (100 + DEF)`). The Shield trait's defensive power comes from DEF/MR multipliers, not a separate flag.
 
 ### TraitDatabase ScriptableObject
 
@@ -67,18 +72,18 @@ struct BattleBehaviorFlag {
 
 | Trait | Threshold | Type | Effect |
 |---|---|---|---|
-| **Fire** | 2 | StatMultiplier | Fire students: Attack × 1.30 |
-| **Fire** | 4 | StatMultiplier | Fire students: Attack × 1.70 (replaces 2-piece) |
-| **Healer** | 2 | StatMultiplier | All students: MaxHP × 1.20 |
-| **Healer** | 4 | StatMultiplier | All students: MaxHP × 1.50 (replaces 2-piece) |
-| **Shield** | 2 | StatMultiplier | Shield students: MaxHP × 1.30 |
-| **Shield** | 4 | StatMultiplier + BehaviorFlag | Shield students: MaxHP × 1.70 + `TakesReducedDamage` flag (20% damage reduction in AutoBattleResolver) |
-| **Arcane** | 2 | StatMultiplier | All students: Speed +2 (flat) |
-| **Arcane** | 4 | StatMultiplier | All students: Speed +5 (flat, replaces 2-piece) |
-| **Storm** | 2 | BehaviorFlag | Storm students: `AOEAttack` flag (attacks deal 50% damage to all enemies) |
-| **Storm** | 3 | BehaviorFlag | Storm students: `AOEAttack` flag (attacks deal 100% damage to all enemies, replaces 2-piece) |
-| **Shadow** | 2 | BehaviorFlag | Shadow students: `FirstHitDouble` flag (first attack deals ×2 damage) |
-| **Shadow** | 3 | BehaviorFlag | Shadow students: `FirstHitDouble` + `ShadowSurge` flag (Speed ×1.5 for the first battle round) |
+| **Fire** | 2 | StatMultiplier | Fire students: ATK × 1.30 |
+| **Fire** | 4 | StatMultiplier | Fire students: ATK × 1.70 (replaces 2-piece) |
+| **Healer** | 2 | StatMultiplier | All students: HP × 1.20 + MG × 1.20 |
+| **Healer** | 4 | StatMultiplier | All students: HP × 1.50 + MG × 1.50 (replaces 2-piece) |
+| **Shield** | 2 | StatMultiplier | Shield students: DEF × 1.40 + MR × 1.40 |
+| **Shield** | 4 | StatMultiplier | Shield students: DEF × 2.00 + MR × 2.00 (replaces 2-piece) |
+| **Arcane** | 2 | StatMultiplier + BehaviorFlag | All students: MG × 1.30; Arcane students: attacks use `DamageType.Magic` (MG vs MR) |
+| **Arcane** | 4 | StatMultiplier + BehaviorFlag | All students: MG × 1.70; Arcane students: `DamageType.Magic` (replaces 2-piece) |
+| **Storm** | 2 | BehaviorFlag | Storm students: `AOEAttack (Physical)` — attacks hit all enemies at full ATK vs each DEF |
+| **Storm** | 3 | BehaviorFlag | Storm students: `AOEAttack (Magic)` — AoE uses MG vs each MR instead (replaces 2-piece) |
+| **Shadow** | 2 | BehaviorFlag | Shadow students: `FirstHitDouble` flag (first attack raw damage ×2 before mitigation) |
+| **Shadow** | 3 | BehaviorFlag + StatMultiplier | Shadow students: `FirstHitDouble` + CRIT × 1.50 + `ShadowSurge` (SPD ×1.5 first tick, replaces 2-piece) |
 
 > **Threshold replacement rule**: activating a higher tier of the same trait fully replaces the lower tier — effects do not stack additively.
 

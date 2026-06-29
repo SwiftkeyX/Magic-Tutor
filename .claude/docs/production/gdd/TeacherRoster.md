@@ -113,9 +113,10 @@ GetTrainingBuff(stat) = sum(teacher.TrainingBuff for teacher in _teachers where 
 | Result | int | 0–∞ | Grows with each run's promotions |
 
 **Expected output examples**:
-- No teachers → `GetTrainingBuff(Attack)` = 0
-- 2 Attack teachers with buffs [2, 3] → `GetTrainingBuff(Attack)` = 5
-- 4 Attack teachers with buffs [1, 2, 3, 4] → `GetTrainingBuff(Attack)` = 10
+- No teachers → `GetTrainingBuff(ATK)` = 0
+- 2 ATK teachers (Fire specialty) with buffs [2, 3] → `GetTrainingBuff(ATK)` = 5
+- 3 CRIT teachers (Shadow specialty) with buffs [1, 3, 5] → `GetTrainingBuff(CRIT)` = 9 (applied as bonus % crit chance in TrainingSystem, clamped to 100)
+- Mix: 4 DEF teachers (Shield) with buffs [1, 2, 3, 4] → `GetTrainingBuff(DEF)` = 10
 
 There is no cap on total buff from all teachers. If this causes runaway power in late saves, a cap can be added in Phase 3 tuning (`beta-task`).
 

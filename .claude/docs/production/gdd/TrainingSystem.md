@@ -27,7 +27,7 @@ Every training session feels like a meaningful investment. The player agonizes: 
 ### StatType Enum
 
 ```csharp
-public enum StatType { Attack, MaxHP, Speed }
+public enum StatType { HP, ATK, DEF, MG, MR, SPD, CRIT }
 ```
 
 ### TrainingConfig ScriptableObject
@@ -36,9 +36,13 @@ public enum StatType { Attack, MaxHP, Speed }
 
 | Field | Type | Default | Description |
 |---|---|---|---|
-| `AttackTrainingGain` | int | 3 | Base Attack bonus per training action |
-| `HPTrainingGain` | int | 8 | Base MaxHP bonus per training action |
-| `SpeedTrainingGain` | int | 1 | Base Speed bonus per training action |
+| `HPTrainingGain` | int | 12 | Base HP bonus per training action |
+| `ATKTrainingGain` | int | 3 | Base physical attack bonus per training action |
+| `DEFTrainingGain` | int | 2 | Base armor bonus per training action |
+| `MGTrainingGain` | int | 3 | Base magic power bonus per training action |
+| `MRTrainingGain` | int | 2 | Base magic resistance bonus per training action |
+| `SPDTrainingGain` | int | 1 | Base speed bonus per training action |
+| `CRITTrainingGain` | int | 5 | Base crit chance bonus (%) per training action |
 
 ### Core Rules
 
@@ -47,7 +51,7 @@ public enum StatType { Attack, MaxHP, Speed }
 3. Each call to `AllocateTraining(studentId, statType)` costs exactly 1 action, regardless of the gain amount.
 4. A student may receive multiple training actions in the same semester (no per-student limit).
 5. Training gain is computed as: `baseGain + teacherBuff`, where `baseGain` comes from `TrainingConfig` and `teacherBuff` comes from `TeacherRoster.GetTrainingBuff(statType)`.
-6. TrainingSystem writes the computed gain directly to the target `StudentData`'s bonus stat (`BonusAttack`, `BonusMaxHP`, or `BonusSpeed`) and increments `TrainingPointsSpent`.
+6. TrainingSystem writes the computed gain directly to the target `StudentData`'s matching bonus stat (`BonusHP`, `BonusATK`, `BonusDEF`, `BonusMG`, `BonusMR`, `BonusSPD`, or `BonusCRIT`) and increments `TrainingPointsSpent`. `BonusCRIT` is clamped so `TotalCRIT` never exceeds 100.
 7. TrainingSystem calls `StudentRoster.NotifyStatChanged(student)` after every write.
 8. When `RemainingActions` reaches 0, `OnTrainingExhausted` fires. Further calls to `AllocateTraining()` are rejected (no-op with a warning — the player must proceed to Battle).
 9. The player may proceed to Battle before the budget is fully spent (`CompleteTrainPhase()` is available at any time during Train phase, not only on exhaustion).
@@ -103,12 +107,16 @@ gain = baseGain(statType) + teacherBuff(statType)
 | `baseGain(statType)` | int | 1–20 | `TrainingConfig` ScriptableObject | Base stat increase per training action for the chosen stat |
 | `teacherBuff(statType)` | int | 0–10 | `TeacherRoster.GetTrainingBuff(statType)` | Flat bonus from accumulated teachers matching the stat type |
 
-**Expected output range**:
-- Attack gain: 3–13 (base 3, up to +10 from teachers)
-- MaxHP gain: 8–18 (base 8, up to +10 from teachers)
-- Speed gain: 1–11 (base 1, up to +10 from teachers)
+**Expected output range with defaults** (base gain + up to +10 from teachers):
+- HP gain: 12–22
+- ATK gain: 3–13
+- DEF gain: 2–12
+- MG gain: 3–13
+- MR gain: 2–12
+- SPD gain: 1–11
+- CRIT gain: 5–15 (% points; clamped so TotalCRIT ≤ 100)
 
-**Edge cases**: Gain is always ≥ 1 (clamped at minimum 1 even if formula produces 0 or negative). Gain has no upper cap beyond what the formula produces, but teacher buffs are capped by the teacher roster.
+**Edge cases**: Gain is always ≥ 1 (clamped at minimum 1 even if formula produces 0 or negative). CRIT gain is additionally clamped so the student's TotalCRIT never exceeds 100%.
 
 ### Total Training Budget
 
@@ -151,9 +159,13 @@ All knobs are on `TrainingConfig.asset` (ScriptableObject):
 
 | Parameter | Default | Safe Range | Effect of Increase | Effect of Decrease |
 |---|---|---|---|---|
-| `AttackTrainingGain` | 3 | 1–15 | Students deal more damage; battles end faster | Less damage growth; battles last longer |
-| `HPTrainingGain` | 8 | 2–30 | Students are much more durable | Students die faster; harder difficulty |
-| `SpeedTrainingGain` | 1 | 1–5 | Students act more frequently; fast build viability increases | Slower pacing; speed training is less impactful |
+| `HPTrainingGain` | 12 | 5–40 | Students are much more durable | Students die faster; harder difficulty |
+| `ATKTrainingGain` | 3 | 1–15 | Students deal more physical damage; battles end faster | Less physical damage; battles last longer |
+| `DEFTrainingGain` | 2 | 1–10 | Students tank physical hits much better | Less defensive value from armor training |
+| `MGTrainingGain` | 3 | 1–15 | Trait magic abilities hit harder | Less magic damage payoff |
+| `MRTrainingGain` | 2 | 1–10 | Students resist magic trait abilities better | More vulnerable to magic builds |
+| `SPDTrainingGain` | 1 | 1–5 | Students act more frequently; fast build viability increases | Slower pacing; speed training less impactful |
+| `CRITTrainingGain` | 5 | 2–15 | Crit builds reach high chance faster (more variance) | Slower crit scaling; crit builds need more investment |
 
 > `TrainingActionsPerSemester` (default: 5) is on `RunConfig.asset`, not `TrainingConfig.asset`.
 
@@ -237,15 +249,17 @@ All knobs are on `TrainingConfig.asset` (ScriptableObject):
 ## Acceptance Criteria
 
 - [ ] `AllocateTraining()` outside `RunPhase.Train` is rejected with a logged error
-- [ ] Stat bonus is applied correctly: `BonusAttack += AttackTrainingGain + teacherBuff(Attack)` for Attack training
+- [ ] Stat bonus is applied correctly for all 7 stat types: e.g. `BonusATK += ATKTrainingGain + teacherBuff(ATK)` for ATK training
 - [ ] `TrainingPointsSpent` increments by 1 on every successful training call
 - [ ] `RemainingActions` decrements by exactly 1 per successful call; never goes below 0
 - [ ] `OnTrainingExhausted` fires exactly once when `RemainingActions` reaches 0
 - [ ] `AllocateTraining()` with a spent budget returns 0 and logs a warning
 - [ ] Teacher buff is read from `TeacherRoster.GetTrainingBuff(statType)` — never hardcoded
 - [ ] Final gain is always ≥ 1 (minimum clamp enforced)
+- [ ] `BonusCRIT` is clamped so `TotalCRIT` never exceeds 100 after any training action
 - [ ] All gain values are integers — no float arithmetic in the training path
-- [ ] Unit test: `AllocateTraining(id, StatType.Attack)` with `AttackTrainingGain=3` and `teacherBuff=2` applies `BonusAttack += 5`
+- [ ] Unit test: `AllocateTraining(id, StatType.ATK)` with `ATKTrainingGain=3` and `teacherBuff=2` applies `BonusATK += 5`
+- [ ] Unit test: CRIT training on a student with `TotalCRIT=95` and `CRITTrainingGain=5` → `BonusCRIT` increases by only 5, `TotalCRIT` clamped to 100
 
 ---
 

@@ -35,10 +35,16 @@ class BattleCombatant {
     bool IsStudent;                    // false = enemy unit
     int MaxHP;
     int CurrentHP;
-    int Attack;
-    int Speed;
+    int ATK;                           // physical attack damage
+    int DEF;                           // armor — reduces incoming physical damage
+    int MG;                            // magic power — used when a flag specifies magic damage
+    int MR;                            // magic resistance — reduces incoming magic damage
+    int SPD;                           // speed — determines ActionInterval
+    int CRIT;                          // critical strike chance (0–100 integer %)
+    int Range;                         // attack range in hex distance (1 = melee, 2 = ranged)
+    HexCoord Position;                 // current cell on the full 8×7 board
     int ActionTimer;                   // ticks remaining until this unit acts; initialized to ActionInterval
-    int ActionInterval;                // = max(1, BaseActionInterval - Speed)
+    int ActionInterval;                // = max(1, BaseActionInterval - SPD)
     List<BattleBehaviorFlag> Flags;    // from TraitSystem (students) or EnemyDatabase (enemies)
     bool HasActedThisBattle;           // used by FirstHitDouble flag
     bool IsDefeated => CurrentHP <= 0;
@@ -58,21 +64,22 @@ struct BattleResult {
 ### Core Rules
 
 1. **Phase guard**: `Resolve()` checks that `RunManager.Instance.CurrentPhase == RunPhase.Battle`. If not, logs an error and returns without starting.
-2. **Combatant initialization**: students are built from `StudentRoster.GetAll()` (stats already buffed by TraitSystem); enemies are built from `EnemyDatabase.GetEnemiesForYear(currentYear)`.
-3. **Action interval**: `ActionInterval = max(1, BaseActionInterval - combatant.Speed)`. Higher Speed → shorter interval → acts more often.
+2. **Combatant initialization**: students are built from `StudentRoster.GetAll()` (stats already buffed by TraitSystem); enemies are built from `EnemyDatabase.GetEnemiesForYear(currentYear)`. All 7 stats (HP, ATK, DEF, MG, MR, SPD, CRIT) are copied.
+3. **Action interval**: `ActionInterval = max(1, BaseActionInterval - combatant.SPD)`. Higher SPD → shorter interval → acts more often.
 4. **Tick loop**: each tick, all combatants' `ActionTimer` decrements by 1. Any unit with `ActionTimer == 0` acts this tick. After acting, `ActionTimer` resets to `ActionInterval`.
-5. **Action order within a tick**: if multiple units act on the same tick, they are ordered by Speed descending (higher Speed goes first). Ties broken by array insertion order.
-6. **Targeting**: each attacking unit targets the living opponent with the lowest `CurrentHP`. Tie broken randomly (Unity `Random.Range`).
-7. **Base damage**: `damage = attacker.Attack` (flat; no defense stat in v1).
-8. **Behavior flag processing** (applied per-attack, in order):
-   - `FirstHitDouble`: if `!combatant.HasActedThisBattle`, multiply damage by 2. Set `HasActedThisBattle = true`.
-   - `TakesReducedDamage` (on target): multiply damage by `(1 - DamageReductionFraction)` before applying.
-   - `AOEAttack` (on attacker): damage is applied to **all living enemy units** at the attacker's base damage. (Other flags still apply per-target.)
-9. **ShadowSurge** (if active): on the first tick only, Shadow-flagged students with this behavior have their `ActionInterval` reduced by `ShadowSurgeIntervalReduction` for that tick only (effectively acting earlier).
-10. **Defeat**: a combatant with `CurrentHP ≤ 0` is immediately marked defeated and removed from the active list. Its `OnCombatantDefeated` event fires.
-11. **Win condition check** happens after every action: if all enemies are defeated → `Won = true` → stop loop. If all students are defeated → `Won = false` → stop loop.
-12. **Timeout**: if `TicksElapsed ≥ MaxBattleTicks` and no win condition is met, the battle times out. Outcome: if more students are alive than enemies (by count), students win; otherwise students lose. `BattleResult.TimedOut = true`.
-13. **`OnBattleComplete`** fires once, after the coroutine resolves. RunManager subscribes to it to advance the phase.
+5. **Action order within a tick**: if multiple units act on the same tick, they are ordered by SPD descending (higher SPD goes first). Ties broken by array insertion order.
+6. **Positioning and targeting (proximity-based)**: each unit checks whether any enemy is within `Range` hex distance. If yes, it attacks the nearest enemy (by `HexGrid.Distance`; ties broken randomly). If no enemy is in range, the unit moves one hex along the shortest path toward the nearest enemy (by hex distance) instead of attacking. Movement fires `OnCombatantMoved(id, fromCoord, toCoord)` and does **not** deal damage or reset `ActionTimer`. The unit's `Position` in `HexGrid` is updated immediately.
+7. **Default attack (physical)**: `rawDamage = attacker.ATK`. Apply DEF mitigation: `damage = max(1, floor(rawDamage × (100 / (100 + target.DEF))))`. Roll CRIT before mitigation (see rule 7a). DEF never fully blocks — minimum 1 damage always dealt.
+   - **7a. CRIT roll**: before mitigation, roll `Random.Range(0, 100) < attacker.CRIT`. On crit: `rawDamage × 2`. CRIT is rolled once per attack action.
+8. **Magic attack (flag-triggered)**: when the active `BattleBehaviorFlag` specifies `DamageType.Magic`, use `rawDamage = attacker.MG` and mitigate with `target.MR` instead of `target.DEF` using the same formula: `damage = max(1, floor(rawDamage × (100 / (100 + target.MR))))`. CRIT still applies.
+9. **Behavior flag processing** (applied per-attack, in order after damage type is resolved):
+   - `FirstHitDouble`: if `!combatant.HasActedThisBattle`, multiply `rawDamage` by 2 before mitigation. Set `HasActedThisBattle = true`.
+   - `AOEAttack` (on attacker): the computed damage is applied to **all living enemy units** independently. Each target's DEF or MR is evaluated separately.
+10. **ShadowSurge** (if active): on the first tick only, Shadow-flagged students with this behavior have their `ActionInterval` reduced by `ShadowSurgeIntervalReduction` for that tick only (effectively acting earlier).
+11. **Defeat**: a combatant with `CurrentHP ≤ 0` is immediately marked defeated and removed from the active list. Its `OnCombatantDefeated` event fires.
+12. **Win condition check** happens after every action: if all enemies are defeated → `Won = true` → stop loop. If all students are defeated → `Won = false` → stop loop.
+13. **Timeout**: if `TicksElapsed ≥ MaxBattleTicks` and no win condition is met, the battle times out. Outcome: if more students are alive than enemies (by count), students win; otherwise students lose. `BattleResult.TimedOut = true`.
+14. **`OnBattleComplete`** fires once, after the coroutine resolves. RunManager subscribes to it to advance the phase.
 
 ### Battle Simulation Flow
 
@@ -82,21 +89,24 @@ Resolve() coroutine:
   2. Build BattleCombatant list from StudentRoster + EnemyDatabase
   3. Apply BattleBehaviorFlags from TraitSystem.GetActiveBattleBehaviors()
   4. Initialize ActionTimers to each unit's ActionInterval
-  5. TICK LOOP:
+  5. Apply positions from SetUnitPositions() (player-side); auto-place enemies on their front row
+  6. TICK LOOP:
      a. Decrement all ActionTimers by 1
      b. Collect units with ActionTimer == 0, sort by Speed DESC
      c. For each acting unit:
-        i.  Select target (lowest CurrentHP among opponents)
-        ii. Compute damage (base + behavior flags)
-        iii.Apply damage to target (and all targets if AOEAttack)
-        iv. Fire OnCombatantActed event
-        v.  If target.CurrentHP <= 0: mark defeated, fire OnCombatantDefeated
-        vi. Reset actor's ActionTimer to ActionInterval
+        i.  Find nearest enemy in range (HexGrid.Distance <= unit.Range)
+        ii. If enemy in range → compute + apply damage (base + behavior flags)
+                               → fire OnCombatantActed
+                               → if target defeated: mark, fire OnCombatantDefeated
+                               → reset ActionTimer to ActionInterval
+        iii.If no enemy in range → move one hex toward nearest enemy (BFS next step)
+                                 → fire OnCombatantMoved(id, from, to)
+                                 → do NOT reset ActionTimer (movement doesn't consume action slot)
      d. Check win condition → if met, break loop
      e. TicksElapsed++
      f. If TicksElapsed >= MaxBattleTicks → timeout, determine outcome, break
      g. yield return new WaitForSeconds(TickDelay)   ← observes _currentTickDelay
-  6. Fire OnBattleComplete(BattleResult)
+  7. Fire OnBattleComplete(BattleResult)
 ```
 
 ### Speed-Up Mode
@@ -111,11 +121,18 @@ The coroutine reads `_currentTickDelay` on every `yield` — the change takes ef
 
 When RunManager calls `Pause()`, AutoBattleResolver sets `_paused = true`. The coroutine inserts a `while (_paused) yield return null;` before the `yield WaitForSeconds`, effectively halting the simulation until `Resume()` clears the flag. No tick processing occurs while paused.
 
-### Per-Tick Events (for BattleHUD)
+### SetUnitPositions (pre-battle injection)
+
+`void SetUnitPositions(Dictionary<string, HexCoord> placements)` — called by `BattleBoardManager` after the player confirms placement. Injects the player's chosen positions into the simulation before `Resolve()` is called. Enemy positions are auto-assigned: enemies fill row 4 of the enemy side (staggered left-to-right by insertion order). Must be called before `Resolve()`; calling it after logs an error and no-ops.
+
+### Per-Tick Events (for BattleHUD and BattleBoardManager)
 
 ```
 event Action<string actorId, string targetId, int damage, List<string> flagsTriggered>
     OnCombatantActed
+
+event Action<string id, HexCoord from, HexCoord to>
+    OnCombatantMoved
 
 event Action<string combatantId>
     OnCombatantDefeated
@@ -142,47 +159,69 @@ event Action<BattleResult>
 ### Action Interval
 
 ```
-ActionInterval = max(1, BaseActionInterval - combatant.Speed)
+ActionInterval = max(1, BaseActionInterval - combatant.SPD)
 ```
 
 | Variable | Type | Range | Source | Description |
 |---|---|---|---|---|
-| `BaseActionInterval` | int | 10–15 | `BattleConfig` ScriptableObject | Ticks at Speed 0; higher = slower combat pace |
-| `combatant.Speed` | int | 1–∞ | StudentData / EnemyData | Higher = shorter interval = more frequent actions |
+| `BaseActionInterval` | int | 10–15 | `BattleConfig` ScriptableObject | Ticks at SPD 0; higher = slower combat pace |
+| `combatant.SPD` | int | 1–∞ | StudentData / EnemyData | Higher = shorter interval = more frequent actions |
 
-**Expected output**: Speed 3 → interval 7; Speed 8 → interval 2; Speed 10 → interval 1 (minimum).
+**Expected output**: SPD 3 → interval 7; SPD 8 → interval 2; SPD 10 → interval 1 (minimum).
 
-### Damage Calculation
+### Physical Damage Calculation (default)
 
 ```
-damage = attacker.Attack
+rawDamage = attacker.ATK
+
+// CRIT roll (before mitigation):
+if Random.Range(0, 100) < attacker.CRIT:
+    rawDamage = rawDamage * 2
 
 // FirstHitDouble (if flag active and first action):
-damage = damage * 2
+if !attacker.HasActedThisBattle:
+    rawDamage = rawDamage * 2     // stacks multiplicatively with CRIT
 
-// TakesReducedDamage (if flag on target):
-damage = floor(damage * (1 - DamageReductionFraction))
-
-// Clamp:
-damage = max(1, damage)
+// DEF mitigation (LoL formula):
+damage = max(1, floor(rawDamage * (100.0 / (100 + target.DEF))))
 ```
 
 | Variable | Type | Range | Source | Description |
 |---|---|---|---|---|
-| `attacker.Attack` | int | 1–∞ | StudentData (post-buff) / EnemyData | Base damage per hit |
-| `DamageReductionFraction` | float | 0.0–0.5 | `BattleConfig` / TraitDatabase | Shield trait damage reduction fraction |
+| `attacker.ATK` | int | 1–∞ | StudentData (post-buff) / EnemyData | Physical attack power |
+| `attacker.CRIT` | int | 0–100 | StudentData (post-buff) / EnemyData | Crit chance as integer % |
+| `target.DEF` | int | 0–∞ | StudentData (post-buff) / EnemyData | Armor — higher = more physical damage absorbed |
 
-**Expected output range**: minimum 1 damage per hit (floor clamp).
+**Expected output**: ATK=10, DEF=0 → 10 dmg; ATK=10, DEF=25 → 8 dmg; ATK=10, DEF=100 → 5 dmg. Minimum 1 always.
+
+### Magic Damage Calculation (flag-triggered)
+
+When a `BattleBehaviorFlag` sets `DamageType.Magic`, MG and MR replace ATK and DEF:
+
+```
+rawDamage = attacker.MG
+
+// CRIT and FirstHitDouble apply identically (same roll, same rules)
+
+// MR mitigation (same formula):
+damage = max(1, floor(rawDamage * (100.0 / (100 + target.MR))))
+```
+
+| Variable | Type | Range | Source | Description |
+|---|---|---|---|---|
+| `attacker.MG` | int | 0–∞ | StudentData (post-buff) / EnemyData | Magic power |
+| `target.MR` | int | 0–∞ | StudentData (post-buff) / EnemyData | Magic resistance |
 
 ### AOEAttack Damage
 
 ```
-// Applied to each enemy independently at the same base damage:
+// Applied to each living enemy independently:
 foreach enemy in livingEnemies:
-    enemy.CurrentHP -= max(1, damage)
+    // Each enemy's DEF (or MR) evaluated separately
+    enemy.CurrentHP -= computeDamage(attacker, enemy)
 ```
 
-AOE applies the same damage to all targets (no split damage). Each target's `TakesReducedDamage` flag is evaluated independently.
+AOE applies the full computed damage to every target (no split). Each target's DEF/MR is evaluated independently.
 
 ### Timeout Tiebreaker
 

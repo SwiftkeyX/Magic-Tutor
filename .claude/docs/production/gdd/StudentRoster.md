@@ -32,19 +32,36 @@ public class StudentData {
     public string StudentId;        // GUID assigned at generation
     public string Name;             // drawn from name pool
     public List<TraitType> Traits;  // 1–2 traits assigned at generation
-    public int BaseAttack;          // random within configured range
-    public int BaseMaxHP;           // random within configured range
-    public int BaseSpeed;           // random within configured range
-    public int BonusAttack;         // accumulated from TrainingSystem (starts 0)
-    public int BonusMaxHP;          // accumulated from TrainingSystem (starts 0)
-    public int BonusSpeed;          // accumulated from TrainingSystem (starts 0)
+
+    // Base stats — randomly generated at recruitment
+    public int BaseHP;    // health points
+    public int BaseATK;   // physical attack damage
+    public int BaseDEF;   // armor (physical damage reduction)
+    public int BaseMG;    // magic power (used by trait magic abilities)
+    public int BaseMR;    // magic resistance
+    public int BaseSPD;   // speed (action frequency in battle)
+    public int BaseCRIT;  // critical strike chance (integer %, e.g. 5 = 5%)
+
+    // Bonus stats — accumulated from TrainingSystem (all start at 0)
+    public int BonusHP;
+    public int BonusATK;
+    public int BonusDEF;
+    public int BonusMG;
+    public int BonusMR;
+    public int BonusSPD;
+    public int BonusCRIT;
+
     public int TrainingPointsSpent; // total training actions used on this student
 }
 
 // Derived (computed in C# properties, not stored):
-// TotalAttack  = BaseAttack  + BonusAttack
-// TotalMaxHP   = BaseMaxHP   + BonusMaxHP
-// TotalSpeed   = BaseSpeed   + BonusSpeed
+// TotalHP   = BaseHP   + BonusHP
+// TotalATK  = BaseATK  + BonusATK
+// TotalDEF  = BaseDEF  + BonusDEF
+// TotalMG   = BaseMG   + BonusMG
+// TotalMR   = BaseMR   + BonusMR
+// TotalSPD  = BaseSPD  + BonusSPD
+// TotalCRIT = BaseCRIT + BonusCRIT   (clamped to 0–100)
 ```
 
 All stat values are **integers** — no floats. This eliminates floating-point drift in formulas.
@@ -56,9 +73,13 @@ All stat values are **integers** — no floats. This eliminates floating-point d
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `RecruitCountPerSemester` | int | 5 | How many students are generated each Recruit phase |
-| `BaseAttackRange` | Vector2Int | (5, 15) | Min/max base attack on generation |
-| `BaseMaxHPRange` | Vector2Int | (20, 40) | Min/max base HP on generation |
-| `BaseSpeedRange` | Vector2Int | (3, 8) | Min/max base speed on generation |
+| `BaseHPRange` | Vector2Int | (40, 80) | Min/max base HP on generation |
+| `BaseATKRange` | Vector2Int | (5, 15) | Min/max base physical attack on generation |
+| `BaseDEFRange` | Vector2Int | (0, 10) | Min/max base armor on generation |
+| `BaseMGRange` | Vector2Int | (0, 10) | Min/max base magic power on generation |
+| `BaseMRRange` | Vector2Int | (0, 10) | Min/max base magic resistance on generation |
+| `BaseSPDRange` | Vector2Int | (3, 8) | Min/max base speed on generation |
+| `BaseCRITRange` | Vector2Int | (0, 10) | Min/max base crit chance (%) on generation |
 | `TraitsPerStudent` | Vector2Int | (1, 2) | Min/max traits assigned per student |
 | `AvailableTraits` | List\<TraitType\> | [all traits] | Which traits can appear in the random pool |
 | `NamePool` | List\<string\> | [50+ names] | Student name list for random draw |
@@ -70,7 +91,7 @@ All stat values are **integers** — no floats. This eliminates floating-point d
 3. Base stats are drawn uniformly at random within their configured ranges (`StudentConfig`).
 4. Traits are drawn without replacement within a single student: one student cannot hold two copies of the same trait. Across students, duplicates are allowed.
 5. Names are drawn with replacement from the name pool (duplicates possible in a run — acceptable).
-6. TrainingSystem is the only system permitted to write `BonusAttack`, `BonusMaxHP`, `BonusSpeed`, and `TrainingPointsSpent` on a `StudentData`.
+6. TrainingSystem is the only system permitted to write `BonusHP`, `BonusATK`, `BonusDEF`, `BonusMG`, `BonusMR`, `BonusSPD`, `BonusCRIT`, and `TrainingPointsSpent` on a `StudentData`.
 7. `OnRosterChanged` fires after any add or remove operation.
 8. `OnStudentStatChanged(StudentData)` fires after any stat modification (called by TrainingSystem after it writes).
 9. `Clear()` removes all remaining students without firing individual remove events — fires one `OnRosterChanged` at the end.
@@ -127,10 +148,10 @@ baseStat = Random.Range(statRange.x, statRange.y + 1)   // inclusive on both end
 
 | Variable | Type | Range | Source | Description |
 |---|---|---|---|---|
-| `statRange.x` | int | ≥ 1 | `StudentConfig` | Minimum base stat value |
+| `statRange.x` | int | ≥ 0 | `StudentConfig` | Minimum base stat value (DEF/MG/MR/CRIT may start at 0) |
 | `statRange.y` | int | ≥ `statRange.x` | `StudentConfig` | Maximum base stat value |
 
-**Expected output**: `BaseAttack` ∈ [5, 15], `BaseMaxHP` ∈ [20, 40], `BaseSpeed` ∈ [3, 8] with defaults.
+**Expected output with defaults**: `BaseHP` ∈ [40, 80], `BaseATK` ∈ [5, 15], `BaseDEF` ∈ [0, 10], `BaseMG` ∈ [0, 10], `BaseMR` ∈ [0, 10], `BaseSPD` ∈ [3, 8], `BaseCRIT` ∈ [0, 10].
 
 ### Trait Count
 
@@ -181,9 +202,13 @@ All knobs are on `StudentConfig.asset` (ScriptableObject) — no hardcoded value
 | Parameter | Default | Safe Range | Effect of Increase | Effect of Decrease |
 |---|---|---|---|---|
 | `RecruitCountPerSemester` | 5 | 3–8 | Larger team; more trait synergy options; harder to fully train all | Smaller team; easier to train deeply; fewer trait combos |
-| `BaseAttackRange` | (5, 15) | (1, 50) | Higher damage output floor/ceiling | Lower damage; battles last longer |
-| `BaseMaxHPRange` | (20, 40) | (5, 100) | Students survive longer in battle | Faster battles; more one-shot potential |
-| `BaseSpeedRange` | (3, 8) | (1, 20) | More actions per battle round | Fewer actions; battles are slower-paced |
+| `BaseHPRange` | (40, 80) | (10, 200) | Students survive longer; battles last more ticks | Squishier; high ATK one-shots more often |
+| `BaseATKRange` | (5, 15) | (1, 50) | Higher physical damage output | Lower physical damage; battles last longer |
+| `BaseDEFRange` | (0, 10) | (0, 50) | Students tank more physical hits at base | Students are fragile before DEF training |
+| `BaseMGRange` | (0, 10) | (0, 50) | Magic trait abilities hit harder at base | Magic builds need more training investment |
+| `BaseMRRange` | (0, 10) | (0, 50) | Students resist magic damage at base | Magic enemies (with MG flags) deal more damage |
+| `BaseSPDRange` | (3, 8) | (1, 20) | More actions per battle round | Fewer actions; battles are slower-paced |
+| `BaseCRITRange` | (0, 10) | (0, 30) | Higher starting crit chance; more variance in battle | Predictable damage with less burst |
 | `TraitsPerStudent` | (1, 2) | (1, 3) | More synergy potential; more complex builds | Simpler builds; fewer combos |
 
 ---
@@ -267,7 +292,8 @@ All knobs are on `StudentConfig.asset` (ScriptableObject) — no hardcoded value
 
 - [ ] `GenerateStudents()` produces exactly `RecruitCountPerSemester` students with non-null, non-empty names and traits
 - [ ] No student has duplicate traits (e.g. [Fire, Fire] is invalid)
-- [ ] All base stats are within their configured ranges (`StudentConfig`)
+- [ ] All 7 base stats (HP, ATK, DEF, MG, MR, SPD, CRIT) are within their configured ranges (`StudentConfig`)
+- [ ] `TotalCRIT` is always clamped to 0–100 regardless of bonuses
 - [ ] `OnRosterChanged` fires exactly once per `GenerateStudents()` call
 - [ ] `OnStudentStatChanged` fires exactly once per stat modification
 - [ ] `Clear()` leaves `GetAll()` returning an empty list

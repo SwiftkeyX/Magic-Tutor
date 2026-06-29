@@ -31,9 +31,13 @@ Each year's battle feels categorically different — Year 1 teaches the player h
 public class EnemyData {
     public string EnemyId;                      // unique identifier (no GUID — use designer-authored string IDs for readability)
     public string DisplayName;                  // shown in BattleHUD (e.g. "Dungeon Golem")
-    public int BaseAttack;                      // flat damage per hit
-    public int BaseMaxHP;                       // total HP at battle start
-    public int BaseSpeed;                       // action interval = max(1, BaseActionInterval - BaseSpeed)
+    public int BaseHP;                          // total HP at battle start
+    public int BaseATK;                         // physical attack damage per hit
+    public int BaseDEF;                         // armor — reduces incoming physical damage
+    public int BaseMG;                          // magic power — used when a flag specifies magic damage
+    public int BaseMR;                          // magic resistance — reduces incoming magic damage
+    public int BaseSPD;                         // speed — action interval = max(1, BaseActionInterval - BaseSPD)
+    public int BaseCRIT;                        // critical strike chance (0–100 integer %)
     public List<BattleBehaviorFlag> Flags;      // optional; same enum as TraitSystem behavior flags
     public Sprite Icon;                         // optional art ref; null falls back to default enemy sprite
 }
@@ -84,36 +88,36 @@ List<EnemyData> GetEnemiesForYear(int year) {
 
 #### Year 1 Squad — "Beginner Creatures" (3 enemies)
 
-| EnemyId | DisplayName | Attack | MaxHP | Speed | Flags |
-|---|---|---|---|---|---|
-| `goblin_scout` | Goblin Scout | 5 | 25 | 3 | — |
-| `forest_slime` | Forest Slime | 4 | 35 | 2 | — |
-| `bark_golem` | Bark Golem | 6 | 30 | 2 | — |
+| EnemyId | DisplayName | HP | ATK | DEF | MG | MR | SPD | CRIT | Flags |
+|---|---|---|---|---|---|---|---|---|---|
+| `goblin_scout` | Goblin Scout | 50 | 6 | 0 | 0 | 0 | 3 | 0 | — |
+| `forest_slime` | Forest Slime | 70 | 5 | 5 | 0 | 0 | 2 | 0 | — |
+| `bark_golem` | Bark Golem | 60 | 7 | 8 | 0 | 0 | 2 | 0 | — |
 
-*Design intent*: Year 1 enemies have lower stats than a lightly trained 5-student team. The player should win Year 1 comfortably even with poor training choices — this is the tutorial battle.
+*Design intent*: Year 1 enemies have lower stats than a lightly trained 5-student team. Low DEF and MR mean even basic training investment wins this. The tutorial battle — teaches ATK vs DEF dynamics.
 
 #### Year 2 Squad — "Threatening Creatures" (4 enemies)
 
-| EnemyId | DisplayName | Attack | MaxHP | Speed | Flags |
-|---|---|---|---|---|---|
-| `iron_hound` | Iron Hound | 9 | 40 | 6 | — |
-| `shadow_sprite` | Shadow Sprite | 7 | 30 | 8 | `FirstHitDouble` |
-| `stone_troll` | Stone Troll | 8 | 55 | 3 | `TakesReducedDamage` |
-| `fire_imp` | Fire Imp | 10 | 28 | 5 | — |
+| EnemyId | DisplayName | HP | ATK | DEF | MG | MR | SPD | CRIT | Flags |
+|---|---|---|---|---|---|---|---|---|---|
+| `iron_hound` | Iron Hound | 80 | 10 | 5 | 0 | 5 | 6 | 0 | — |
+| `shadow_sprite` | Shadow Sprite | 60 | 8 | 0 | 0 | 0 | 8 | 20 | `FirstHitDouble` |
+| `stone_troll` | Stone Troll | 110 | 9 | 30 | 0 | 10 | 3 | 0 | — |
+| `fire_imp` | Fire Imp | 55 | 11 | 0 | 8 | 0 | 5 | 10 | — |
 
-*Design intent*: Year 2 is a real pressure test. A player who spread training evenly will struggle. The Stone Troll's `TakesReducedDamage` introduces the first enemy with a defensive flag, teaching the player that some targets are tank-like. Shadow Sprite's `FirstHitDouble` punishes slow students in the action queue.
+*Design intent*: Year 2 introduces meaningful DEF (Stone Troll — high armor requires high ATK or MG to crack) and CRIT variance (Shadow Sprite — 20% crit + FirstHitDouble can one-shot a student). Fire Imp's MG stat hints at the magic system for players who've invested MR.
 
 #### Year 3 Squad — "Boss Tier Creatures" (5 enemies)
 
-| EnemyId | DisplayName | Attack | MaxHP | Speed | Flags |
-|---|---|---|---|---|---|
-| `arcane_guardian` | Arcane Guardian | 14 | 65 | 5 | `AOEAttack` |
-| `void_wraith` | Void Wraith | 12 | 45 | 9 | `FirstHitDouble` |
-| `iron_colossus` | Iron Colossus | 10 | 90 | 2 | `TakesReducedDamage` |
-| `ember_witch` | Ember Witch | 13 | 40 | 7 | — |
-| `plague_lurker` | Plague Lurker | 11 | 50 | 6 | — |
+| EnemyId | DisplayName | HP | ATK | DEF | MG | MR | SPD | CRIT | Flags |
+|---|---|---|---|---|---|---|---|---|---|
+| `arcane_guardian` | Arcane Guardian | 130 | 12 | 10 | 18 | 5 | 5 | 0 | `AOEAttack (Magic)` |
+| `void_wraith` | Void Wraith | 90 | 14 | 0 | 0 | 0 | 9 | 30 | `FirstHitDouble` |
+| `iron_colossus` | Iron Colossus | 180 | 11 | 50 | 0 | 20 | 2 | 0 | — |
+| `ember_witch` | Ember Witch | 80 | 10 | 5 | 15 | 0 | 7 | 15 | — |
+| `plague_lurker` | Plague Lurker | 100 | 12 | 15 | 0 | 15 | 6 | 0 | — |
 
-*Design intent*: Year 3 is the final boss encounter. Arcane Guardian's `AOEAttack` punishes HP-weak teams (all students take damage each round). Void Wraith's high Speed + `FirstHitDouble` can one-shot a low-HP student before they ever act. Only a team with strong trait synergies and focused training should reliably win Year 3.
+*Design intent*: Arcane Guardian's AOE uses MG (magic) — teams without MR are devastated. Iron Colossus's DEF=50 (takes ~67% reduced physical damage) — requires magic builds or high-ATK teams with Fire synergy to crack. Void Wraith's 30% CRIT + FirstHitDouble can instantly kill a fragile student. Year 3 tests every stat axis.
 
 ### Core Rules
 
@@ -141,13 +145,13 @@ EnemyDatabase contains no formulas — it is a data store. All combat formulas t
 ### Enemy Action Interval (defined in AutoBattleResolver)
 
 ```
-EnemyActionInterval = max(1, BaseActionInterval - enemy.BaseSpeed)
+EnemyActionInterval = max(1, BaseActionInterval - enemy.BaseSPD)
 ```
 
 | Variable | Type | Source | Description |
 |---|---|---|---|
 | `BaseActionInterval` | int | `BattleConfig` SO | Shared constant used for all combatants |
-| `enemy.BaseSpeed` | int | `EnemyData.BaseSpeed` | Read from the deep-copied EnemyData |
+| `enemy.BaseSPD` | int | `EnemyData.BaseSPD` | Read from the deep-copied EnemyData |
 
 ---
 

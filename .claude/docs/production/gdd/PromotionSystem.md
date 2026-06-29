@@ -41,14 +41,14 @@ public class TeacherData {
 
 **Specialty → TrainingFocus mapping:**
 
-| Specialty (TraitType) | TrainingFocus (StatType) |
-|---|---|
-| `Fire` | `Attack` |
-| `Healer` | `MaxHP` |
-| `Shield` | `MaxHP` |
-| `Arcane` | `Attack` |
-| `Storm` | `Speed` |
-| `Shadow` | `Speed` |
+| Specialty (TraitType) | TrainingFocus (StatType) | Rationale |
+|---|---|---|
+| `Fire` | `ATK` | Fire synergy boosts physical attack |
+| `Healer` | `HP` | Healer synergy boosts team HP and MG |
+| `Shield` | `DEF` | Shield synergy boosts armor and MR |
+| `Arcane` | `MG` | Arcane synergy boosts magic power and converts to magic damage |
+| `Storm` | `MR` | Storm AoE (magic) is countered by MR — teachers buff enemy-facing defense |
+| `Shadow` | `CRIT` | Shadow synergy revolves around CRIT and first-hit burst |
 
 ### TeacherData Conversion Formula
 

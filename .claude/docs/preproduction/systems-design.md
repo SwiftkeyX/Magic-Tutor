@@ -21,7 +21,8 @@
 | AudioSystem | Music and SFX playback; AudioSource pooling, clip management | GameManager | 3 |
 | MainMenuController | Main menu screen logic (new run, settings, quit) | GameManager, SceneLoader | 3 |
 | SchoolHUD | School management phase UI (student list, training actions, trait display, year progress) | StudentRoster, TrainingSystem, TraitSystem | 3 |
-| BattleHUD | Auto-battle view UI (unit display, battle log, outcome screen) | AutoBattleResolver | 3 |
+| BattleHUD | Auto-battle view UI (HP bars, damage numbers, outcome screen) | AutoBattleResolver, BattleBoardManager | 3 |
+| BattleBoardManager | Renders hex grid, handles pre-battle drag-drop placement, drives unit visual movement on board | AutoBattleResolver | 3 |
 | YearEndHUD | Promotion/discard screen UI | PromotionSystem | 3 |
 | MetaProgressionHUD | Teacher collection and run history display | TeacherRoster | 3 |
 
