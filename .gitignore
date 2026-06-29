@@ -1,0 +1,56 @@
+.DS_Store
+Thumbs.db
+
+# GitHub App bot secrets — never commit
+.env
+*.pem
+.gh-token
+
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Unity cache
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+*.booproj
+*.suo
+*.user
+*.sln
+*.csproj
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# VS / Rider IDE
+.vs/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Desktop.ini
+Thumbs.db
+
+# Crashlytics
+crashlytics-build.properties
