@@ -33,7 +33,7 @@ During battle, BattleBoardManager subscribes to `AutoBattleResolver` events and 
   x = col * HEX_WIDTH + (row % 2 == 0 ? 0 : HEX_OFFSET)
   y = row * HEX_HEIGHT
   ```
-  where `HEX_WIDTH = 1.0f`, `HEX_OFFSET = 0.5f`, `HEX_HEIGHT = 0.866f` (≈ √3/2)
+  where `HEX_WIDTH = 1.1f`, `HEX_OFFSET = 0.55f`, `HEX_HEIGHT = 0.95f` (tuned from √3/2 for visual spacing)
 
 ### Named Positions (Reference Image)
 
@@ -145,8 +145,8 @@ y = row * HEX_HEIGHT
 
 | Parameter | Default | Safe Range | Effect |
 |---|---|---|---|
-| `HEX_WIDTH` | 1.0 | 0.8–1.5 | Tile spacing horizontal |
-| `HEX_HEIGHT` | 0.866 | 0.7–1.3 | Tile spacing vertical |
+| `HEX_WIDTH` | 1.1 | 0.8–1.5 | Tile spacing horizontal |
+| `HEX_HEIGHT` | 0.95 | 0.7–1.3 | Tile spacing vertical |
 | `MoveAnimDuration` | 0.15s | 0.05–0.4s | Unit movement speed between cells |
 | `AttackLungePercent` | 0.3 | 0.1–0.6 | How far unit lurches toward target on attack |
 

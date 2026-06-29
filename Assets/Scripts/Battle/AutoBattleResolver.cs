@@ -93,6 +93,16 @@ namespace MagicSchool.Battle
 
         public List<CombatantSnapshot> GetCombatantSnapshots()
         {
+            // Lazy-init: if called before SetCombatants (e.g. from BattleBoardManager.Start),
+            // populate from stub components on the same GameObject.
+            if (_combatants.Count == 0)
+            {
+                var roster   = GetComponent<StudentRosterStub>();
+                var database = GetComponent<EnemyDatabaseStub>();
+                if (roster != null && database != null)
+                    SetCombatants(roster.GetStudents(), database.GetEnemies());
+            }
+
             return _combatants.Select(c => new CombatantSnapshot
             {
                 Id = c.Id, DisplayName = c.DisplayName, IsStudent = c.IsPlayer,
@@ -180,7 +190,7 @@ namespace MagicSchool.Battle
                 {
                     int pCount = _combatants.Count(c =>  c.IsPlayer && !c.IsDefeated);
                     int eCount = _combatants.Count(c => !c.IsPlayer && !c.IsDefeated);
-                    var result = new BattleResult { Won = pCount >= eCount, TicksElapsed = ticks, TimedOut = true };
+                    var result = new BattleResult { Won = pCount > eCount, TicksElapsed = ticks, TimedOut = true };
                     Debug.Log($"[AutoBattle] TIMEOUT — {(result.Won ? "PLAYERS WIN" : "PLAYERS LOSE")}");
                     OnBattleComplete?.Invoke(result);
                     _battleRunning = false;

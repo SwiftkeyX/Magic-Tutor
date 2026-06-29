@@ -125,6 +125,10 @@ When RunManager calls `Pause()`, AutoBattleResolver sets `_paused = true`. The c
 
 `void SetUnitPositions(Dictionary<string, HexCoord> placements)` — called by `BattleBoardManager` after the player confirms placement. Injects the player's chosen positions into the simulation before `Resolve()` is called. Enemy positions are auto-assigned: enemies fill row 4 of the enemy side (staggered left-to-right by insertion order). Must be called before `Resolve()`; calling it after logs an error and no-ops.
 
+### GetCombatantSnapshots (bench population API)
+
+`List<CombatantSnapshot> GetCombatantSnapshots()` — returns a read-only list of all combatants as lightweight snapshots. Each `CombatantSnapshot` carries: `id`, `displayName`, `isStudent`, `maxHP`, `currentHP`. Called by `BattleBoardManager` during Placement Phase to populate the bench panel without reading `StudentRoster` or `EnemyDatabase` directly. Before `Resolve()` is called the list reflects the full pre-battle roster; once the simulation is running it reflects live battle state (HP updates as combatants take damage). `CombatantSnapshot` is defined in `BattleData.cs`.
+
 ### Per-Tick Events (for BattleHUD and BattleBoardManager)
 
 ```

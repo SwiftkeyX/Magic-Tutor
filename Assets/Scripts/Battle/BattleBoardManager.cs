@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,23 +13,21 @@ namespace MagicSchool.Battle
         [SerializeField] AutoBattleResolver   _resolver;
         [SerializeField] GameObject           _hexTilePrefab;
         [SerializeField] GameObject           _battleUnitPrefab;
-        [SerializeField] StudentRosterStub    _studentRoster;
-        [SerializeField] EnemyDatabaseStub    _enemyDatabase;
         [SerializeField] RectTransform        _benchPanel;
         [SerializeField] Button               _startBattleButton;
         [SerializeField] GameObject           _outcomePanel;
         [SerializeField] Text                 _outcomeText;
 
-        // ── Hex constants (must match BattleTestController / existing prefabs) ──
+        // ── Hex constants ────────────────────────────────────────────────────
         private const float HexWidth  = 1.1f;
         private const float HexHeight = 0.95f;
         private const float HexOffset = 0.55f;
 
         // ── State ────────────────────────────────────────────────────────────
-        private readonly Dictionary<HexCoord, HexTileView>     _tiles         = new();
-        private readonly Dictionary<string,   BattleUnit>       _units         = new();
-        private readonly Dictionary<string,   HexCoord>         _pendingPlacements = new();
-        private readonly Dictionary<string,   StudentCombatData> _studentData   = new();
+        private readonly Dictionary<HexCoord, HexTileView>      _tiles             = new();
+        private readonly Dictionary<string,   BattleUnit>        _units             = new();
+        private readonly Dictionary<string,   HexCoord>          _pendingPlacements = new();
+        private readonly Dictionary<string,   CombatantSnapshot> _studentSnapshots  = new();
 
         private HexGrid _grid;
         private bool    _battleStarted;
@@ -44,19 +43,22 @@ namespace MagicSchool.Battle
         {
             _cam  = Camera.main;
             _grid = GetComponent<HexGrid>();
+            if (_grid == null) { Debug.LogError("[BattleBoardManager] HexGrid missing", this); enabled = false; return; }
         }
 
         private void Start()
         {
+            if (_resolver == null)          { Debug.LogError("[BattleBoardManager] AutoBattleResolver missing", this); enabled = false; return; }
+            if (_startBattleButton == null) { Debug.LogError("[BattleBoardManager] StartBattleButton missing", this); enabled = false; return; }
+            if (_outcomePanel == null)      { Debug.LogError("[BattleBoardManager] OutcomePanel missing", this); enabled = false; return; }
+
             BuildBoard();
 
-            var students = _studentRoster.GetStudents();
-            var enemies  = _enemyDatabase.GetEnemies();
+            var snapshots = _resolver.GetCombatantSnapshots();
+            var students  = snapshots.Where(s => s.IsStudent).ToList();
 
             foreach (var s in students)
-                _studentData[s.Id] = s;
-
-            _resolver.SetCombatants(students, enemies);
+                _studentSnapshots[s.Id] = s;
 
             _resolver.OnCombatantMoved    += HandleMoved;
             _resolver.OnCombatantActed    += HandleActed;
@@ -111,7 +113,7 @@ namespace MagicSchool.Battle
             return _fallbackSprite;
         }
 
-        private void BuildBench(List<StudentCombatData> students)
+        private void BuildBench(List<CombatantSnapshot> students)
         {
             foreach (var s in students)
             {
@@ -156,11 +158,13 @@ namespace MagicSchool.Battle
                     kv.Value.SetHighlight(true);
             }
 
-            // Create a ghost
+            // Create a ghost — get sprite from the dragged card's SpriteRenderer if present;
+            // card is a UI Image (no SpriteRenderer) so fall back to the procedural white sprite.
             _dragGhost = new GameObject("DragGhost");
             _dragGhost.transform.SetParent(transform, false);
-            var sr = _dragGhost.AddComponent<SpriteRenderer>();
-            sr.sprite       = GetComponent<SpriteRenderer>() != null ? GetComponent<SpriteRenderer>().sprite : null;
+            var sr     = _dragGhost.AddComponent<SpriteRenderer>();
+            var cardSr = card.GetComponent<SpriteRenderer>();
+            sr.sprite       = cardSr != null ? cardSr.sprite : GetFallbackSprite();
             sr.color        = new Color(StudentColor(studentId).r, StudentColor(studentId).g, StudentColor(studentId).b, 0.6f);
             sr.sortingOrder = 10;
             _dragGhost.transform.localScale = Vector3.one * 0.4f;
@@ -252,7 +256,7 @@ namespace MagicSchool.Battle
 
         private void PlaceStudent(string studentId, HexCoord coord)
         {
-            if (!_studentData.TryGetValue(studentId, out var data)) return;
+            if (!_studentSnapshots.TryGetValue(studentId, out var snap)) return;
             if (_grid.IsOccupied(coord)) return;
 
             // Remove existing placement if re-placing — restore card alpha first
@@ -276,11 +280,11 @@ namespace MagicSchool.Battle
             _pendingPlacements[studentId] = coord;
             _grid.SetOccupant(coord, studentId);
 
-            // Spawn unit
+            // Spawn unit — MaxHP sourced from snapshot (B3)
             var go   = Instantiate(_battleUnitPrefab, CoordToWorld(coord), Quaternion.identity);
             var unit = go.GetComponent<BattleUnit>();
             unit.Init(studentId, coord);
-            unit.InitHealthBar(data.MaxHP, data.MaxHP);
+            unit.InitHealthBar(snap.MaxHP, snap.MaxHP);
             var sr = go.GetComponent<SpriteRenderer>();
             if (sr != null)
             {
@@ -301,6 +305,7 @@ namespace MagicSchool.Battle
         }
 
         // ── Test helper (editor/QA only) ─────────────────────────────────────
+#if UNITY_EDITOR
         public void TestAutoPlace()
         {
             PlaceStudent("warrior", new HexCoord(1, 0));
@@ -308,6 +313,7 @@ namespace MagicSchool.Battle
             PlaceStudent("archer",  new HexCoord(5, 0));
             OnStartBattle();
         }
+#endif
 
         // ── Start Battle ─────────────────────────────────────────────────────
         private void OnStartBattle()
@@ -320,10 +326,10 @@ namespace MagicSchool.Battle
             // Tell resolver player positions
             _resolver.SetUnitPositions(_pendingPlacements);
 
-            // Auto-spawn enemy units
+            // Auto-spawn enemy units from snapshots — no direct stub dependency
             var enemyPlacements = _resolver.GetAutoEnemyPlacements();
-            var enemies         = _enemyDatabase.GetEnemies();
-            foreach (var e in enemies)
+            var enemySnapshots  = _resolver.GetCombatantSnapshots().Where(s => !s.IsStudent).ToList();
+            foreach (var e in enemySnapshots)
             {
                 if (!enemyPlacements.TryGetValue(e.Id, out var coord)) continue;
                 var go   = Instantiate(_battleUnitPrefab, CoordToWorld(coord), Quaternion.identity);
