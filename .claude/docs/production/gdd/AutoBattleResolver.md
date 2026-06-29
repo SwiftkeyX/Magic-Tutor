@@ -1,0 +1,385 @@
+# AutoBattleResolver
+
+> **Status**: Draft
+> **Last Updated**: 2026-06-29
+> **Implements Pillar**: Empowering — the payoff moment; the player watches the team they built and trained dismantle the enemy
+
+## Summary
+
+AutoBattleResolver runs a tick-based combat simulation between the trained student team and the year's enemy squad. It runs as a coroutine with configurable tick delays (so the player can watch the battle unfold), fires per-tick events for BattleHUD to animate, and fires `OnBattleComplete(BattleResult)` when the fight ends. No player input occurs during battle. It reads student stats from StudentRoster (already modified by `TraitSystem.ResolveBattleBuffs()`), enemy data from EnemyDatabase, and behavior flags from TraitSystem.
+
+> **Quick reference** — Layer: `Core` · Priority: `MVP` · Key deps: `TraitSystem, EnemyDatabase`
+
+---
+
+## Overview
+
+AutoBattleResolver is a MonoBehaviour in the Battle scene. RunManager calls `Resolve()` after `TraitSystem.ResolveBattleBuffs()` completes. `Resolve()` is a coroutine: each tick it advances all combatants' action timers, resolves actions for any unit whose timer hits zero (in Speed order), applies damage and behavior flags, removes defeated units, and checks the win condition. Between ticks it yields for `TickDelay` seconds (default 0.5s) so the player can see each step. When `OnSpeedUpStarted` fires from InputHandler, `TickDelay` is reduced to `FastTickDelay` (default 0.05s). When the fight resolves, `OnBattleComplete(BattleResult)` fires and the coroutine ends.
+
+## Player Fantasy
+
+The player watches their carefully trained team face off against the year's enemies and feels either growing confidence ("the Fire synergy is shredding them") or mounting dread ("we're going to lose"). The simulation is readable — each hit is visible, each defeat is dramatized — and the outcome feels earned, not arbitrary.
+
+---
+
+## Detailed Design
+
+### BattleCombatant (Internal Data)
+
+AutoBattleResolver builds this from StudentData/EnemyData at the start of `Resolve()`. Never persisted.
+
+```csharp
+class BattleCombatant {
+    string Id;                         // matches StudentId or EnemyId
+    string DisplayName;
+    bool IsStudent;                    // false = enemy unit
+    int MaxHP;
+    int CurrentHP;
+    int ATK;                           // physical attack damage
+    int DEF;                           // armor — reduces incoming physical damage
+    int MG;                            // magic power — used when a flag specifies magic damage
+    int MR;                            // magic resistance — reduces incoming magic damage
+    int SPD;                           // speed — determines ActionInterval
+    int CRIT;                          // critical strike chance (0–100 integer %)
+    int Range;                         // attack range in hex distance (1 = melee, 2 = ranged)
+    HexCoord Position;                 // current cell on the full 8×7 board
+    int ActionTimer;                   // ticks remaining until this unit acts; initialized to ActionInterval
+    int ActionInterval;                // = max(1, BaseActionInterval - SPD)
+    List<BattleBehaviorFlag> Flags;    // from TraitSystem (students) or EnemyDatabase (enemies)
+    bool HasActedThisBattle;           // used by FirstHitDouble flag
+    bool IsDefeated => CurrentHP <= 0;
+}
+```
+
+### BattleResult
+
+```csharp
+struct BattleResult {
+    bool Won;
+    int TicksElapsed;
+    bool TimedOut;                     // true if MaxBattleTicks was reached
+}
+```
+
+### Core Rules
+
+1. **Phase guard**: `Resolve()` checks that `RunManager.Instance.CurrentPhase == RunPhase.Battle`. If not, logs an error and returns without starting.
+2. **Combatant initialization**: students are built from `StudentRoster.GetAll()` (stats already buffed by TraitSystem); enemies are built from `EnemyDatabase.GetEnemiesForYear(currentYear)`. All 7 stats (HP, ATK, DEF, MG, MR, SPD, CRIT) are copied.
+3. **Action interval**: `ActionInterval = max(1, BaseActionInterval - combatant.SPD)`. Higher SPD → shorter interval → acts more often.
+4. **Tick loop**: each tick, all combatants' `ActionTimer` decrements by 1. Any unit with `ActionTimer == 0` acts this tick. After acting, `ActionTimer` resets to `ActionInterval`.
+5. **Action order within a tick**: if multiple units act on the same tick, they are ordered by SPD descending (higher SPD goes first). Ties broken by array insertion order.
+6. **Positioning and targeting (proximity-based)**: each unit checks whether any enemy is within `Range` hex distance. If yes, it attacks the nearest enemy (by `HexGrid.Distance`; ties broken randomly). If no enemy is in range, the unit moves one hex along the shortest path toward the nearest enemy (by hex distance) instead of attacking. Movement fires `OnCombatantMoved(id, fromCoord, toCoord)` and does **not** deal damage or reset `ActionTimer`. The unit's `Position` in `HexGrid` is updated immediately.
+7. **Default attack (physical)**: `rawDamage = attacker.ATK`. Apply DEF mitigation: `damage = max(1, floor(rawDamage × (100 / (100 + target.DEF))))`. Roll CRIT before mitigation (see rule 7a). DEF never fully blocks — minimum 1 damage always dealt.
+   - **7a. CRIT roll**: before mitigation, roll `Random.Range(0, 100) < attacker.CRIT`. On crit: `rawDamage × 2`. CRIT is rolled once per attack action.
+8. **Magic attack (flag-triggered)**: when the active `BattleBehaviorFlag` specifies `DamageType.Magic`, use `rawDamage = attacker.MG` and mitigate with `target.MR` instead of `target.DEF` using the same formula: `damage = max(1, floor(rawDamage × (100 / (100 + target.MR))))`. CRIT still applies.
+9. **Behavior flag processing** (applied per-attack, in order after damage type is resolved):
+   - `FirstHitDouble`: if `!combatant.HasActedThisBattle`, multiply `rawDamage` by 2 before mitigation. Set `HasActedThisBattle = true`.
+   - `AOEAttack` (on attacker): the computed damage is applied to **all living enemy units** independently. Each target's DEF or MR is evaluated separately.
+10. **ShadowSurge** (if active): on the first tick only, Shadow-flagged students with this behavior have their `ActionInterval` reduced by `ShadowSurgeIntervalReduction` for that tick only (effectively acting earlier).
+11. **Defeat**: a combatant with `CurrentHP ≤ 0` is immediately marked defeated and removed from the active list. Its `OnCombatantDefeated` event fires.
+12. **Win condition check** happens after every action: if all enemies are defeated → `Won = true` → stop loop. If all students are defeated → `Won = false` → stop loop.
+13. **Timeout**: if `TicksElapsed ≥ MaxBattleTicks` and no win condition is met, the battle times out. Outcome: if more students are alive than enemies (by count), students win; otherwise students lose. `BattleResult.TimedOut = true`.
+14. **`OnBattleComplete`** fires once, after the coroutine resolves. RunManager subscribes to it to advance the phase.
+
+### Battle Simulation Flow
+
+```
+Resolve() coroutine:
+  1. Guard: check CurrentPhase == Battle
+  2. Build BattleCombatant list from StudentRoster + EnemyDatabase
+  3. Apply BattleBehaviorFlags from TraitSystem.GetActiveBattleBehaviors()
+  4. Initialize ActionTimers to each unit's ActionInterval
+  5. Apply positions from SetUnitPositions() (player-side); auto-place enemies on their front row
+  6. TICK LOOP:
+     a. Decrement all ActionTimers by 1
+     b. Collect units with ActionTimer == 0, sort by Speed DESC
+     c. For each acting unit:
+        i.  Find nearest enemy in range (HexGrid.Distance <= unit.Range)
+        ii. If enemy in range → compute + apply damage (base + behavior flags)
+                               → fire OnCombatantActed
+                               → if target defeated: mark, fire OnCombatantDefeated
+                               → reset ActionTimer to ActionInterval
+        iii.If no enemy in range → move one hex toward nearest enemy (BFS next step)
+                                 → fire OnCombatantMoved(id, from, to)
+                                 → do NOT reset ActionTimer (movement doesn't consume action slot)
+     d. Check win condition → if met, break loop
+     e. TicksElapsed++
+     f. If TicksElapsed >= MaxBattleTicks → timeout, determine outcome, break
+     g. yield return new WaitForSeconds(TickDelay)   ← observes _currentTickDelay
+  7. Fire OnBattleComplete(BattleResult)
+```
+
+### Speed-Up Mode
+
+InputHandler fires `OnSpeedUpStarted` / `OnSpeedUpCancelled`. AutoBattleResolver maintains `_currentTickDelay`:
+- Normal: `_currentTickDelay = NormalTickDelay` (default 0.5s)
+- Held Space: `_currentTickDelay = FastTickDelay` (default 0.05s)
+
+The coroutine reads `_currentTickDelay` on every `yield` — the change takes effect immediately on the next tick.
+
+### Pause Support
+
+When RunManager calls `Pause()`, AutoBattleResolver sets `_paused = true`. The coroutine inserts a `while (_paused) yield return null;` before the `yield WaitForSeconds`, effectively halting the simulation until `Resume()` clears the flag. No tick processing occurs while paused.
+
+### SetUnitPositions (pre-battle injection)
+
+`void SetUnitPositions(Dictionary<string, HexCoord> placements)` — called by `BattleBoardManager` after the player confirms placement. Injects the player's chosen positions into the simulation before `Resolve()` is called. Enemy positions are auto-assigned: enemies fill row 4 of the enemy side (staggered left-to-right by insertion order). Must be called before `Resolve()`; calling it after logs an error and no-ops.
+
+### Per-Tick Events (for BattleHUD and BattleBoardManager)
+
+```
+event Action<string actorId, string targetId, int damage, List<string> flagsTriggered>
+    OnCombatantActed
+
+event Action<string id, HexCoord from, HexCoord to>
+    OnCombatantMoved
+
+event Action<string combatantId>
+    OnCombatantDefeated
+
+event Action<BattleResult>
+    OnBattleComplete
+```
+
+### Interactions with Other Systems
+
+| System | Interaction |
+|---|---|
+| `RunManager` | Calls `Resolve()` after `TraitSystem.ResolveBattleBuffs()`; subscribes to `OnBattleComplete` to advance phase |
+| `TraitSystem` | Reads modified student stats from StudentData (already applied by `ResolveBattleBuffs()`); reads `GetActiveBattleBehaviors(studentId)` for behavior flags |
+| `EnemyDatabase` | Reads `GetEnemiesForYear(currentYear)` to build enemy combatants |
+| `InputHandler` | Subscribes to `OnSpeedUpStarted` / `OnSpeedUpCancelled` to toggle `_currentTickDelay` |
+| `BattleHUD` | Subscribes to `OnCombatantActed`, `OnCombatantDefeated`, `OnBattleComplete` for animation |
+| `StudentRoster` | Reads `GetAll()` at the start of `Resolve()` — never writes |
+
+---
+
+## Formulas
+
+### Action Interval
+
+```
+ActionInterval = max(1, BaseActionInterval - combatant.SPD)
+```
+
+| Variable | Type | Range | Source | Description |
+|---|---|---|---|---|
+| `BaseActionInterval` | int | 10–15 | `BattleConfig` ScriptableObject | Ticks at SPD 0; higher = slower combat pace |
+| `combatant.SPD` | int | 1–∞ | StudentData / EnemyData | Higher = shorter interval = more frequent actions |
+
+**Expected output**: SPD 3 → interval 7; SPD 8 → interval 2; SPD 10 → interval 1 (minimum).
+
+### Physical Damage Calculation (default)
+
+```
+rawDamage = attacker.ATK
+
+// CRIT roll (before mitigation):
+if Random.Range(0, 100) < attacker.CRIT:
+    rawDamage = rawDamage * 2
+
+// FirstHitDouble (if flag active and first action):
+if !attacker.HasActedThisBattle:
+    rawDamage = rawDamage * 2     // stacks multiplicatively with CRIT
+
+// DEF mitigation (LoL formula):
+damage = max(1, floor(rawDamage * (100.0 / (100 + target.DEF))))
+```
+
+| Variable | Type | Range | Source | Description |
+|---|---|---|---|---|
+| `attacker.ATK` | int | 1–∞ | StudentData (post-buff) / EnemyData | Physical attack power |
+| `attacker.CRIT` | int | 0–100 | StudentData (post-buff) / EnemyData | Crit chance as integer % |
+| `target.DEF` | int | 0–∞ | StudentData (post-buff) / EnemyData | Armor — higher = more physical damage absorbed |
+
+**Expected output**: ATK=10, DEF=0 → 10 dmg; ATK=10, DEF=25 → 8 dmg; ATK=10, DEF=100 → 5 dmg. Minimum 1 always.
+
+### Magic Damage Calculation (flag-triggered)
+
+When a `BattleBehaviorFlag` sets `DamageType.Magic`, MG and MR replace ATK and DEF:
+
+```
+rawDamage = attacker.MG
+
+// CRIT and FirstHitDouble apply identically (same roll, same rules)
+
+// MR mitigation (same formula):
+damage = max(1, floor(rawDamage * (100.0 / (100 + target.MR))))
+```
+
+| Variable | Type | Range | Source | Description |
+|---|---|---|---|---|
+| `attacker.MG` | int | 0–∞ | StudentData (post-buff) / EnemyData | Magic power |
+| `target.MR` | int | 0–∞ | StudentData (post-buff) / EnemyData | Magic resistance |
+
+### AOEAttack Damage
+
+```
+// Applied to each living enemy independently:
+foreach enemy in livingEnemies:
+    // Each enemy's DEF (or MR) evaluated separately
+    enemy.CurrentHP -= computeDamage(attacker, enemy)
+```
+
+AOE applies the full computed damage to every target (no split). Each target's DEF/MR is evaluated independently.
+
+### Timeout Tiebreaker
+
+```
+if (livingStudentCount > livingEnemyCount) → Won = true
+else → Won = false
+```
+
+---
+
+## Edge Cases
+
+| Scenario | Expected Behavior | Rationale |
+|---|---|---|
+| `Resolve()` called outside Battle phase | Log error, no-op | Phase guard — best-practices rule |
+| `Resolve()` called while already running | Log error, no-op | Only one simulation at a time |
+| All students are already defeated before first tick | `OnBattleComplete(Won: false)` fires immediately | Edge case on Year 3 with heavily debuffed team |
+| AOEAttack kills multiple enemies in one action | Each enemy's `OnCombatantDefeated` fires in sequence; win condition checked after all are processed | Correct; avoid checking mid-AOE resolution |
+| `FirstHitDouble` flag on an enemy | Enemy uses the same flag logic (HasActedThisBattle). Valid if EnemyDatabase assigns it. | Symmetric flag handling |
+| Battle timeout with equal survivor counts | Students lose (tie goes to enemy) | Harsh but consistent with "Challenging" pillar |
+| `_paused = true` when coroutine is between ticks | Coroutine halts at the `while (_paused)` guard on next iteration | No partial tick processing while paused |
+| TickDelay changed to FastTickDelay mid-battle | Takes effect on the next `yield` | Immediate switch within 1 tick |
+| `ShadowSurge` flag: reduces ActionInterval below 1 | Clamped to 1 | Minimum interval rule |
+
+---
+
+## Dependencies
+
+| System | Direction | Nature |
+|---|---|---|
+| `TraitSystem` | This depends on it | Data dependency — reads behavior flags; stats already buffed by ResolveBattleBuffs() |
+| `EnemyDatabase` | This depends on it | Data dependency — reads enemy definitions per year |
+| `StudentRoster` | This depends on it | Data dependency — reads student stats at simulation start (read-only) |
+| `RunManager` | It depends on this | State trigger — calls `Resolve()`; subscribes to `OnBattleComplete` |
+| `InputHandler` | It depends on this | Rule dependency — fires speed-up events that AutoBattleResolver acts on |
+| `BattleHUD` | It depends on this | State trigger — subscribes to per-tick events for animation |
+
+---
+
+## Tuning Knobs
+
+All knobs in `BattleConfig.asset` (ScriptableObject):
+
+| Parameter | Default | Safe Range | Effect of Increase | Effect of Decrease |
+|---|---|---|---|---|
+| `BaseActionInterval` | 10 | 6–20 | Slower combat; more ticks per battle | Faster combat; Speed has less relative impact |
+| `NormalTickDelay` | 0.5s | 0.2–2.0s | Battle plays slower; more dramatic | Faster default speed; less time to observe |
+| `FastTickDelay` | 0.05s | 0.01–0.2s | Speed-up is less extreme | Almost instant speed-up |
+| `MaxBattleTicks` | 200 | 100–500 | Longer battles before timeout | Earlier timeout; more draws |
+| `DamageReductionFraction` | 0.20 | 0.0–0.50 | Shield trait is much tankier | Shield trait has less defensive value |
+| `ShadowSurgeIntervalReduction`| 3 | 1–5 | Shadow acts much earlier on tick 1 | Shadow speed advantage is smaller |
+
+---
+
+## Visual / Audio Requirements
+
+| Event | Visual Feedback | Audio Feedback | Priority |
+|---|---|---|---|
+| `OnCombatantActed` (attack) | Attacker lunges toward target; damage number floats | Attack SFX (varies by trait) | MVP |
+| `OnCombatantActed` (AOEAttack) | Attack lines radiate to all enemies; damage numbers on each | AoE SFX (bigger) | MVP |
+| `OnCombatantActed` (FirstHitDouble) | Larger impact flash; bigger damage number | Distinct "first hit" SFX | Alpha |
+| `OnCombatantDefeated` (enemy) | Enemy unit fades/collapses | Enemy defeat SFX | MVP |
+| `OnCombatantDefeated` (student) | Student unit falls; dimmed | Student defeat SFX (solemn) | MVP |
+| `OnBattleComplete` (win) | Victory flash; all living students animate | Victory fanfare | MVP |
+| `OnBattleComplete` (lose) | Screen dims; all students defeated | Defeat sting | MVP |
+| Speed-up active | Tick delay indicator in BattleHUD | None | MVP |
+
+---
+
+## Game Feel
+
+### Feel Reference
+
+> "Should feel like TFT's battle phase — readable, unit-by-unit action that plays out in real time. Each hit lands with weight; the outcome builds tension. NOT a screen of numbers that resolves in 1 second with no visual narrative."
+
+### Input Responsiveness
+
+| Action | Max Input-to-Response Latency | Frame Budget (60fps) |
+|---|---|---|
+| `OnSpeedUpStarted` → tick rate changes | 1 frame + current tick remainder | ≤ 1 tick delay |
+
+### Animation Feel Targets
+
+| Animation | Startup Frames | Active Frames | Recovery Frames | Feel Goal |
+|---|---|---|---|---|
+| Attack lunge | 3 | 8 | 4 | Snappy, committed |
+| Damage number float | 0 | 30 | 0 | Clear, readable |
+| Unit defeat | 0 | 20 | 0 | Legible, slightly sad for students |
+
+### Impact Moments
+
+| Impact Type | Duration | Effect |
+|---|---|---|
+| First Shadow hit (FirstHitDouble) | 0.1s hit-stop | Freeze both units for 3 frames; large number |
+| Enemy wave cleared (all enemies dead) | 0.5s | Brief flash; victory sound; students "celebrate" |
+| Student defeated | 0.3s | Student card dims; sound of disappointment |
+
+### Weight and Responsiveness
+
+- **Weight**: Hits should feel physically impactful — not weightless damage ticks
+- **Player control**: Zero during battle — the player watches and reacts
+- **Snap quality**: Each tick resolves discretely and cleanly; no blurred state between ticks
+- **Failure texture**: When a student falls, it is immediately visible and attributable (the enemy that hit them is still active)
+
+### Feel Acceptance Criteria
+
+- [ ] A full battle (5 students vs Year-1 enemies) plays out in under 30 seconds at normal speed
+- [ ] Speed-up reduces perceived battle time to under 5 seconds
+- [ ] Every hit is accompanied by a visible damage number and SFX
+- [ ] The win/lose outcome is visually unambiguous within 2 seconds of the final action
+
+---
+
+## UI Requirements
+
+| Information | Display Location | Update Frequency | Condition |
+|---|---|---|---|
+| Student HP bars | BattleHUD student cards | On `OnCombatantActed` (when student is target) | During battle |
+| Enemy HP bars | BattleHUD enemy display | On `OnCombatantActed` (when enemy is target) | During battle |
+| Active behavior flags | Icon overlay on student/enemy card | Set once at battle start | During battle |
+| Ticks elapsed | Debug display only (hidden in release) | Every tick | Dev builds |
+| Speed-up indicator | BattleHUD corner (e.g. ">> FAST") | On speed-up toggle | When held |
+
+---
+
+## Cross-References
+
+| This Doc References | Target Doc | Element Referenced | Nature |
+|---|---|---|---|
+| TraitSystem must resolve before AutoBattleResolver | `TraitSystem.md`, `RunManager.md` | `ResolveBattleBuffs()` ordering invariant | Rule dependency |
+| BattleBehaviorFlags: TakesReducedDamage, AOEAttack, FirstHitDouble, ShadowSurge | `TraitSystem.md` | Flag definitions | Data dependency |
+| EnemyDatabase provides year-scaled enemies | `EnemyDatabase.md` | `GetEnemiesForYear(year)` | Data dependency |
+| InputHandler fires speed-up events | `InputHandler.md` | `OnSpeedUpStarted` / `OnSpeedUpCancelled` | Rule dependency |
+| Best-practices: AutoBattleResolver only runs during Battle phase | `best-practices.md` | Phase guard rule | Rule dependency |
+
+---
+
+## Acceptance Criteria
+
+- [ ] `Resolve()` called outside `RunPhase.Battle` logs an error and does not start
+- [ ] A battle with students who have higher combined stats than enemies results in a student win (statistical expectation across 10 runs — not a deterministic guarantee, as Speed ordering introduces variance)
+- [ ] `OnBattleComplete` fires exactly once per `Resolve()` call
+- [ ] Speed-up reduces `_currentTickDelay` to `FastTickDelay` within 1 tick of `OnSpeedUpStarted`
+- [ ] `FirstHitDouble` applies to only the first action of a flagged unit per battle
+- [ ] `AOEAttack` applies damage to all living enemies independently
+- [ ] `TakesReducedDamage` reduces incoming damage by `DamageReductionFraction` (floored to int, minimum 1)
+- [ ] `MaxBattleTicks` prevents an infinite simulation (verified: simulation always terminates)
+- [ ] Pause halts tick advancement without losing any state
+- [ ] Unit test: 1 student (Attack=10, MaxHP=50, Speed=5) vs 1 enemy (Attack=5, MaxHP=20, Speed=3) → student wins in ≤ 20 ticks
+
+---
+
+## Open Questions
+
+| Question | Owner | Deadline | Resolution |
+|---|---|---|---|
+| Should enemies have behavior flags (e.g., a Year-3 enemy with `FirstHitDouble`)? | Designer | Before code-system | Pending — recommend yes for Year 3 to increase difficulty surprise |
+| Should the timeout tiebreaker use HP totals (remaining HP%) instead of unit counts? | Designer | Before code-system | Pending — HP-based is more nuanced; count-based is simpler |
+| Should students target the lowest-HP enemy, or the highest-HP (to eliminate threats faster)? | Designer | Before code-system | Pending — lowest HP (focus-fire) is the standard auto-battler behavior |
+| Is the `ShadowSurge` flag for the first round only, or does Shadow always get a Speed boost? | Designer | Before code-system | Pending — first round only (as designed); confirm |
+| Should the battle simulation be fully deterministic (no randomness in targeting ties)? | Engineer | Before code-system | Pending — recommend deterministic (seed-based or sorted ID tiebreaker) for reproducibility |

@@ -2,31 +2,77 @@
 
 ## Phase 1 — Pre-production
 
-- [ ] Fill out `docs/design/game-vision.md`
-- [ ] Fill out `docs/design/design-decisions.md`
-- [ ] Fill out `docs/technical/technical-preferences.md` (engine, platform, performance budgets)
-- [ ] Fill out `docs/design/systems-design.md` — list every system, tier, and dependencies
-- [ ] Fill out `docs/technical/architecture.md` with finalized script table
-- [ ] Fill out `docs/technical/best-practices.md` — add project-critical patterns section
-- [ ] Milestone 0 — vision complete, all systems tiered, architecture and tech stack finalized
+- [x] Fill out `docs/preproduction/game-vision.md`
+- [x] Fill out `docs/preproduction/design-decisions.md`
+- [x] Fill out `docs/preproduction/technical-preferences.md` (engine, platform, performance budgets)
+- [x] Fill out `docs/preproduction/systems-design.md` — list every system, tier, and dependencies
+- [x] Fill out `docs/preproduction/architecture.md` with finalized script table
+- [x] Fill out `docs/preproduction/best-practices.md` — add project-critical patterns section
+- [x] Milestone 0 — vision complete, all systems tiered, architecture and tech stack finalized
 
 ## Phase 2 — Production
 
-### Tier 1 — Foundation
-- [ ] Create `docs/design/technical-design/<system>.md` for each Tier 1 system (copy `_template.md`)
-- [ ] *(fill in your Tier 1 systems)*
+### Sub-phase A — Design (GDDs)
 
-### Tier 2 — Core Loop
-- [ ] Create `docs/design/technical-design/<system>.md` for each Tier 2 system (copy `_template.md`)
-- [ ] *(fill in your Tier 2 systems)*
+#### Tier 1 — Foundation GDDs
+- [ ] Design `GameManager`
+- [ ] Design `SceneLoader`
+- [ ] Design `InputHandler`
+- [ ] Design `SaveSystem`
 
-- [ ] Milestone 1 — core loop playable end-to-end
+#### Tier 2 — Core Loop GDDs
+- [ ] Design `RunManager`
+- [ ] Design `StudentRoster`
+- [ ] Design `TrainingSystem`
+- [ ] Design `TraitSystem`
+- [ ] Design `AutoBattleResolver`
+- [ ] Design `EnemyDatabase`
+- [ ] Design `PromotionSystem`
+- [ ] Design `TeacherRoster`
 
-### Tier 3 — Supporting Systems
-- [ ] Create `docs/design/technical-design/<system>.md` for each Tier 3 system (copy `_template.md`)
-- [ ] *(fill in your Tier 3 systems)*
+#### Tier 3 — Supporting GDDs
+- [ ] Design `AudioSystem`
+- [ ] Design `MainMenuController`
+- [ ] Design `SchoolHUD`
+- [ ] Design `BattleHUD`
+- [ ] Design `YearEndHUD`
+- [ ] Design `MetaProgressionHUD`
 
-- [ ] Milestone 2 — all features in, content complete
+- [ ] Milestone 1 — all system GDDs written and approved
+
+### Sub-phase B — Implementation
+
+#### Tier 1 — Foundation
+- [ ] Code `GameManager`
+- [ ] Code `SceneLoader`
+- [ ] Code `InputHandler`
+- [ ] Code `SaveSystem`
+- [ ] 🧪 Test Gate 1 — Foundation wired; game launches, Bootstrap scene loads, no console errors
+
+#### Tier 2 — Core Loop
+- [ ] Code `RunManager`
+- [ ] Code `StudentRoster`
+- [ ] Code `TrainingSystem`
+- [ ] Code `TraitSystem`
+- [ ] Code `AutoBattleResolver`
+- [ ] Code `EnemyDatabase`
+- [ ] Code `PromotionSystem`
+- [ ] Code `TeacherRoster`
+- [ ] Milestone 2 — core loop playable end-to-end (run starts, 3 years cycle, win/lose resolves)
+- [ ] 🧪 Test Gate 2 — One full 3-year run completes without errors
+
+#### Tier 3 — Supporting Systems
+- [ ] Code `AudioSystem`
+- [ ] Code `MainMenuController`
+- [ ] Code `SchoolHUD`
+- [ ] Code `BattleHUD`
+- [ ] Code `YearEndHUD`
+- [ ] Code `MetaProgressionHUD`
+- [ ] Milestone 3 — all features in, content complete
+- [ ] 🧪 Test Gate 3 — All systems integrated; full game playable start-to-finish
+
+### Production Exit
+- [ ] Architecture pass — code matches GDDs (via `/architecture-pass`)
 
 ## Phase 3 — Beta
 
