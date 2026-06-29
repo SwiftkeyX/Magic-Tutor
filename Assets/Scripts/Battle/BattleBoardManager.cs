@@ -1,0 +1,418 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+namespace MagicSchool.Battle
+{
+    public class BattleBoardManager : MonoBehaviour
+    {
+        // ── Inspector ────────────────────────────────────────────────────────
+        [SerializeField] AutoBattleResolver   _resolver;
+        [SerializeField] GameObject           _hexTilePrefab;
+        [SerializeField] GameObject           _battleUnitPrefab;
+        [SerializeField] StudentRosterStub    _studentRoster;
+        [SerializeField] EnemyDatabaseStub    _enemyDatabase;
+        [SerializeField] RectTransform        _benchPanel;
+        [SerializeField] Button               _startBattleButton;
+        [SerializeField] GameObject           _outcomePanel;
+        [SerializeField] Text                 _outcomeText;
+
+        // ── Hex constants (must match BattleTestController / existing prefabs) ──
+        private const float HexWidth  = 1.1f;
+        private const float HexHeight = 0.95f;
+        private const float HexOffset = 0.55f;
+
+        // ── State ────────────────────────────────────────────────────────────
+        private readonly Dictionary<HexCoord, HexTileView>     _tiles         = new();
+        private readonly Dictionary<string,   BattleUnit>       _units         = new();
+        private readonly Dictionary<string,   HexCoord>         _pendingPlacements = new();
+        private readonly Dictionary<string,   StudentCombatData> _studentData   = new();
+
+        private HexGrid _grid;
+        private bool    _battleStarted;
+
+        // ── Dragging state ───────────────────────────────────────────────────
+        private string      _draggingStudentId;
+        private GameObject  _dragGhost;
+        private Camera      _cam;
+        private HexTileView _hoveredTile;
+
+        // ── Lifecycle ────────────────────────────────────────────────────────
+        private void Awake()
+        {
+            _cam  = Camera.main;
+            _grid = GetComponent<HexGrid>();
+        }
+
+        private void Start()
+        {
+            BuildBoard();
+
+            var students = _studentRoster.GetStudents();
+            var enemies  = _enemyDatabase.GetEnemies();
+
+            foreach (var s in students)
+                _studentData[s.Id] = s;
+
+            _resolver.SetCombatants(students, enemies);
+
+            _resolver.OnCombatantMoved    += HandleMoved;
+            _resolver.OnCombatantActed    += HandleActed;
+            _resolver.OnCombatantDefeated += HandleDefeated;
+            _resolver.OnBattleComplete    += HandleComplete;
+
+            BuildBench(students);
+
+            _startBattleButton.interactable = false;
+            _startBattleButton.onClick.AddListener(OnStartBattle);
+            _outcomePanel.SetActive(false);
+        }
+
+        private void OnDestroy()
+        {
+            if (_resolver == null) return;
+            _resolver.OnCombatantMoved    -= HandleMoved;
+            _resolver.OnCombatantActed    -= HandleActed;
+            _resolver.OnCombatantDefeated -= HandleDefeated;
+            _resolver.OnBattleComplete    -= HandleComplete;
+        }
+
+        // ── Board construction ───────────────────────────────────────────────
+        private void BuildBoard()
+        {
+            var fallback = GetFallbackSprite();
+            for (int row = 0; row < HexGrid.Rows; row++)
+            for (int col = 0; col < HexGrid.Cols; col++)
+            {
+                var coord = new HexCoord(col, row);
+                var go    = Instantiate(_hexTilePrefab, CoordToWorld(coord), Quaternion.identity, transform);
+                // Ensure sprite is set — built-in Knob sprite doesn't survive prefab serialization
+                var sr = go.GetComponent<SpriteRenderer>();
+                if (sr != null && sr.sprite == null) sr.sprite = fallback;
+                var view  = go.GetComponent<HexTileView>();
+                view.Init(coord);
+                _tiles[coord] = view;
+            }
+        }
+
+        private static Sprite _fallbackSprite;
+        private static Sprite GetFallbackSprite()
+        {
+            if (_fallbackSprite != null) return _fallbackSprite;
+            var tex    = new Texture2D(32, 32, TextureFormat.RGBA32, false);
+            var pixels = new Color32[32 * 32];
+            for (int i = 0; i < pixels.Length; i++) pixels[i] = new Color32(255, 255, 255, 255);
+            tex.SetPixels32(pixels);
+            tex.Apply();
+            tex.filterMode = FilterMode.Point;
+            _fallbackSprite = Sprite.Create(tex, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32f);
+            return _fallbackSprite;
+        }
+
+        private void BuildBench(List<StudentCombatData> students)
+        {
+            foreach (var s in students)
+            {
+                var card = new GameObject($"Card_{s.Id}");
+                card.transform.SetParent(_benchPanel, false);
+
+                var img   = card.AddComponent<Image>();
+                img.color = StudentColor(s.Id);
+                var rt    = card.GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(80, 100);
+
+                var label    = new GameObject("Label");
+                label.transform.SetParent(card.transform, false);
+                var txt      = label.AddComponent<Text>();
+                txt.text     = s.DisplayName;
+                txt.font     = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                txt.fontSize = 14;
+                txt.alignment = TextAnchor.MiddleCenter;
+                txt.color    = Color.white;
+                var lrt      = label.GetComponent<RectTransform>();
+                lrt.anchorMin = Vector2.zero; lrt.anchorMax = Vector2.one;
+                lrt.offsetMin = lrt.offsetMax = Vector2.zero;
+
+                // Wire drag events
+                var drag = card.AddComponent<BenchCardDrag>();
+                drag.Init(s.Id, this);
+            }
+        }
+
+        // ── Dragging (called by BenchCardDrag) ───────────────────────────────
+        public void OnCardDragStart(string studentId, GameObject card)
+        {
+            if (_battleStarted) return;
+            _draggingStudentId = studentId;
+            _hoveredTile = null;
+
+            // Highlight valid player tiles (exclude this student's own current tile)
+            foreach (var kv in _tiles)
+            {
+                bool isOwnTile = _pendingPlacements.TryGetValue(studentId, out var own) && kv.Key == own;
+                if (kv.Key.Row < HexGrid.PlayerRowCount && (!_grid.IsOccupied(kv.Key) || isOwnTile))
+                    kv.Value.SetHighlight(true);
+            }
+
+            // Create a ghost
+            _dragGhost = new GameObject("DragGhost");
+            _dragGhost.transform.SetParent(transform, false);
+            var sr = _dragGhost.AddComponent<SpriteRenderer>();
+            sr.sprite       = GetComponent<SpriteRenderer>() != null ? GetComponent<SpriteRenderer>().sprite : null;
+            sr.color        = new Color(StudentColor(studentId).r, StudentColor(studentId).g, StudentColor(studentId).b, 0.6f);
+            sr.sortingOrder = 10;
+            _dragGhost.transform.localScale = Vector3.one * 0.4f;
+        }
+
+        public void OnCardDrag(Vector2 screenPos)
+        {
+            if (_dragGhost == null) return;
+            Vector3 world = _cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -_cam.transform.position.z));
+            world.z = 0f;
+            _dragGhost.transform.position = world;
+
+            // Update hover highlight — brightest tile nearest the cursor
+            bool isReplacing = _pendingPlacements.TryGetValue(_draggingStudentId, out var ownCoord);
+            HexTileView nearestView = null;
+            float minDist = float.MaxValue;
+            foreach (var kv in _tiles)
+            {
+                if (kv.Key.Row >= HexGrid.PlayerRowCount) continue;
+                bool ownTile = isReplacing && kv.Key == ownCoord;
+                if (_grid.IsOccupied(kv.Key) && !ownTile) continue;
+                float d = Vector3.Distance(CoordToWorld(kv.Key), world);
+                if (d < HexWidth * 0.75f && d < minDist) { minDist = d; nearestView = kv.Value; }
+            }
+
+            if (nearestView != _hoveredTile)
+            {
+                _hoveredTile?.SetHover(false);
+                _hoveredTile = nearestView;
+                _hoveredTile?.SetHover(true);
+            }
+        }
+
+        public void OnCardDragEnd(Vector2 screenPos)
+        {
+            // Clear hover then all highlights
+            _hoveredTile?.SetHover(false);
+            _hoveredTile = null;
+            foreach (var kv in _tiles) kv.Value.SetHighlight(false);
+
+            if (_dragGhost != null) { Destroy(_dragGhost); _dragGhost = null; }
+
+            if (_draggingStudentId == null) return;
+
+            // Hit-test world pos → nearest valid tile
+            Vector3 worldPos = _cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -_cam.transform.position.z));
+            worldPos.z = 0f;
+
+            bool hasExisting = _pendingPlacements.TryGetValue(_draggingStudentId, out var existingCoord);
+            HexCoord? closest = null;
+            float     minDist = float.MaxValue;
+            foreach (var kv in _tiles)
+            {
+                if (kv.Key.Row >= HexGrid.PlayerRowCount) continue;
+                bool ownTile = hasExisting && kv.Key == existingCoord;
+                if (_grid.IsOccupied(kv.Key) && !ownTile) continue;
+                float d = Vector3.Distance(CoordToWorld(kv.Key), worldPos);
+                if (d < minDist && d < HexWidth * 0.75f) { minDist = d; closest = kv.Key; }
+            }
+
+            if (closest.HasValue)
+                PlaceStudent(_draggingStudentId, closest.Value);
+            else if (_pendingPlacements.ContainsKey(_draggingStudentId))
+                UnplaceStudent(_draggingStudentId);
+
+            _draggingStudentId = null;
+        }
+
+        private void UnplaceStudent(string studentId)
+        {
+            if (_pendingPlacements.TryGetValue(studentId, out var coord))
+            {
+                _grid.ClearOccupant(coord);
+                _pendingPlacements.Remove(studentId);
+            }
+            if (_units.TryGetValue(studentId, out var unit))
+            {
+                Destroy(unit.gameObject);
+                _units.Remove(studentId);
+            }
+            var card = _benchPanel.Find($"Card_{studentId}");
+            if (card != null)
+            {
+                var img = card.GetComponent<Image>();
+                if (img != null) img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
+            }
+            _startBattleButton.interactable = _pendingPlacements.Count > 0;
+        }
+
+        private void PlaceStudent(string studentId, HexCoord coord)
+        {
+            if (!_studentData.TryGetValue(studentId, out var data)) return;
+            if (_grid.IsOccupied(coord)) return;
+
+            // Remove existing placement if re-placing — restore card alpha first
+            if (_pendingPlacements.TryGetValue(studentId, out var oldCoord))
+            {
+                _grid.ClearOccupant(oldCoord);
+                if (_units.TryGetValue(studentId, out var oldUnit))
+                {
+                    Destroy(oldUnit.gameObject);
+                    _units.Remove(studentId);
+                }
+                var existingCard = _benchPanel.Find($"Card_{studentId}");
+                if (existingCard != null)
+                {
+                    var existingImg = existingCard.GetComponent<Image>();
+                    if (existingImg != null)
+                        existingImg.color = new Color(existingImg.color.r, existingImg.color.g, existingImg.color.b, 1f);
+                }
+            }
+
+            _pendingPlacements[studentId] = coord;
+            _grid.SetOccupant(coord, studentId);
+
+            // Spawn unit
+            var go   = Instantiate(_battleUnitPrefab, CoordToWorld(coord), Quaternion.identity);
+            var unit = go.GetComponent<BattleUnit>();
+            unit.Init(studentId, coord);
+            unit.InitHealthBar(data.MaxHP, data.MaxHP);
+            var sr = go.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                if (sr.sprite == null) sr.sprite = GetFallbackSprite();
+                sr.color = StudentColor(studentId);
+            }
+            _units[studentId] = unit;
+
+            // Dim bench card to show it's placed (kept active so it can be re-dragged)
+            var card = _benchPanel.Find($"Card_{studentId}");
+            if (card != null)
+            {
+                var img = card.GetComponent<Image>();
+                if (img != null) img.color = new Color(img.color.r, img.color.g, img.color.b, 0.4f);
+            }
+
+            _startBattleButton.interactable = _pendingPlacements.Count > 0;
+        }
+
+        // ── Test helper (editor/QA only) ─────────────────────────────────────
+        public void TestAutoPlace()
+        {
+            PlaceStudent("warrior", new HexCoord(1, 0));
+            PlaceStudent("mage",    new HexCoord(3, 1));
+            PlaceStudent("archer",  new HexCoord(5, 0));
+            OnStartBattle();
+        }
+
+        // ── Start Battle ─────────────────────────────────────────────────────
+        private void OnStartBattle()
+        {
+            if (_battleStarted || _pendingPlacements.Count == 0) return;
+            _battleStarted = true;
+            _startBattleButton.gameObject.SetActive(false);
+            _benchPanel.gameObject.SetActive(false);
+
+            // Tell resolver player positions
+            _resolver.SetUnitPositions(_pendingPlacements);
+
+            // Auto-spawn enemy units
+            var enemyPlacements = _resolver.GetAutoEnemyPlacements();
+            var enemies         = _enemyDatabase.GetEnemies();
+            foreach (var e in enemies)
+            {
+                if (!enemyPlacements.TryGetValue(e.Id, out var coord)) continue;
+                var go   = Instantiate(_battleUnitPrefab, CoordToWorld(coord), Quaternion.identity);
+                var unit = go.GetComponent<BattleUnit>();
+                unit.Init(e.Id, coord);
+                unit.InitHealthBar(e.MaxHP, e.MaxHP);
+                var sr = go.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    if (sr.sprite == null) sr.sprite = GetFallbackSprite();
+                    sr.color = EnemyColor(e.Id);
+                }
+                _units[e.Id] = unit;
+            }
+
+            _resolver.BeginBattle();
+        }
+
+        // ── Event handlers ───────────────────────────────────────────────────
+        private void HandleMoved(string id, HexCoord from, HexCoord to)
+        {
+            if (!_units.TryGetValue(id, out var unit)) return;
+            unit.MoveTo(CoordToWorld(to), to);
+        }
+
+        private void HandleActed(string actorId, string targetId, int damage, System.Collections.Generic.List<string> flags)
+        {
+            if (_units.TryGetValue(actorId, out var actor) && _units.TryGetValue(targetId, out var target))
+            {
+                actor.PlayAttackAnim(target.transform.position);
+                Debug.DrawLine(actor.transform.position, target.transform.position, Color.red, 0.5f);
+                int cur = _resolver.GetCurrentHP(targetId);
+                int max = _resolver.GetMaxHP(targetId);
+                target.UpdateHP(cur, max);
+            }
+        }
+
+        private void HandleDefeated(string id)
+        {
+            if (!_units.TryGetValue(id, out var unit)) return;
+            unit.PlayDeathAnim();
+            _units.Remove(id);
+        }
+
+        private void HandleComplete(BattleResult result)
+        {
+            _outcomePanel.SetActive(true);
+            _outcomeText.text = result.Won
+                ? $"VICTORY!\n{result.TicksElapsed} ticks"
+                : $"DEFEAT\n{result.TicksElapsed} ticks";
+        }
+
+        // ── Helpers ──────────────────────────────────────────────────────────
+        private Vector3 CoordToWorld(HexCoord c) =>
+            new Vector3(c.Col * HexWidth + (c.Row % 2 == 1 ? HexOffset : 0f),
+                        c.Row * HexHeight, 0f);
+
+        private static Color StudentColor(string id) => id switch
+        {
+            "warrior" => new Color(0.2f, 0.5f, 1.0f),
+            "mage"    => new Color(0.7f, 0.2f, 1.0f),
+            "archer"  => new Color(0.2f, 0.8f, 0.3f),
+            _         => Color.white,
+        };
+
+        private static Color EnemyColor(string id) => id switch
+        {
+            "brute"  => new Color(1.0f, 0.2f, 0.2f),
+            "witch"  => new Color(1.0f, 0.5f, 0.1f),
+            "sniper" => new Color(1.0f, 0.9f, 0.1f),
+            _        => Color.gray,
+        };
+    }
+
+    // ── Drag helper component ─────────────────────────────────────────────────
+    [RequireComponent(typeof(Image))]
+    internal class BenchCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    {
+        private string             _studentId;
+        private BattleBoardManager _board;
+
+        public void Init(string studentId, BattleBoardManager board)
+        {
+            _studentId = studentId;
+            _board     = board;
+        }
+
+        public void OnBeginDrag(PointerEventData e) => _board.OnCardDragStart(_studentId, gameObject);
+        public void OnDrag(PointerEventData e)      => _board.OnCardDrag(e.position);
+        public void OnEndDrag(PointerEventData e)   => _board.OnCardDragEnd(e.position);
+    }
+}
