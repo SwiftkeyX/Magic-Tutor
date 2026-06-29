@@ -10,6 +10,16 @@
 - [x] Fill out `docs/preproduction/best-practices.md` — add project-critical patterns section
 - [x] Milestone 0 — vision complete, all systems tiered, architecture and tech stack finalized
 
+## Prototype — Playable Proof of Concept
+
+Rapid prototype on feature branches to validate the core loop before committing to full GDD-gated production. Each milestone ships independently.
+
+- [x] **Milestone 1 — Battle Grid** — hex board, drag-drop placement, AutoBattleResolver tick simulation, VICTORY/DEFEAT overlay (`feat/battle-grid-milestone1`)
+- [ ] **Milestone 2 — Trait System** — 4 traits wired into AutoBattleResolver (MG/MR/CRIT/Flags); requires deep research first
+- [ ] **Milestone 3 — Training System** — deferred; design TBD
+
+---
+
 ## Phase 2 — Production
 
 ### Sub-phase A — Design (GDDs)
