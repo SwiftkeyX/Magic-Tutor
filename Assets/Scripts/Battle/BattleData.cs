@@ -33,7 +33,7 @@ namespace MagicSchool.Battle
         public int DEF;
         public int MG;
         public int MR;
-        public int SPD;
+        public float AttackSpeed;       // attacks per second — interval derived as round(1 / (AS × 0.6))
         public int CRIT;
         public int Range = 1;   // 1 = melee, 2 = ranged
         public List<BattleBehaviorFlag> Flags = new List<BattleBehaviorFlag>();
@@ -51,7 +51,7 @@ namespace MagicSchool.Battle
         public int DEF;
         public int MG;
         public int MR;
-        public int SPD;
+        public float AttackSpeed;       // attacks per second
         public int CRIT;
         public int Range = 1;
         public List<BattleBehaviorFlag> Flags = new List<BattleBehaviorFlag>();
