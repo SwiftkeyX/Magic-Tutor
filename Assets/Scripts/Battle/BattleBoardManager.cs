@@ -76,6 +76,10 @@ namespace MagicSchool.Battle
             _startBattleButton.interactable = false;
             _startBattleButton.onClick.AddListener(OnStartBattle);
             _outcomePanel.SetActive(false);
+
+#if UNITY_EDITOR
+            if (_debugAutoStart) TestAutoPlace();
+#endif
         }
 
         private void OnDestroy()
@@ -165,7 +169,8 @@ namespace MagicSchool.Battle
             {
                 Vector2 a = verts[i];
                 Vector2 b = verts[(i + 1) % verts.Length];
-                if ((b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x) < 0)
+                // Vertices are CW, so interior points have cross < 0; exclude when > 0.
+                if ((b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x) > 0)
                     return false;
             }
             return true;
@@ -382,11 +387,23 @@ namespace MagicSchool.Battle
 
         // ── Test helper (editor/QA only) ─────────────────────────────────────
 #if UNITY_EDITOR
+        [SerializeField] private bool  _debugAutoStart;
+        [SerializeField] private float _debugPlayerStartHpPct = 1f;
+
         public void TestAutoPlace()
         {
-            PlaceStudent("ironclad",   new HexCoord(1, 0));
-            PlaceStudent("pyromancer", new HexCoord(3, 1));
-            PlaceStudent("windrunner", new HexCoord(5, 0));
+            // Covers all 4 horizontal trait breakpoints at BP2:
+            // Dreadknight BP2: bloodhound + phalanx
+            // Kinetic BP2:     pyromancer + windrunner
+            // Striker BP2:     bloodhound + shadowblade
+            // Trickster BP2:   shadowblade + phantomassassin
+            PlaceStudent("ironclad",        new HexCoord(0, 0));
+            PlaceStudent("bloodhound",      new HexCoord(1, 0));
+            PlaceStudent("pyromancer",      new HexCoord(2, 0));
+            PlaceStudent("windrunner",      new HexCoord(3, 0));
+            PlaceStudent("shadowblade",     new HexCoord(0, 1));
+            PlaceStudent("phalanx",         new HexCoord(1, 1));
+            PlaceStudent("phantomassassin", new HexCoord(2, 1));
             OnStartBattle();
         }
 #endif
@@ -429,6 +446,9 @@ namespace MagicSchool.Battle
                 _units[e.Id] = unit;
             }
 
+#if UNITY_EDITOR
+            if (_debugPlayerStartHpPct < 1f) _resolver.DebugSetAllPlayerHp(_debugPlayerStartHpPct);
+#endif
             _resolver.BeginBattle();
         }
 
