@@ -1,323 +1,379 @@
 # TraitSystem
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
-> **Implements Pillar**: Strategic & Empowering — trait synergies are the primary build-diversity engine; hitting a threshold unlocks abilities that make the team dramatically stronger
+> **Last Updated**: 2026-06-30
+> **Implements Pillar**: Strategic & Empowering — dual-axis trait synergies are the primary build-diversity engine; hitting a breakpoint makes the team visibly and dramatically stronger
 
 ## Summary
 
-TraitSystem counts how many students on the active team share each `TraitType`, determines which trait thresholds are active, and resolves their effects in two stages: (1) `ResolveBattleBuffs()` applies stat multipliers directly to `StudentData` before the battle simulation begins, and (2) `GetActiveBattleBehaviors()` returns behavior flags that `AutoBattleResolver` queries during the simulation. Fires `OnTraitThresholdReached` when the trait count crosses a breakpoint so SchoolHUD can show synergy progress.
+TraitSystem counts how many champions on the active battle board share each trait, determines which breakpoints are active, and applies their effects in two passes: (1) `TraitEffectApplier.Apply()` modifies combatant stats directly on `AutoBattleResolver` before the simulation begins, and (2) new per-unit flags on the internal `Combatant` class govern runtime combat behaviors (shields, omnivamp, dashes, stacks, etc.) during the tick loop.
 
-> **Quick reference** — Layer: `Core` · Priority: `MVP` · Key deps: `StudentRoster`
+In the **Prototype phase**, trait counting is triggered at **placement time** by `BattleBoardManager` — there is no RunManager and no School scene yet. All 10 champions are defined in `ChampionRoster.cs`. Trait counts update in real time via `TraitTracker` as the player drags champions onto the hex board.
 
----
-
-## Overview
-
-TraitSystem is a MonoBehaviour in the School scene. It subscribes to `StudentRoster.OnRosterChanged` to recount trait totals whenever the roster changes. It stores a `Dictionary<TraitType, int>` of team trait counts and exposes this for SchoolHUD display. At the start of every battle, RunManager calls `ResolveBattleBuffs()` — TraitSystem applies stat multipliers from all active thresholds directly to `StudentData` objects in StudentRoster, then caches the active `BattleBehaviorFlag` set for AutoBattleResolver to query. Trait abilities come in two forms: **StatMultipliers** (applied before battle) and **BattleBehaviorFlags** (queried during simulation). All 6 traits are defined in a `TraitDatabase` ScriptableObject.
-
-## Player Fantasy
-
-The player sees their trait counts building in the SchoolHUD ("Fire: 1/2 — 1 more for synergy!") and feels the pull of completing a threshold. When the threshold pops, there is a visible "synergy activated" moment. Watching two different synergies stack — e.g., Fire 2 + Healer 2 — feels like assembling a machine. A team with three active thresholds feels markedly more powerful than a team with none.
+> **Quick reference** — Layer: `Core` · Priority: `MVP` · Key deps: `AutoBattleResolver`, `BattleBoardManager`
 
 ---
 
-## Detailed Design
+## Champion Model
 
-### TraitType Enum
+Each champion has **two traits** — one Vertical and one Horizontal — plus a Role. Every placed champion contributes to both its Vertical and Horizontal trait count simultaneously.
 
 ```csharp
-public enum TraitType {
-    Fire,    // Offensive attack multiplier
-    Healer,  // Team HP sustain
-    Shield,  // Defensive survivability
-    Arcane,  // Speed and initiative
-    Storm,   // Area-of-effect attacks
-    Shadow   // Burst damage / first-hit
-}
+public enum VerticalTrait   { None, Vanguard, Striker, Elementalist, Ranger }
+public enum HorizontalTrait { None, Kinetic, Dreadknight, Warden, Trickster }
+public enum ChampionRole    { Tank, Carry, Support }
 ```
 
-### Ability Type System
+### Full Champion Roster
 
-Trait abilities resolve in two passes:
+| Champion | Cost | Vertical | Horizontal | Role | HP | ATK | DEF | MG | MR | AS | CRIT | Range |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Ironclad | 1 | Vanguard | Warden | Tank | 100 | 13 | 18 | 4 | 12 | 0.21 | 2 | 1 |
+| Bloodhound | 1 | Striker | Dreadknight | Carry | 70 | 18 | 5 | 0 | 5 | 0.33 | 12 | 1 |
+| Pyromancer | 1 | Elementalist | Kinetic | Carry | 60 | 8 | 3 | 20 | 8 | 0.28 | 8 | 2 |
+| Windrunner | 2 | Ranger | Kinetic | Carry | 75 | 20 | 5 | 0 | 6 | 0.42 | 14 | 3 |
+| Grove Keeper | 2 | Elementalist | Warden | Support | 85 | 7 | 8 | 26 | 14 | 0.24 | 4 | 2 |
+| Shadowblade | 2 | Striker | Trickster | Carry | 65 | 24 | 4 | 0 | 6 | 0.56 | 20 | 1 |
+| Phalanx | 3 | Vanguard | Dreadknight | Tank | 145 | 16 | 26 | 5 | 18 | 0.21 | 3 | 1 |
+| Stormbringer | 3 | Ranger | Warden | Support | 95 | 18 | 8 | 30 | 12 | 0.33 | 7 | 3 |
+| Phantom Assassin | 4 | Elementalist | Trickster | Carry | 85 | 15 | 6 | 42 | 10 | 0.42 | 22 | 2 |
+| Dread Overlord | 5 | Vanguard | Trickster | Tank | 195 | 26 | 36 | 8 | 26 | 0.24 | 4 | 1 |
 
-**StatMultiplier** — applied in `ResolveBattleBuffs()` before battle:
-```csharp
-struct StatMultiplierEffect {
-    bool appliesToTrait;  // true: only students WITH this trait; false: all students
-    StatType stat;        // HP, ATK, DEF, MG, MR, SPD, or CRIT
-    float multiplier;     // applied as: bonusDelta = floor(totalStat * (multiplier - 1))
-    int flatBonus;        // added after multiplier (integer; may be 0)
-}
-```
+> **AS** = AttackSpeed (attacks/second). `ActionInterval = round(1 / (AS × 0.6))`. See `balance-framework.md` for the full formula rationale.
 
-> **Rounding rule**: all float intermediate results are truncated (floor) to integer before being written to `StudentData`. Final applied stat is always ≥ 1.
+> **Magic users**: Elementalist champions and Support champions with MG > ATK receive `BattleBehaviorFlag.MagicAttack` automatically via `ChampionData.ToStudentCombatData()`. This switches their damage formula to MG vs MR.
 
-**BattleBehaviorFlag** — cached in `_activeBehaviors` for AutoBattleResolver to query:
-```csharp
-struct BattleBehaviorFlag {
-    string flagName;          // e.g. "AOEAttack", "FirstHitDouble", "ShadowSurge"
-    DamageType damageType;    // Physical (uses ATK vs DEF) or Magic (uses MG vs MR)
-    bool appliesToTrait;      // true: only students WITH this trait receive the flag
-}
+---
 
-public enum DamageType { Physical, Magic }
-```
+## Trait Breakpoints & Effects
 
-> Note: `TakesReducedDamage` is removed — physical and magic damage reduction are now handled natively by DEF and MR stats using the LoL formula (`ATK × 100 / (100 + DEF)`). The Shield trait's defensive power comes from DEF/MR multipliers, not a separate flag.
+### Vertical Traits
 
-### TraitDatabase ScriptableObject
+#### Vanguard (Breakpoints: 2 / 4 / 6 / 8)
 
-`Assets/Config/TraitDatabase.asset` — all trait definitions:
+Affects: Vanguard-trait champions only (unless noted at 8).
 
-| Trait | Threshold | Type | Effect |
+| Breakpoint | DEF bonus | MR bonus | Extra |
 |---|---|---|---|
-| **Fire** | 2 | StatMultiplier | Fire students: ATK × 1.30 |
-| **Fire** | 4 | StatMultiplier | Fire students: ATK × 1.70 (replaces 2-piece) |
-| **Healer** | 2 | StatMultiplier | All students: HP × 1.20 + MG × 1.20 |
-| **Healer** | 4 | StatMultiplier | All students: HP × 1.50 + MG × 1.50 (replaces 2-piece) |
-| **Shield** | 2 | StatMultiplier | Shield students: DEF × 1.40 + MR × 1.40 |
-| **Shield** | 4 | StatMultiplier | Shield students: DEF × 2.00 + MR × 2.00 (replaces 2-piece) |
-| **Arcane** | 2 | StatMultiplier + BehaviorFlag | All students: MG × 1.30; Arcane students: attacks use `DamageType.Magic` (MG vs MR) |
-| **Arcane** | 4 | StatMultiplier + BehaviorFlag | All students: MG × 1.70; Arcane students: `DamageType.Magic` (replaces 2-piece) |
-| **Storm** | 2 | BehaviorFlag | Storm students: `AOEAttack (Physical)` — attacks hit all enemies at full ATK vs each DEF |
-| **Storm** | 3 | BehaviorFlag | Storm students: `AOEAttack (Magic)` — AoE uses MG vs each MR instead (replaces 2-piece) |
-| **Shadow** | 2 | BehaviorFlag | Shadow students: `FirstHitDouble` flag (first attack raw damage ×2 before mitigation) |
-| **Shadow** | 3 | BehaviorFlag + StatMultiplier | Shadow students: `FirstHitDouble` + CRIT × 1.50 + `ShadowSurge` (SPD ×1.5 first tick, replaces 2-piece) |
+| 2 | +25 | +25 | — |
+| 4 | +60 | +60 | — |
+| 6 | +120 | +120 | Tank-role Vanguards get +30 more DEF & MR |
+| 8 | +250 | +250 | ALL placed allies (any trait) get +60 DEF & MR |
 
-> **Threshold replacement rule**: activating a higher tier of the same trait fully replaces the lower tier — effects do not stack additively.
+Applied as flat additive bonuses to `Combatant.DEF` and `Combatant.MR` before battle via `ApplyPreBattleTraitModifiers`.
 
-> **Note**: all numeric values above are starting defaults for tuning. Final balance will be determined during the tune-pass.
+#### Striker (Breakpoints: 2 / 4 / 6 / 8)
 
-### Core Rules
+Affects: Striker-trait champions only. Stacks are accumulated **in combat**, not pre-battle.
 
-1. TraitSystem subscribes to `StudentRoster.OnRosterChanged` and immediately recounts all trait totals.
-2. `_traitCounts` (Dictionary<TraitType, int>) is always kept synchronized with the current roster. It is rebuilt from scratch on every `OnRosterChanged` — no incremental updates.
-3. `OnTraitThresholdReached(TraitType, int tier)` fires when a trait count crosses a threshold boundary (upward only). It does **not** fire on roster init — only on count increase.
-4. `OnTraitThresholdLost(TraitType, int tier)` fires when a count drops below a threshold (downward). (Useful for future mechanic where removing a student affects the trait count — e.g., injuries.)
-5. `ResolveBattleBuffs()` is called by RunManager before `AutoBattleResolver.Resolve()`. It iterates all active trait thresholds, applies StatMultiplierEffects to `StudentData.BonusAttack/MaxHP/Speed`, and builds `_activeBehaviors`.
-6. Stat multipliers applied by `ResolveBattleBuffs()` are **additive to bonus stats, not base stats** — they are computed as: `bonusDelta = (int)(student.TotalStat * (multiplier - 1.0f))`, then `bonusStat += bonusDelta`. This preserves base stats for display.
-7. `ResolveBattleBuffs()` must be idempotent within a single battle: calling it twice on the same roster before a battle must not double-apply. A `_battleBuffsApplied` bool guards this.
-8. After a battle ends, `ResetBattleBuffs()` reverses all StatMultiplierEffects applied in step 6, restoring bonus stats to their pre-battle values. `_battleBuffsApplied` is reset to false.
-9. `GetActiveBattleBehaviors()` returns the cached `_activeBehaviors` set. It must only be called after `ResolveBattleBuffs()`.
-10. No student can have two copies of the same trait (enforced by StudentRoster at generation). Trait counts reflect unique students, not trait instances.
-
-### States and Transitions
-
-| State | Entry Condition | Exit Condition | Behavior |
+| Breakpoint | ATK % per stack (max 8 stacks) | Extra at max stacks | Extra always |
 |---|---|---|---|
-| `Counting` | Default during Train/Recruit phases | `ResolveBattleBuffs()` called | Trait counts update on every `OnRosterChanged` |
-| `BuffsApplied` | `ResolveBattleBuffs()` returns | `ResetBattleBuffs()` called | Stat buffs are applied; `GetActiveBattleBehaviors()` returns valid data |
-| `Reset` | `ResetBattleBuffs()` returns | `ResolveBattleBuffs()` called again | Stat buffs removed; back to pre-battle bonus values |
+| 2 | +6% | — | — |
+| 4 | +12% | — | — |
+| 6 | +20% | Carry-role Strikers: ActionInterval −30% | — |
+| 8 | +35% | Carry-role Strikers: ActionInterval −30% | Attacks bypass 40% of target's DEF |
 
-### Public API
+Runtime: `Combatant.StrikerPctPerStack` set pre-battle. Stack count increments each attack (capped at 8). Total ATK multiplier = `1 + stacks × StrikerPctPerStack`.
+
+#### Elementalist (Breakpoints: 2 / 4 / 6 / 8)
+
+Affects: Elementalist-trait champions only.
+
+| Breakpoint | MG bonus | Kill explosion |
+|---|---|---|
+| 2 | +25 | — |
+| 4 | +55 | — |
+| 6 | +95 | On kill: 10% of killed unit's MaxHP as magic damage to all adjacent enemies |
+| 8 | +150 | On kill: 20% of killed unit's MaxHP as **true damage** to adjacent enemies; chains to secondary kills |
+
+True damage at BP8 ignores MR. Explosion damage is handled in `HandleKill` inside `AutoBattleResolver`.
+
+#### Ranger (Breakpoints: 2 / 4 / 6)
+
+Affects: Ranger-trait champions only.
+
+| Breakpoint | Range bonus (cumulative) | ActionInterval | Damage bonus |
+|---|---|---|---|
+| 2 | +1 | −15% | — |
+| 4 | +1 (total +2) | −15% | +5% dmg per hex distance to target |
+| 6 | +2 (total +3) | −15% | +12% dmg per hex distance |
+
+Range bonus applied pre-battle. `RangerBonusDmgPerHex` is set per unit and multiplied onto computed damage after the base formula.
+
+---
+
+### Horizontal Traits
+
+#### Kinetic (Breakpoints: 2 / 4)
+
+Affects: All placed player units (not just Kinetic-trait units) receive the mana restoration.
+
+| Breakpoint | Mana per interval | Support bonus | Starting mana |
+|---|---|---|---|
+| 2 | 5 | +10 (Supports get 15 total) | 0 |
+| 4 | 15 | +10 (Supports get 25 total) | +30 for ALL allies |
+
+Mana interval = every 5 ticks (≈3 seconds at 0.6s/tick). When a unit's Mana reaches 100 it resets to 0 and triggers a **bonus attack** immediately. This is the prototype approximation of "ability cycle acceleration" before a full ability system exists.
+
+#### Dreadknight (Breakpoints: 2 / 4)
+
+Affects: Dreadknight-trait champions only.
+
+| Breakpoint | Omnivamp | Low-HP shield |
+|---|---|---|
+| 2 | 15% | — |
+| 4 | 30% | Below 40% HP: gain Shield = 25% MaxHP (triggers once per combat) |
+
+Omnivamp: each attack, attacker heals `damage_dealt × OmnivampPct` (floored, capped at MaxHP). Applied after shield absorption.
+
+#### Warden (Breakpoints: 2 / 3 / 4)
+
+Affects: Warden-trait champions only. "Front rows" = player rows 2–3 (nearest to enemy). "Back rows" = player rows 0–1.
+
+| Breakpoint | Shield (front rows) | MG bonus (back rows) | ActionInterval (all Wardens) |
+|---|---|---|---|
+| 2 | 250 | +20 | — |
+| 3 | 450 | +35 | −15% |
+| 4 | 750 | +60 | −30% |
+
+Shield is pre-applied before battle via `InitialShield`. Absorbed by the damage formula before HP reduction. Front/back determined by `placements[id].Row >= 2`.
+
+#### Trickster (Breakpoints: 2 / 4)
+
+Affects: Trickster-trait champions only.
+
+| Breakpoint | Effect |
+|---|---|
+| 2 | Below 50% HP: become untargetable for 2 ticks and dash to the hex adjacent to the furthest enemy backliner. Triggers once per combat. |
+| 4 | First attack after dash applies bleed: 25% of target's MaxHP as magic damage over 7 ticks (~4.2s). |
+
+Dash is handled in `AutoBattleResolver.ExecuteTricksterDash()`. Bleed damage lives on the victim (`BleedDamagePerTick`, `BleedTicksRemaining`).
+
+---
+
+## Architecture (Prototype Phase)
+
+Four components collaborate — none of them is "the TraitSystem" singleton described in the Phase 2 GDD. The equivalent functionality is distributed:
+
+| Component | Type | Responsibility |
+|---|---|---|
+| `ChampionRoster` | MonoBehaviour | Defines all 10 champions; exposes `GetStudents()` and `GetChampionLookup()` |
+| `TraitTracker` | MonoBehaviour | Counts traits per placement/unplacement; fires `OnTraitCountsChanged`; computes active breakpoints |
+| `TraitEffectApplier` | Static class | Translates active breakpoints → calls `resolver.ApplyPreBattleTraitModifiers()` |
+| `TraitHUDController` | MonoBehaviour | Subscribes to `TraitTracker.OnTraitCountsChanged`; renders trait count labels in UGUI |
+
+### Placement Flow
 
 ```
-// Subscribed internally to StudentRoster.OnRosterChanged
-void OnRosterChanged()   // (private callback — recounts all traits)
+Player drags champion to hex tile
+  → BattleBoardManager.PlaceStudent()
+    → TraitTracker.RegisterPlacement(id, coord, championData)
+      → Recalculate trait counts + breakpoints
+        → OnTraitCountsChanged fires
+          → TraitHUDController updates labels
 
-// Returns current team trait count for each type — for SchoolHUD display
-Dictionary<TraitType, int> GetTeamTraitCounts()
-
-// Returns which threshold tier is active for a given trait (0 = none, 1 = lowest, 2 = highest)
-int GetActiveThresholdTier(TraitType trait)
-
-// Called by RunManager before AutoBattleResolver.Resolve()
-// Applies stat multipliers and populates _activeBehaviors
-void ResolveBattleBuffs()
-
-// Called by RunManager after battle ends — reverses stat multipliers
-void ResetBattleBuffs()
-
-// Called by AutoBattleResolver during simulation setup
-// Returns flags active for a given student
-List<BattleBehaviorFlag> GetActiveBattleBehaviors(string studentId)
+Player clicks "Start Battle"
+  → BattleBoardManager.OnStartBattle()
+    → resolver.SetUnitPositions(placements)
+    → TraitEffectApplier.Apply(breakpoints, championLookup, placements, resolver)
+      → resolver.ApplyPreBattleTraitModifiers(perUnitMods, globalSettings)
+    → resolver.BeginBattle()
 ```
 
-### Interactions with Other Systems
+### Data Contracts
+
+```csharp
+// Per-unit trait modifiers injected into AutoBattleResolver before battle
+public struct CombatantTraitModifiers
+{
+    public ChampionRole Role;
+    public bool         IsFrontRow;
+    public int          BonusDEF, BonusMR, BonusMG, BonusATK, BonusRange;
+    public float        ActionIntervalMult;   // 1.0 = no change; multiplicative chaining
+    public int          InitialShield;
+    public int          InitialMana;
+    public float        OmnivampPct;
+    public bool         DreadknightShieldOnLowHP;
+    public float        StrikerPctPerStack;
+    public bool         StrikerBypassArmor;
+    public bool         StrikerMaxStackSpeedBonus;
+    public bool         TricksterDashEnabled;
+    public bool         TricksterBleedEnabled;
+    public float        ElementalistExplosionPct;
+    public bool         ElementalistTrueDamage;
+    public float        RangerBonusDmgPerHex;
+}
+
+// Global resolver settings (Kinetic mana tick, etc.)
+public struct ResolverTraitSettings
+{
+    public bool KineticEnabled;
+    public int  KineticManaPerInterval;
+    public bool KineticSupportExtraBonus;
+}
+```
+
+### TraitTracker — Breakpoint Resolution
+
+```
+traitCount[trait] = count of placed champions where VerticalTrait == trait OR HorizontalTrait == trait
+
+activeBreakpoint[trait] = highest threshold T such that thresholds[T] ≤ traitCount[trait]
+                          (0 if no threshold met)
+```
+
+Breakpoints table:
+
+| Trait | Thresholds |
+|---|---|
+| Vanguard | 2, 4, 6, 8 |
+| Striker | 2, 4, 6, 8 |
+| Elementalist | 2, 4, 6, 8 |
+| Ranger | 2, 4, 6 |
+| Kinetic | 2, 4 |
+| Dreadknight | 2, 4 |
+| Warden | 2, 3, 4 |
+| Trickster | 2, 4 |
+
+With 10 champions, max achievable breakpoints: Vanguard 2, Striker 2, Elementalist 2, Ranger 2, Kinetic 2, Dreadknight 2, Warden 3, Trickster 2. Higher breakpoints (4/6/8) are reserved for future champions.
+
+---
+
+## Core Rules
+
+1. Each champion contributes to **exactly two** trait counts: its Vertical trait and its Horizontal trait.
+2. Trait counts are rebuilt from scratch on every `RegisterPlacement` / `UnregisterPlacement` — no incremental updates.
+3. `TraitEffectApplier.Apply()` must be called **after** `SetUnitPositions()` and **before** `BeginBattle()`. Calling it after battle starts logs an error and no-ops.
+4. `ActionIntervalMult` chains multiplicatively across traits: if Ranger gives ×0.85 and Warden(3) gives ×0.85, a Ranger+Warden unit gets `×0.85 × 0.85 = ×0.7225`. Applied as: `newInterval = Max(1, (int)(baseInterval × mult))`.
+5. Warden front/back split is determined by the player's chosen row at the moment `OnStartBattle` fires — changing position after that point has no effect.
+6. Trickster dash is one-time per combat per unit (`TricksterDashTriggered` guards it). It resets between battles.
+7. Dreadknight low-HP shield is one-time per combat per unit (`DreadknightShieldGranted` guards it).
+8. Striker stacks persist for the full battle — they are never reset mid-combat. Reset occurs when the next battle initializes combatants.
+9. Elementalist kill explosions at BP8 chain: a secondary kill from the explosion also triggers an explosion. This is capped to 1 level of chaining to avoid runaway cascades (secondary kills do not chain further).
+10. Kinetic bonus actions fire in the same tick as the mana threshold is crossed — they are queued and resolved after the standard ready-actor loop.
+
+---
+
+## Interactions with Other Systems
 
 | System | Interaction |
 |---|---|
-| `StudentRoster` | Subscribes to `OnRosterChanged`; reads `GetAll()` to recount traits; writes bonus stats via `NotifyStatChanged()` during `ResolveBattleBuffs()` |
-| `RunManager` | Calls `ResolveBattleBuffs()` before battle; calls `ResetBattleBuffs()` after battle |
-| `AutoBattleResolver` | Reads `GetActiveBattleBehaviors(studentId)` during simulation setup; reads stat values (already modified by `ResolveBattleBuffs()`) from StudentData |
-| `SchoolHUD` | Subscribes to `OnTraitThresholdReached` and `OnTraitThresholdLost`; reads `GetTeamTraitCounts()` and `GetActiveThresholdTier()` to render trait progress UI |
+| `BattleBoardManager` | Calls `TraitTracker.RegisterPlacement` / `UnregisterPlacement` on every drag-drop; calls `TraitEffectApplier.Apply()` in `OnStartBattle()` |
+| `AutoBattleResolver` | Receives `ApplyPreBattleTraitModifiers(perUnitMods, globalSettings)` before `BeginBattle()`; reads new Combatant fields (Shield, OmnivampPct, StrikerPctPerStack, etc.) during simulation |
+| `ChampionRoster` | Provides `GetStudents()` as a drop-in replacement for `StudentRosterStub.GetStudents()` in the resolver's lazy-init path |
+| `TraitHUDController` | Subscribes to `TraitTracker.OnTraitCountsChanged`; read-only; never calls trait-mutating methods |
 
 ---
 
 ## Formulas
 
-### Stat Multiplier Application
+### Damage with Striker Stacks
 
 ```
-bonusDelta = floor(student.TotalStat(stat) * (multiplier - 1.0))
-student.BonusStat(stat) += bonusDelta
+stackMult = 1 + (StrikerStacks × StrikerPctPerStack)
+rawOffense = ATK × stackMult
+
+if StrikerBypassArmor:
+    effectiveDEF = target.DEF × 0.6
+
+damage = Max(1, floor(rawOffense × 100 / (100 + effectiveDEF)))
 ```
 
-| Variable | Type | Range | Source | Description |
-|---|---|---|---|---|
-| `student.TotalStat(stat)` | int | 1–∞ | StudentRoster | Total stat before buff (Base + prior Bonus) |
-| `multiplier` | float | 1.0–3.0 | `TraitDatabase` | Trait ability multiplier |
-| `bonusDelta` | int | 0–∞ | calculated | Integer bonus added to BonusStat |
-
-**Expected output range**: A Fire student with TotalAttack = 10 and Fire-2 active (×1.3): delta = floor(10 × 0.3) = 3 → TotalAttack becomes 13.
-
-**Reversal on ResetBattleBuffs**: the same `bonusDelta` is subtracted. `_appliedDeltas` tracks these values per student per stat.
-
-### Trait Count
+### Ranger Distance Bonus
 
 ```
-traitCount[trait] = count of students in GetAll() where student.Traits.Contains(trait)
+damage = baseDamage × (1 + RangerBonusDmgPerHex × hexDistance)
 ```
 
-**Expected output**: 0 ≤ count ≤ `RecruitCountPerSemester` (default 5).
+Applied after the base LoL formula, physical attacks only.
 
-### Active Threshold Tier
+### Warden ActionInterval
 
 ```
-activeThresholdTier = highest tier T such that thresholds[T].RequiredCount ≤ traitCount[trait]
-(0 if no threshold is met)
+newInterval = Max(1, floor(baseInterval × ActionIntervalMult))
 ```
 
----
+ActionIntervalMult chains: each multiplying trait applies `mult *= (1 - reductionPct)`.
 
-## Edge Cases
+### Omnivamp Heal
 
-| Scenario | Expected Behavior | Rationale |
-|---|---|---|
-| `ResolveBattleBuffs()` called twice before a battle | Second call is no-op (`_battleBuffsApplied` guard) | Prevents double-stacking multipliers |
-| `ResetBattleBuffs()` called with `_battleBuffsApplied = false` | No-op | Idempotent reset |
-| `GetActiveBattleBehaviors()` called before `ResolveBattleBuffs()` | Log error; return empty list | Behavior flags are undefined before resolution |
-| Trait count drops below a threshold mid-run (future mechanic) | `OnTraitThresholdLost` fires; buffs will be lower in next battle | Only affects next `ResolveBattleBuffs()` call |
-| Roster has 0 students with a trait | `traitCount[trait] = 0`; no threshold active | No effect |
-| All students removed (after YearEnd, before next Recruit) | All trait counts = 0; no thresholds active | Clean state for next semester |
-| Float precision: `floor(10 × 0.3)` = `floor(2.9999...)` = 2, not 3 | Use `Mathf.FloorToInt(totalStat * (multiplier - 1f))` with Unity's float; acceptable rounding | Integer floor is the rule; tune values to compensate |
+```
+healAmount = floor(rawDamageDealt × OmnivampPct)
+attacker.CurrentHP = Min(MaxHP, CurrentHP + healAmount)
+```
 
----
+`rawDamageDealt` = shield-absorbed + HP-damage combined.
 
-## Dependencies
+### Trickster Bleed
 
-| System | Direction | Nature |
-|---|---|---|
-| `StudentRoster` | This depends on it | Data dependency — reads student list and trait assignments; writes bonus stat deltas |
-| `RunManager` | It depends on this | Rule dependency — calls `ResolveBattleBuffs()` and `ResetBattleBuffs()` |
-| `AutoBattleResolver` | It depends on this | Data dependency — reads behavior flags and modified stats |
-| `SchoolHUD` | It depends on this | State trigger — subscribes to threshold events; reads trait counts for display |
+```
+BleedDamagePerTick = Max(1, floor(target.MaxHP × 0.25 / 7))
+BleedTicksRemaining = 7
+```
+
+Applied to victim as magic damage each tick (bypasses all mitigation — true DoT).
+
+### Elementalist Explosion
+
+```
+// Physical variant (BP6):
+explodeDmg = floor(killed.MaxHP × 0.10 × (100 / (100 + hit.MR)))
+
+// True damage (BP8):
+explodeDmg = floor(killed.MaxHP × 0.20)
+```
 
 ---
 
 ## Tuning Knobs
 
-All values in `TraitDatabase.asset` (ScriptableObject):
+All values are defined as constants in `ChampionRoster.cs` and the `CombatantTraitModifiers` defaults set by `TraitEffectApplier`. Tunable without recompile by extracting to a `TraitConfig` ScriptableObject in a future pass.
 
-| Parameter | Default | Safe Range | Effect of Increase | Effect of Decrease |
-|---|---|---|---|---|
-| Fire 2-piece multiplier | 1.30 | 1.1–2.0 | Easier to build offensive teams | Less payoff for trait investment |
-| Fire 4-piece multiplier | 1.70 | 1.4–3.0 | Strong late-game offense | Weaker 4-piece incentive |
-| Healer 2-piece multiplier | 1.20 | 1.05–1.5 | More team sustain | Less survivability from Healer |
-| Shield TakesReducedDamage | 20% | 10–40% | Shield build becomes much tankier | Weaker defensive incentive |
-| Storm AOEAttack % (2-piece) | 50% | 25–100% | AoE is more punishing to enemies | AoE is less worth building |
-| Storm AOEAttack % (3-piece) | 100% | 50–150% | Full AoE damage at high threshold | Weaker Storm 3-piece |
-| Shadow FirstHitDouble | ×2.0 | ×1.5–×4.0 | Massive burst; one-shots possible | Less first-hit advantage |
-| Arcane Speed flat bonus (2-piece) | +2 | +1–+5 | More actions per battle; fast teams dominant | Speed synergy less impactful |
-
----
-
-## Visual / Audio Requirements
-
-| Event | Visual Feedback | Audio Feedback | Priority |
-|---|---|---|---|
-| Trait count reaches a threshold (School phase) | Trait icon in SchoolHUD pulses; threshold badge lights up | "Synergy unlocked" chime | MVP |
-| Trait count drops below a threshold | Threshold badge dims | Soft "synergy lost" sound | MVP |
-| `ResolveBattleBuffs()` completes (Battle phase start) | Brief "synergy active" flash on each buffed student in BattleHUD | Battle intro sting includes trait activation sounds | MVP |
-| Shadow `FirstHitDouble` triggers | First hit animation is larger/flashier | Distinct impact SFX on first hit | Alpha |
-
----
-
-## Game Feel
-
-### Feel Reference
-
-> "Should feel like TFT's synergy panel — the player can glance at the trait bar and immediately know how far they are from the next threshold, and the 'pop' of hitting a new tier is always satisfying. NOT a system where the synergies are invisible or only legible in a tooltip."
-
-### Input Responsiveness
-
-| Action | Max Input-to-Response Latency | Frame Budget (60fps) |
+| Parameter | Default | Notes |
 |---|---|---|
-| Roster changes → trait counts update | 1 frame (synchronous recount) | 1 frame |
-| Threshold crossed → `OnTraitThresholdReached` fires + SchoolHUD updates | 1 frame | 1 frame |
+| Vanguard DEF/MR per breakpoint | 25 / 60 / 120 / 250 | Higher = tankier frontlines |
+| Striker % per stack | 6% / 12% / 20% / 35% | Higher = more burst scaling |
+| Elementalist MG bonus | 25 / 55 / 95 / 150 | Higher = stronger magic output |
+| Ranger attack speed | ×1.176 AttackSpeedMult (+17.6% AS) | Higher mult = faster fire rate |
+| Kinetic mana per interval | 5 (BP2) / 15 (BP4) | Higher = more frequent bonus attacks |
+| Dreadknight omnivamp | 15% (BP2) / 30% (BP4) | Higher = more sustain |
+| Warden shield | 250 / 450 / 750 | Higher = more frontline durability |
+| Trickster bleed | 25% MaxHP / 7 ticks | Duration or dmg adjustable independently |
+| Mana max | 100 | Lowering = more frequent bonus attacks |
+| Mana tick interval | 5 ticks | Lowering = faster mana ramp |
 
-### Animation Feel Targets
+---
 
-| Animation | Startup Frames | Active Frames | Recovery Frames | Feel Goal |
-|---|---|---|---|---|
-| Trait threshold pop | 0 | 30 (glow + scale) | 0 | "Power up" moment |
+## UI Requirements (Prototype)
 
-### Impact Moments
-
-| Impact Type | Duration | Effect |
+| Information | Display Location | Update Trigger |
 |---|---|---|
-| New threshold activated | 0.5s | Badge lights up; trait icon animates; chime plays |
-| All trait buffs applied at battle start | 1.5s (staggered per student) | Each buffed student flashes their trait color |
-
-### Weight and Responsiveness
-
-- **Weight**: Trait synergies feel like a reward for planning, not a random bonus
-- **Player control**: Fully player-controlled — traits are assigned at generation, but the player chooses which students to train and how to compose the team
-- **Snap quality**: Threshold states are binary per tier — either active or not
-- **Failure texture**: Being 1 student short of a threshold is legible and motivating ("so close!")
-
-### Feel Acceptance Criteria
-
-- [ ] A new player can read the current trait synergy progress without opening a help screen
-- [ ] The "threshold activated" animation is noticed without looking for it
-- [ ] The stat difference between a team with 0 thresholds and a team with 2 active thresholds is perceptible in battle
-
----
-
-## UI Requirements
-
-| Information | Display Location | Update Frequency | Condition |
-|---|---|---|---|
-| Per-trait count (e.g. "Fire: 2") | SchoolHUD trait panel | On `OnRosterChanged` | During Train/Recruit phases |
-| Active threshold tier indicator | Trait icon badge (0/1/2 stars) | On `OnTraitThresholdReached` / `Lost` | During run |
-| Next threshold requirement | Trait panel tooltip (e.g. "+2 for Fire 4") | Static | On hover |
-| Active behavior flags per student | BattleHUD student card (icon overlay) | Once at battle start | During Battle phase |
-
----
-
-## Cross-References
-
-| This Doc References | Target Doc | Element Referenced | Nature |
-|---|---|---|---|
-| RunManager calls ResolveBattleBuffs before AutoBattleResolver | `RunManager.md`, `AutoBattleResolver.md` | Ordering invariant | Rule dependency |
-| AutoBattleResolver reads behavior flags | `AutoBattleResolver.md` | `GetActiveBattleBehaviors()` | Data dependency |
-| Shield TakesReducedDamage handled in AutoBattleResolver | `AutoBattleResolver.md` | Damage calculation | Data dependency |
-| StudentData bonus stat write pattern | `StudentRoster.md` | `NotifyStatChanged()` | Data dependency |
+| Per-trait count (e.g. "Vanguard 2/4") | `TraitHUDController` panel (Battle scene, placement phase) | `TraitTracker.OnTraitCountsChanged` |
+| Active breakpoint highlight | Gold label color | When `activeBreakpoint[trait] > 0` |
+| Partial progress | White label color | When count > 0 but no breakpoint met |
+| Inactive trait | Gray label color | When count = 0 |
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `GetTeamTraitCounts()` returns correct counts for every trait after every roster change
-- [ ] `OnTraitThresholdReached(Fire, 1)` fires when the second Fire student joins the roster
-- [ ] `OnTraitThresholdReached` does NOT fire on initial roster population — only on count increases
-- [ ] `ResolveBattleBuffs()` applies correct stat deltas for all active thresholds (verified by unit test)
-- [ ] `ResolveBattleBuffs()` is idempotent — calling it twice produces the same result as calling it once
-- [ ] `ResetBattleBuffs()` restores all bonus stats to their pre-`ResolveBattleBuffs()` values exactly
-- [ ] `GetActiveBattleBehaviors(studentId)` returns only the flags relevant to that student's traits and the active thresholds
-- [ ] Fire 2 threshold is active when team has exactly 2 Fire students; inactive at 1; Fire 4 replaces Fire 2 at 4
-- [ ] All trait definitions are loaded from `TraitDatabase.asset` — no hardcoded trait data in code
-- [ ] Unit test: Fire 2 active, student TotalAttack = 10 → `ResolveBattleBuffs()` → BonusAttack increases by 3 (floor(10 × 0.3))
+- [ ] Placing Ironclad + Phalanx shows "Vanguard 2/4" in gold in the HUD
+- [ ] Removing one Vanguard drops label to white "Vanguard 1/2"
+- [ ] Starting battle with 2 Vanguards logs `[Trait] Ironclad: DEF=43 MR=37` (base + 25 bonus)
+- [ ] Striker stacks increase effective damage each attack; damage log shows growth
+- [ ] Trickster dash fires when unit HP crosses below 50%; unit is untargetable for 2 ticks
+- [ ] Warden front-row units absorb shield damage before HP drops
+- [ ] Kinetic mana logs bonus action after 20 ticks (2× mana intervals at 5 mana/5ticks to reach 100)
+- [ ] Elementalist BP2 correctly adds +25 MG to Elementalist units
+- [ ] `TraitEffectApplier.Apply()` called after battle start logs error and no-ops
+- [ ] All 8 trait breakpoint effects can be observed in play mode without runtime exceptions
 
 ---
 
 ## Open Questions
 
-| Question | Owner | Deadline | Resolution |
-|---|---|---|---|
-| Are 6 traits the right number for v1, or should we start with 4 (Fire, Healer, Shield, Arcane) and add Storm/Shadow later? | Designer | Before code-system | Pending — 4 traits is safer for v1 balance |
-| Should the trait database allow mid-run dynamic traits (e.g., a teacher unlocks a 7th trait type)? | Designer | Before code-system | Pending — recommend no for v1 |
-| How should traits be displayed on student cards — text label, colored icon, or both? | Designer/Artist | Before code-system | Pending |
-| Should `ResetBattleBuffs()` be called automatically by RunManager, or does AutoBattleResolver call it when the battle ends? | Engineer | Before code-system | Pending — recommend RunManager calls it (only RunManager may advance phases) |
-| Can two different thresholds of the same trait stack (Fire 2 AND Fire 4 both active simultaneously)? | Designer | Before code-system | Resolution: NO — higher tier fully replaces lower tier (documented in Core Rules) |
+| Question | Owner | Resolution |
+|---|---|---|
+| Should mana bonus action be a copy of the unit's standard attack, or a separate "ability"? | Designer | Prototype: standard attack copy. Full ability system deferred to Phase 2. |
+| Should Elementalist BP8 chain limit be 1 or unlimited? | Designer | Prototype: 1 chain (no secondary chain) to avoid runaway cascades. |
+| Should Trickster dash re-trigger between battles or reset only on new combat? | Designer | Resets per combat; does not re-trigger mid-combat after triggering once. |
