@@ -17,6 +17,8 @@ namespace MagicSchool.Battle
         [SerializeField] Button               _startBattleButton;
         [SerializeField] GameObject           _outcomePanel;
         [SerializeField] Text                 _outcomeText;
+        [SerializeField] private TraitTracker   _traitTracker;
+        [SerializeField] private ChampionRoster _championRoster;
 
         // ── Hex constants ────────────────────────────────────────────────────
         private const float HexWidth  = 1.1f;
@@ -31,6 +33,7 @@ namespace MagicSchool.Battle
 
         private HexGrid _grid;
         private bool    _battleStarted;
+        private Dictionary<string, ChampionData> _championDataLookup = new Dictionary<string, ChampionData>();
 
         // ── Dragging state ───────────────────────────────────────────────────
         private string      _draggingStudentId;
@@ -53,6 +56,9 @@ namespace MagicSchool.Battle
             if (_outcomePanel == null)      { Debug.LogError("[BattleBoardManager] OutcomePanel missing", this); enabled = false; return; }
 
             BuildBoard();
+
+            if (_championRoster != null)
+                _championDataLookup = _championRoster.GetChampionLookup();
 
             var snapshots = _resolver.GetCombatantSnapshots();
             var students  = snapshots.Where(s => s.IsStudent).ToList();
@@ -82,23 +88,90 @@ namespace MagicSchool.Battle
         }
 
         // ── Board construction ───────────────────────────────────────────────
+        // Full visual height of a pointy-top hex whose centre-to-centre column width = HexWidth
+        private static readonly float HexVisualHeight = HexWidth * 2f / Mathf.Sqrt(3f);
+
         private void BuildBoard()
         {
-            var fallback = GetFallbackSprite();
+            var hexSprite = GetHexSprite();
+            var scale     = new Vector3(HexWidth, HexVisualHeight, 1f);
+
             for (int row = 0; row < HexGrid.Rows; row++)
             for (int col = 0; col < HexGrid.Cols; col++)
             {
                 var coord = new HexCoord(col, row);
                 var go    = Instantiate(_hexTilePrefab, CoordToWorld(coord), Quaternion.identity, transform);
-                // Ensure sprite is set — built-in Knob sprite doesn't survive prefab serialization
+                go.transform.localScale = scale;
                 var sr = go.GetComponent<SpriteRenderer>();
-                if (sr != null && sr.sprite == null) sr.sprite = fallback;
-                var view  = go.GetComponent<HexTileView>();
+                if (sr != null) sr.sprite = hexSprite;
+                var view = go.GetComponent<HexTileView>();
                 view.Init(coord);
                 _tiles[coord] = view;
             }
         }
 
+        // ── Hex sprite (pointy-top, 128px, dark border ring) ─────────────────
+        private static Sprite _hexSprite;
+        private static Sprite GetHexSprite()
+        {
+            if (_hexSprite != null) return _hexSprite;
+
+            const int size   = 128;
+            const int border = 5;
+
+            float cx   = (size - 1) / 2f;
+            float cy   = (size - 1) / 2f;
+            float rOut = cx - 1f;
+            float rIn  = rOut - border;
+
+            var outer  = HexVerts(cx, cy, rOut);
+            var inner  = HexVerts(cx, cy, rIn);
+            var pixels = new Color32[size * size];
+
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                var p = new Vector2(x, y);
+                if (PointInHex(p, outer))
+                    pixels[y * size + x] = PointInHex(p, inner)
+                        ? new Color32(255, 255, 255, 255)   // body (tinted by SpriteRenderer.color)
+                        : new Color32(15,  15,  15,  220);  // border ring
+                // else stays default Color32(0,0,0,0) — transparent
+            }
+
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            tex.filterMode = FilterMode.Bilinear;
+            tex.SetPixels32(pixels);
+            tex.Apply();
+
+            _hexSprite = Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
+            return _hexSprite;
+        }
+
+        private static Vector2[] HexVerts(float cx, float cy, float r)
+        {
+            var v = new Vector2[6];
+            for (int i = 0; i < 6; i++)
+            {
+                float rad = (90f - 60f * i) * Mathf.Deg2Rad; // pointy-top: first vertex at 12 o'clock
+                v[i] = new Vector2(cx + r * Mathf.Cos(rad), cy + r * Mathf.Sin(rad));
+            }
+            return v;
+        }
+
+        private static bool PointInHex(Vector2 p, Vector2[] verts)
+        {
+            for (int i = 0; i < verts.Length; i++)
+            {
+                Vector2 a = verts[i];
+                Vector2 b = verts[(i + 1) % verts.Length];
+                if ((b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x) < 0)
+                    return false;
+            }
+            return true;
+        }
+
+        // Kept for drag-ghost (card sprite fallback, not a hex)
         private static Sprite _fallbackSprite;
         private static Sprite GetFallbackSprite()
         {
@@ -239,6 +312,7 @@ namespace MagicSchool.Battle
             {
                 _grid.ClearOccupant(coord);
                 _pendingPlacements.Remove(studentId);
+                _traitTracker?.UnregisterPlacement(studentId);
             }
             if (_units.TryGetValue(studentId, out var unit))
             {
@@ -278,6 +352,8 @@ namespace MagicSchool.Battle
             }
 
             _pendingPlacements[studentId] = coord;
+            if (_traitTracker != null && _championDataLookup.TryGetValue(studentId, out var champData))
+                _traitTracker.RegisterPlacement(studentId, coord, champData);
             _grid.SetOccupant(coord, studentId);
 
             // Spawn unit — MaxHP sourced from snapshot (B3)
@@ -308,9 +384,9 @@ namespace MagicSchool.Battle
 #if UNITY_EDITOR
         public void TestAutoPlace()
         {
-            PlaceStudent("warrior", new HexCoord(1, 0));
-            PlaceStudent("mage",    new HexCoord(3, 1));
-            PlaceStudent("archer",  new HexCoord(5, 0));
+            PlaceStudent("ironclad",   new HexCoord(1, 0));
+            PlaceStudent("pyromancer", new HexCoord(3, 1));
+            PlaceStudent("windrunner", new HexCoord(5, 0));
             OnStartBattle();
         }
 #endif
@@ -325,6 +401,14 @@ namespace MagicSchool.Battle
 
             // Tell resolver player positions
             _resolver.SetUnitPositions(_pendingPlacements);
+
+            // Apply trait bonuses before battle starts
+            if (_traitTracker != null && _championRoster != null)
+                TraitEffectApplier.Apply(
+                    _traitTracker.GetActiveBreakpoints(),
+                    _championDataLookup,
+                    _pendingPlacements,
+                    _resolver);
 
             // Auto-spawn enemy units from snapshots — no direct stub dependency
             var enemyPlacements = _resolver.GetAutoEnemyPlacements();
@@ -389,10 +473,20 @@ namespace MagicSchool.Battle
 
         private static Color StudentColor(string id) => id switch
         {
-            "warrior" => new Color(0.2f, 0.5f, 1.0f),
-            "mage"    => new Color(0.7f, 0.2f, 1.0f),
-            "archer"  => new Color(0.2f, 0.8f, 0.3f),
-            _         => Color.white,
+            "warrior"         => new Color(0.2f,  0.5f,  1.0f),
+            "mage"            => new Color(0.7f,  0.2f,  1.0f),
+            "archer"          => new Color(0.2f,  0.8f,  0.3f),
+            "ironclad"        => new Color(0.35f, 0.45f, 0.55f),
+            "bloodhound"      => new Color(0.65f, 0.10f, 0.10f),
+            "pyromancer"      => new Color(0.85f, 0.35f, 0.05f),
+            "windrunner"      => new Color(0.10f, 0.65f, 0.65f),
+            "grovekeeper"     => new Color(0.15f, 0.50f, 0.20f),
+            "shadowblade"     => new Color(0.40f, 0.05f, 0.55f),
+            "phalanx"         => new Color(0.10f, 0.20f, 0.60f),
+            "stormbringer"    => new Color(0.25f, 0.35f, 0.75f),
+            "phantomassassin" => new Color(0.60f, 0.05f, 0.60f),
+            "dreadoverlord"   => new Color(0.45f, 0.00f, 0.10f),
+            _                 => new Color(0.3f,  0.3f,  0.3f),
         };
 
         private static Color EnemyColor(string id) => id switch
