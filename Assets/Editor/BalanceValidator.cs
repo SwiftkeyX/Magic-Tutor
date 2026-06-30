@@ -13,10 +13,10 @@ namespace MagicSchool.Editor
 {
     public static class BalanceValidator
     {
-        private const int   Trials          = 200;
-        private const float TickDelay       = 0.6f;
-        private const int   MaxTicks        = 200;
-        private const bool  IncludeCrit     = false;  // false = pure base stats; true = with CRIT variance
+        private const int   Trials      = 200;
+        private const float TickDelay   = 0.1f;   // matches AutoBattleResolver
+        private const int   MaxTicks    = 1200;   // 120s max
+        private const bool  IncludeCrit = false;  // false = pure base stats; true = with CRIT variance
 
         // Expected win-rate bands for higher-cost vs lower-cost (for pass/fail logging)
         private static readonly (int costDiff, float lo, float hi)[] _bands =
@@ -59,23 +59,21 @@ namespace MagicSchool.Editor
         {
             for (int tick = 0; tick < MaxTicks; tick++)
             {
-                a.Timer--;
-                b.Timer--;
+                a.Progress += a.AS * TickDelay;
+                b.Progress += b.AS * TickDelay;
 
-                if (a.Timer <= 0)
+                if (a.Progress >= 1.0f)
                 {
-                    int dmg = Damage(a, b);
-                    b.HP -= dmg;
+                    b.HP -= Damage(a, b);
                     if (b.HP <= 0) return true;
-                    a.Timer = a.Interval;
+                    a.Progress -= 1.0f;
                 }
 
-                if (b.Timer <= 0)
+                if (b.Progress >= 1.0f)
                 {
-                    int dmg = Damage(b, a);
-                    a.HP -= dmg;
+                    a.HP -= Damage(b, a);
                     if (a.HP <= 0) return false;
-                    b.Timer = b.Interval;
+                    b.Progress -= 1.0f;
                 }
             }
             // timeout: side with more HP wins
@@ -148,19 +146,19 @@ namespace MagicSchool.Editor
         private static List<SimUnit> BuildRoster()
         {
             // Mirrors ChampionRoster.cs exactly. Update both together.
+            // Columns: name, cost, HP, ATK, DEF, MG, MR, AS, CRIT, isMagic
             return new List<SimUnit>
             {
-                // id          short name          cost  HP   ATK  DEF  MG  MR  AS     CRIT  magic?
-                new SimUnit("Ironclad",          1, 100, 13,  18,  4,  12, 0.21f,  2,  false),
-                new SimUnit("Bloodhound",         1,  70, 18,   5,  0,   5, 0.33f, 12,  false),
-                new SimUnit("Pyromancer",         1,  60,  8,   3, 20,   8, 0.28f,  8,  true),
-                new SimUnit("Windrunner",         2,  75, 20,   5,  0,   6, 0.42f, 14,  false),
-                new SimUnit("Grove Keeper",       2,  85,  7,   8, 26,  14, 0.24f,  4,  true),
-                new SimUnit("Shadowblade",        2,  65, 24,   4,  0,   6, 0.56f, 20,  false),
-                new SimUnit("Phalanx",            3, 145, 16,  26,  5,  18, 0.21f,  3,  false),
-                new SimUnit("Stormbringer",       3,  95, 18,   8, 30,  12, 0.33f,  7,  true),
-                new SimUnit("Phantom Assassin",   4,  85, 15,   6, 42,  10, 0.42f, 22,  true),
-                new SimUnit("Dread Overlord",     5, 195, 26,  36,  8,  26, 0.24f,  4,  false),
+                new SimUnit("Ironclad",         1,  650, 50, 45,  0, 45, 0.60f,  2, false),
+                new SimUnit("Bloodhound",        1,  500, 55, 20,  0, 20, 0.75f, 12, false),
+                new SimUnit("Pyromancer",        1,  480, 40, 20, 65, 20, 0.70f,  8, true ),
+                new SimUnit("Windrunner",        2,  600, 65, 20,  0, 20, 0.80f, 14, false),
+                new SimUnit("Grove Keeper",      2,  600, 40, 25, 55, 25, 0.65f,  4, true ),
+                new SimUnit("Shadowblade",       2,  580, 65, 25,  0, 25, 0.80f, 20, false),
+                new SimUnit("Phalanx",           3,  800, 60, 50,  0, 50, 0.60f,  3, false),
+                new SimUnit("Stormbringer",      3,  700, 50, 25, 65, 25, 0.70f,  7, true ),
+                new SimUnit("Phantom Assassin",  4,  750, 65, 30, 90, 30, 0.80f, 22, true ),
+                new SimUnit("Dread Overlord",    5, 1000, 80, 60,  0, 60, 0.65f,  4, false),
             };
         }
 
@@ -178,10 +176,9 @@ namespace MagicSchool.Editor
             public readonly float  AS;
             public readonly int    CRIT;
             public readonly bool   IsMagic;
-            public readonly int    Interval;
 
-            public int HP;
-            public int Timer;
+            public int   HP;
+            public float Progress;
 
             public SimUnit(string name, int cost, int hp, int atk, int def,
                            int mg, int mr, float aSpeed, int crit, bool magic)
@@ -189,16 +186,15 @@ namespace MagicSchool.Editor
                 ShortName = name; Cost = cost; MaxHP = hp;
                 ATK = atk; DEF = def; MG = mg; MR = mr;
                 AS = aSpeed; CRIT = crit; IsMagic = magic;
-                Interval = Mathf.Max(2, Mathf.RoundToInt(1f / (AS * TickDelay)));
-                HP    = MaxHP;
-                Timer = Interval;
+                HP       = MaxHP;
+                Progress = 0f;
             }
 
             public SimUnit Clone()
             {
-                var c = (SimUnit)MemberwiseClone();
-                c.HP    = MaxHP;
-                c.Timer = Interval;
+                var c    = (SimUnit)MemberwiseClone();
+                c.HP       = MaxHP;
+                c.Progress = 0f;
                 return c;
             }
         }

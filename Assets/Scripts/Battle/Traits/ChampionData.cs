@@ -13,6 +13,8 @@ namespace MagicSchool.Battle
         public HorizontalTrait HorizontalTrait;
         public int   MaxHP, ATK, DEF, MG, MR, CRIT, Range;
         public float AttackSpeed;    // attacks per second (TFT-style AS)
+        public int   MaxMana     = 100;
+        public int   StartingMana = 0;
 
         public StudentCombatData ToStudentCombatData()
         {
@@ -26,7 +28,8 @@ namespace MagicSchool.Battle
                 Id = Id, DisplayName = DisplayName,
                 MaxHP = MaxHP, ATK = ATK, DEF = DEF,
                 MG = MG, MR = MR, AttackSpeed = AttackSpeed, CRIT = CRIT,
-                Range = Range, Flags = flags
+                Range = Range, MaxMana = MaxMana, StartingMana = StartingMana,
+                Flags = flags
             };
         }
     }

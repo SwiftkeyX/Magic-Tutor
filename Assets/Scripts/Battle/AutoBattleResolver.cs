@@ -15,9 +15,8 @@ namespace MagicSchool.Battle
         public event Action<BattleResult>                       OnBattleComplete;
 
         // ── Constants ────────────────────────────────────────────────────────
-        private const float TickDelay          = 0.6f;
-        private const int   BaseActionInterval = 10;
-        private const int   MaxBattleTicks     = 200;
+        private const float TickDelay      = 0.1f;   // 10 ticks/second — matches TFT resolution
+        private const int   MaxBattleTicks = 1200;   // 120s max (was 200 × 0.6s)
 
         // ── State ────────────────────────────────────────────────────────────
         private readonly List<Combatant>              _combatants       = new List<Combatant>();
@@ -45,8 +44,8 @@ namespace MagicSchool.Battle
             public float    AttackSpeed;
             public int      Range;
             public HexCoord Position;
-            public int      ActionInterval;
-            public int      ActionTimer;
+            public float    ActionProgress;  // accumulates AttackSpeed × TickDelay each tick; fires at ≥ 1.0
+            public int      MaxMana;
             public bool     IsDefeated => CurrentHP <= 0;
 
             // ── Trait fields ─────────────────────────────────────────────
@@ -86,39 +85,39 @@ namespace MagicSchool.Battle
             foreach (var s in students)
                 _combatants.Add(new Combatant
                 {
-                    Id             = s.Id,
-                    DisplayName    = s.DisplayName,
-                    IsPlayer       = true,
-                    MaxHP          = s.MaxHP,
-                    CurrentHP      = s.MaxHP,
-                    ATK            = s.ATK,
-                    DEF            = s.DEF,
-                    AttackSpeed    = s.AttackSpeed,
-                    Range          = s.Range,
-                    MG             = s.MG,
-                    MR             = s.MR,
-                    Flags          = s.Flags ?? new List<BattleBehaviorFlag>(),
-                    ActionInterval = Mathf.Max(2, Mathf.RoundToInt(1f / (s.AttackSpeed * TickDelay))),
-                    ActionTimer    = Mathf.Max(2, Mathf.RoundToInt(1f / (s.AttackSpeed * TickDelay))),
+                    Id          = s.Id,
+                    DisplayName = s.DisplayName,
+                    IsPlayer    = true,
+                    MaxHP       = s.MaxHP,
+                    CurrentHP   = s.MaxHP,
+                    ATK         = s.ATK,
+                    DEF         = s.DEF,
+                    AttackSpeed = s.AttackSpeed,
+                    Range       = s.Range,
+                    MG          = s.MG,
+                    MR          = s.MR,
+                    MaxMana     = s.MaxMana,
+                    Mana        = s.StartingMana,
+                    Flags       = s.Flags ?? new List<BattleBehaviorFlag>(),
                 });
 
             foreach (var e in enemies)
                 _combatants.Add(new Combatant
                 {
-                    Id             = e.Id,
-                    DisplayName    = e.DisplayName,
-                    IsPlayer       = false,
-                    MaxHP          = e.MaxHP,
-                    CurrentHP      = e.MaxHP,
-                    ATK            = e.ATK,
-                    DEF            = e.DEF,
-                    AttackSpeed    = e.AttackSpeed,
-                    Range          = e.Range,
-                    MG             = e.MG,
-                    MR             = e.MR,
-                    Flags          = e.Flags ?? new List<BattleBehaviorFlag>(),
-                    ActionInterval = Mathf.Max(2, Mathf.RoundToInt(1f / (e.AttackSpeed * TickDelay))),
-                    ActionTimer    = Mathf.Max(2, Mathf.RoundToInt(1f / (e.AttackSpeed * TickDelay))),
+                    Id          = e.Id,
+                    DisplayName = e.DisplayName,
+                    IsPlayer    = false,
+                    MaxHP       = e.MaxHP,
+                    CurrentHP   = e.MaxHP,
+                    ATK         = e.ATK,
+                    DEF         = e.DEF,
+                    AttackSpeed = e.AttackSpeed,
+                    Range       = e.Range,
+                    MG          = e.MG,
+                    MR          = e.MR,
+                    MaxMana     = e.MaxMana,
+                    Mana        = e.StartingMana,
+                    Flags       = e.Flags ?? new List<BattleBehaviorFlag>(),
                 });
         }
 
@@ -205,14 +204,11 @@ namespace MagicSchool.Battle
                 c.ATK       += m.BonusATK;
                 c.Range     += m.BonusRange;
                 c.Shield     = m.InitialShield;
-                c.Mana       = m.InitialMana;
+                c.Mana += m.InitialMana;
 
                 if (Math.Abs(m.AttackSpeedMult - 1f) > 0.001f)
-                {
-                    c.AttackSpeed    *= m.AttackSpeedMult;
-                    c.ActionInterval  = Mathf.Max(2, Mathf.RoundToInt(1f / (c.AttackSpeed * TickDelay)));
-                    c.ActionTimer     = c.ActionInterval;
-                }
+                    c.AttackSpeed *= m.AttackSpeedMult;
+                // No interval recalc — accumulator derives speed from AttackSpeed directly each tick.
 
                 c.OmnivampPct              = m.OmnivampPct;
                 c.DreadknightShieldEnabled  = m.DreadknightShieldOnLowHP;
@@ -306,11 +302,11 @@ namespace MagicSchool.Battle
                         if (c.TricksterUntargetableTicks <= 0) c.TricksterUntargetable = false;
                     }
 
-                // Phase 5 — Kinetic mana tick
+                // Phase 5 — Kinetic mana tick (every 3s = 30 ticks at 0.1s/tick)
                 if (_kineticEnabled)
                 {
                     _kineticTickCounter++;
-                    if (_kineticTickCounter >= 5)
+                    if (_kineticTickCounter >= 30)
                     {
                         _kineticTickCounter = 0;
                         foreach (var c in _combatants)
@@ -319,7 +315,8 @@ namespace MagicSchool.Battle
                             int gain = _kineticManaPerInterval;
                             if (_kineticSupportExtraBonus && c.Role == ChampionRole.Support) gain += 10;
                             c.Mana += gain;
-                            if (c.Mana >= 100) { c.Mana -= 100; _pendingBonusActions.Add(c); }
+                            Debug.Log($"[Trait][Kinetic] {c.DisplayName} +{gain} mana → {c.Mana}/{c.MaxMana}");
+                            if (c.Mana >= c.MaxMana) { c.Mana = 0; _pendingBonusActions.Add(c); }
                         }
                     }
                 }
@@ -340,13 +337,18 @@ namespace MagicSchool.Battle
                 }
                 _pendingBonusActions.Clear();
 
-                // Decrement timers
+                // Accumulate action progress (replaces integer timer decrement)
                 foreach (var c in _combatants.Where(c => !c.IsDefeated))
-                    c.ActionTimer--;
+                {
+                    float gain = c.AttackSpeed * TickDelay;
+                    if (c.StrikerMaxStackSpeedBonus && c.Role == ChampionRole.Carry && c.StrikerStacks >= 8)
+                        gain /= 0.70f;  // +42.9% at max Striker stacks
+                    c.ActionProgress += gain;
+                }
 
-                // Collect ready actors
+                // Collect ready actors (progress ≥ 1.0 = one full attack cycle complete)
                 var ready = _combatants
-                    .Where(c => !c.IsDefeated && c.ActionTimer <= 0)
+                    .Where(c => !c.IsDefeated && c.ActionProgress >= 1.0f)
                     .OrderByDescending(c => c.AttackSpeed)
                     .ToList();
 
@@ -363,11 +365,8 @@ namespace MagicSchool.Battle
                     else
                         MoveTowardNearest(actor, opponents);
 
-                    // Striker max-stack speed bonus
-                    int resetInterval = actor.ActionInterval;
-                    if (actor.StrikerMaxStackSpeedBonus && actor.Role == ChampionRole.Carry && actor.StrikerStacks >= 8)
-                        resetInterval = Math.Max(2, (int)(resetInterval * 0.70f));
-                    actor.ActionTimer = resetInterval;
+                    // Subtract one full cycle; overflow carries into the next cycle naturally
+                    actor.ActionProgress -= 1.0f;
 
                     // Win check
                     bool playersAlive = _combatants.Any(c =>  c.IsPlayer && !c.IsDefeated);
@@ -420,6 +419,7 @@ namespace MagicSchool.Battle
             bool isMagic   = actor.Flags != null && actor.Flags.Contains(BattleBehaviorFlag.MagicAttack);
             int rawOffense = isMagic ? actor.MG  : actor.ATK;
             int rawDefense = isMagic ? target.MR : target.DEF;
+            int preMitDmg  = rawOffense;  // captured before mitigation for mana-on-hit
 
             if (!isMagic && actor.StrikerPctPerStack > 0)
             {
@@ -437,7 +437,10 @@ namespace MagicSchool.Battle
             }
 
             if (!isMagic && actor.StrikerPctPerStack > 0)
+            {
                 actor.StrikerStacks = Math.Min(8, actor.StrikerStacks + 1);
+                Debug.Log($"[Trait][Striker] {actor.DisplayName} stack {actor.StrikerStacks}/8");
+            }
 
             int shieldAbsorbed = 0;
             if (target.Shield > 0)
@@ -454,8 +457,8 @@ namespace MagicSchool.Battle
 
             if (actor.TricksterBleedNextAttack && actor.TricksterBleedEnabled)
             {
-                target.BleedDamagePerTick  = Math.Max(1, (int)(target.MaxHP * 0.25f / 7));
-                target.BleedTicksRemaining = 7;
+                target.BleedDamagePerTick  = Math.Max(1, (int)(target.MaxHP * 0.25f / 42));
+                target.BleedTicksRemaining = 42;  // 4.2s at 0.1s/tick (was 7 at 0.6s/tick)
                 actor.TricksterBleedNextAttack = false;
                 Debug.Log($"[Trait] {target.DisplayName} afflicted with bleed by {actor.DisplayName}");
             }
@@ -463,8 +466,50 @@ namespace MagicSchool.Battle
             Debug.Log($"[AutoBattle] {actor.DisplayName} → {target.DisplayName}: {damage} dmg (HP:{target.CurrentHP}/{target.MaxHP})");
             OnCombatantActed?.Invoke(actor.Id, target.Id, damage, new List<string>());
 
+            // Mana-on-attack (attacker) and mana-on-hit (defender, 7% pre-mitigation, cap 42)
+            actor.Mana  += 10;
+            Debug.Log($"[Mana] {actor.DisplayName} +10 atk → {actor.Mana}/{actor.MaxMana}");
+            target.Mana += Mathf.Min(42, Mathf.RoundToInt(preMitDmg * 0.07f));
+
+            // Ability cast — zero mana first to prevent cascade if CastAbility calls back into Attack
+            if (actor.Mana >= actor.MaxMana)
+            {
+                actor.Mana = 0;
+                CastAbility(actor);
+            }
+            if (!target.IsDefeated && target.Mana >= target.MaxMana)
+            {
+                target.Mana = 0;
+                CastAbility(target);
+            }
+
             if (target.IsDefeated)
                 HandleKill(actor, target);
+        }
+
+        private void CastAbility(Combatant caster)
+        {
+            var opponents = _combatants.Where(c => !c.IsDefeated && c.IsPlayer != caster.IsPlayer).ToList();
+            if (opponents.Count == 0) return;
+            var target = FindInRange(caster, opponents);
+            if (target == null) return;
+
+            bool isMagic   = caster.Flags != null && caster.Flags.Contains(BattleBehaviorFlag.MagicAttack);
+            int rawOffense = isMagic ? caster.MG : caster.ATK;
+            int rawDefense = isMagic ? target.MR : target.DEF;
+            int damage     = Math.Max(1, (int)(rawOffense * (100f / (100 + rawDefense))));
+
+            if (target.Shield > 0)
+            {
+                int absorbed  = Math.Min(target.Shield, damage);
+                target.Shield -= absorbed;
+                damage        -= absorbed;
+            }
+            target.CurrentHP -= damage;
+
+            Debug.Log($"[Ability] {caster.DisplayName} casts on {target.DisplayName}: {damage} dmg (HP:{target.CurrentHP}/{target.MaxHP})");
+            OnCombatantActed?.Invoke(caster.Id, target.Id, damage, new List<string> { "ABILITY" });
+            if (target.IsDefeated) HandleKill(caster, target);
         }
 
         private void ApplyDamage(Combatant target, int damage)
@@ -520,7 +565,7 @@ namespace MagicSchool.Battle
         {
             c.TricksterDashTriggered     = true;
             c.TricksterUntargetable      = true;
-            c.TricksterUntargetableTicks = 2;
+            c.TricksterUntargetableTicks = 12;  // 1.2s at 0.1s/tick (was 2 at 0.6s/tick)
             c.TricksterBleedNextAttack   = c.TricksterBleedEnabled;
 
             // Find deepest backline enemy target
@@ -554,6 +599,15 @@ namespace MagicSchool.Battle
             Debug.Log($"[Trait] {c.DisplayName} Trickster Dash: {from} → {c.Position}");
             OnCombatantMoved?.Invoke(c.Id, from, c.Position);
         }
+
+        // ── Debug helpers (editor/QA only) ───────────────────────────────────
+#if UNITY_EDITOR
+        public void DebugSetAllPlayerHp(float pct)
+        {
+            foreach (var c in _combatants)
+                if (c.IsPlayer) c.CurrentHP = Mathf.Max(1, Mathf.RoundToInt(c.MaxHP * pct));
+        }
+#endif
 
         private void MoveTowardNearest(Combatant actor, List<Combatant> opponents)
         {

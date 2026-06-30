@@ -33,9 +33,11 @@ namespace MagicSchool.Battle
         public int DEF;
         public int MG;
         public int MR;
-        public float AttackSpeed;       // attacks per second — interval derived as round(1 / (AS × 0.6))
+        public float AttackSpeed;       // attacks per second
         public int CRIT;
         public int Range = 1;   // 1 = melee, 2 = ranged
+        public int MaxMana      = 100;  // mana threshold to cast ability
+        public int StartingMana = 0;    // mana at battle start (before trait bonuses)
         public List<BattleBehaviorFlag> Flags = new List<BattleBehaviorFlag>();
     }
 
@@ -54,6 +56,8 @@ namespace MagicSchool.Battle
         public float AttackSpeed;       // attacks per second
         public int CRIT;
         public int Range = 1;
+        public int MaxMana      = 100;
+        public int StartingMana = 0;
         public List<BattleBehaviorFlag> Flags = new List<BattleBehaviorFlag>();
     }
 
