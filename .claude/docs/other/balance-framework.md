@@ -9,7 +9,7 @@
 ## Overview
 
 Three-layer process for balancing champions:
-1. **Layer 1 — Attack Speed formula**: linear AS replaces old SPD (see below)
+1. **Layer 1 — Accumulator & Mana**: float accumulator replaces integer timer; universal mana system
 2. **Layer 2 — Stat Budget Score**: spreadsheet math to set per-tier targets
 3. **Layer 3 — Simulation**: `BalanceValidator.cs` runs 200 battles per matchup and reports win rates
 
@@ -17,58 +17,70 @@ No champion stats should change without running Layer 2 first, and Layer 3 after
 
 ---
 
-## Layer 1 — Attack Speed (AS)
+## Layer 1 — Attack Speed Accumulator
 
-### Concept
+### Tick Rate
 
-`AttackSpeed` is a `float` (attacks per second), the same concept as TFT's AS stat.  
-`ActionInterval` (ticks between actions) is derived from it:
+The resolver runs at **0.1s per tick** (10 ticks/second), matching TFT's resolution.  
+`MaxBattleTicks = 1200` (120s ceiling).
+
+### Accumulator Logic
+
+Each unit has a float `ActionProgress` that starts at `0.0f`. Each tick:
 
 ```
-ActionInterval = max(2, round(1.0 / (AttackSpeed × 0.6)))
-
-// 0.6 = TickDelay in seconds (AutoBattleResolver.TickDelay constant)
+ActionProgress += AttackSpeed × TickDelay   (= AttackSpeed × 0.1)
 ```
 
-### Why not `10 − SPD`
+When `ActionProgress >= 1.0f`, the unit acts and we subtract 1.0 (overflow carries forward):
 
-The old `ActionInterval = max(1, 10 − SPD)` formula was non-linear:
-- SPD 6 → 7: +33% more attacks per tick
-- SPD 2 → 3: +14% more attacks per tick
-
-The same +1 stat point had 2.4× more impact at the high end. This is why Shadowblade (old SPD 7) was disproportionately dominant.
-
-With AS, the scale is linear: doubling AS always doubles attack frequency.
-
-### Trait speed bonuses
-
-Trait bonuses multiply `AttackSpeed` (not the interval), then ActionInterval is re-derived:
-
-```csharp
-c.AttackSpeed    *= m.AttackSpeedMult;       // e.g. 1.176f = +17.6% AS
-c.ActionInterval  = Mathf.Max(2, Mathf.RoundToInt(1f / (c.AttackSpeed * TickDelay)));
-c.ActionTimer     = c.ActionInterval;
+```
+ActionProgress -= 1.0f
 ```
 
-| Old interval mult | New AS mult | Effect |
+This eliminates the dead-zones and breakpoints of the old integer `ActionInterval` system. A +5% AS buff now always results in exactly +5% more attacks over time — no rounding cliff.
+
+### Trait Speed Bonuses
+
+Trait bonuses multiply `AttackSpeed` directly before the battle loop (in `ApplyPreBattleTraitModifiers`). Because accumulation uses `AttackSpeed × TickDelay` each tick, the effect is immediate and linear.
+
+| Trait effect | AS multiplier | Effective DPS change |
 |---|---|---|
-| ×0.85 (Ranger, Warden BP3) | ×1.176 | +17.6% more attacks |
-| ×0.70 (Warden BP4)         | ×1.429 | +42.9% more attacks |
+| Ranger BP2 / Warden BP3 | ×1.176 | +17.6% |
+| Warden BP4 | ×1.429 | +42.9% |
+| Striker max-stack (inline) | ÷0.70 on `gain` | +42.9% while at 8 stacks |
 
-### AS reference table (current roster)
+---
 
-| Champion | AS | Interval (ticks) | Attacks/10 ticks |
+## Layer 1b — Mana & Ability Casting
+
+All units gain mana through combat. When `Mana >= MaxMana`, the unit casts its ability (currently a placeholder bonus attack) and mana resets to 0.
+
+### Mana Sources
+
+| Source | Amount |
+|---|---|
+| Per auto-attack (attacker) | +10 flat |
+| Per hit received (defender) | +`min(42, round(rawOffense × 0.07))` |
+| Kinetic trait tick (every 3s) | +5 or +15 depending on BP |
+| Kinetic BP4 starting bonus | +30 starting mana at battle start |
+
+> **Why pre-mitigation for on-hit mana?** A tank with 300 DEF would otherwise gain 4× less mana per hit than a squishy carry struck by the same attack. Pre-mitigation keeps mana gain fair across all archetypes.
+
+### Per-Champion Mana Pools
+
+| Champion | MaxMana | StartingMana | Profile |
 |---|---|---|---|
-| Ironclad | 0.21 | 8 | 1.25 |
-| Bloodhound | 0.33 | 5 | 2.00 |
-| Pyromancer | 0.28 | 6 | 1.67 |
-| Windrunner | 0.42 | 4 | 2.50 |
-| Grove Keeper | 0.24 | 7 | 1.43 |
-| Shadowblade | 0.56 | 3 | 3.33 |
-| Phalanx | 0.21 | 8 | 1.25 |
-| Stormbringer | 0.33 | 5 | 2.00 |
-| Phantom Assassin | 0.42 | 4 | 2.50 |
-| Dread Overlord | 0.24 | 7 | 1.43 |
+| Ironclad | 100 | 0 | Utility tank |
+| Bloodhound | 50 | 0 | Spam carry |
+| Pyromancer | 50 | 0 | Spam AP carry |
+| Windrunner | 50 | 0 | Spam carry |
+| Grove Keeper | 80 | 0 | Support |
+| Shadowblade | 40 | 0 | Hyper-spam carry |
+| Phalanx | 120 | 30 | CC tank (casts once early) |
+| Stormbringer | 80 | 0 | Support |
+| Phantom Assassin | 60 | 0 | Burst carry |
+| Dread Overlord | 150 | 50 | Hyper-tank (long windup) |
 
 ---
 
@@ -83,35 +95,35 @@ Offense = ATK  (physical units)
 Offense = MG   (Elementalists and Supports where MG > ATK)
 ```
 
-**Offense × AS** = raw DPS at 0 armor (attacks per second × damage per hit).  
-**sqrt(EHP)** = square root of effective physical HP.
+**Offense × AS** = raw DPS at 0 armor.  
+**sqrt(EHP)** = square root of effective physical HP (reduces tank weight to reflect team-fight realism).
 
 > CRIT, traits, shields, omnivamp, Striker stacks excluded — base stats only.
 
-### Target score bands by tier
+### Target Score Bands (by cost tier, unified across roles)
 
-| Tier  | Tank     | Carry    | Support  |
-|-------|----------|----------|----------|
-| 1c    | 25 – 40  | 40 – 60  | —        |
-| 2c    | —        | 65 – 95  | 50 – 70  |
-| 3c    | 80 – 130 | —        | 85 – 125 |
-| 4c    | —        | 140 – 220| —        |
-| 5c    | 260 – 400| —        | —        |
+| Tier | Score range |
+|---|---|
+| 1c | 900 – 1100 |
+| 2c | 950 – 1450 |
+| 3c | 1200 – 1350 |
+| 4c | ~2200 |
+| 5c | ~2100 |
 
-### Current scores (as of last balance pass)
+### Current Scores (TFT-aligned roster)
 
 | Champion | Cost | Role | Score | In band? |
 |---|---|---|---|---|
-| Ironclad | 1c | Tank | 29.6 | ✅ |
-| Bloodhound | 1c | Carry | 50.9 | ✅ |
-| Pyromancer | 1c | Carry | 44.0 | ✅ |
-| Windrunner | 2c | Carry | 74.5 | ✅ |
-| Grove Keeper | 2c | Support | 59.8 | ✅ |
-| Shadowblade | 2c | Carry | 110.5 | ❌ target 65–95 |
-| Phalanx | 3c | Tank | 45.4 | ❌ target 80–130 |
-| Stormbringer | 3c | Support | 100.3 | ✅ |
-| Phantom Assassin | 4c | Carry | 167.4 | ✅ |
-| Dread Overlord | 5c | Tank | 101.7 | ❌ target 260–400 |
+| Ironclad | 1c | Tank | 921 | ✅ |
+| Bloodhound | 1c | Carry | 1010 | ✅ |
+| Pyromancer | 1c | Carry | 964 | ✅ |
+| Windrunner | 2c | Carry | 1393 | ✅ |
+| Grove Keeper | 2c | Support | 979 | ✅ |
+| Shadowblade | 2c | Carry | 1391 | ✅ |
+| Phalanx | 3c | Tank | 1244 | ✅ |
+| Stormbringer | 3c | Support | 1345 | ✅ |
+| Phantom Assassin | 4c | Carry | 2246 | ✅ |
+| Dread Overlord | 5c | Tank | 2080 | ✅ |
 
 ---
 
@@ -124,7 +136,7 @@ Offense = MG   (Elementalists and Supports where MG > ATK)
 Runs 200 1v1 battles for all 10×10 champion pairs, synchronous (no coroutines).
 Prints a win-rate matrix and flags matchups outside the expected band.
 
-### Expected win-rate bands
+### Expected Win-Rate Bands
 
 | Cost difference | Expected win % for the higher-cost unit |
 |---|---|
@@ -135,12 +147,13 @@ Prints a win-rate matrix and flags matchups outside the expected band.
 
 > Units at the same cost tier should win ~45–55% of their mirror matchup.
 
-### Simulation rules
+### Simulation Rules
 
-- Base stats only (no traits, no shields, no Striker stacks, no omnivamp)
+- Base stats only (no traits, no shields, no Striker stacks, no mana/abilities)
 - `IncludeCrit = false` by default — set to `true` to check CRIT variance impact
 - Movement ignored — both units start in range (pure 1v1 DPS race)
-- Timeout at 200 ticks: winner is the unit with more HP remaining
+- Float accumulator mirrors the resolver exactly
+- Timeout at 1200 ticks: winner is the unit with more HP remaining
 
 ---
 
@@ -160,5 +173,5 @@ When adding or tuning a champion:
 | This doc references | Target | Nature |
 |---|---|---|
 | Champion stats | `TraitSystem.md` | Source of truth for all HP/ATK/DEF/MG/MR/AS/CRIT/Range values |
-| AS formula | `AutoBattleResolver.md` | Action Interval section |
+| AS accumulator | `AutoBattleResolver.cs` | `ActionProgress` field, BattleLoop accumulation block |
 | Simulation tool | `Assets/Editor/BalanceValidator.cs` | Implementation |

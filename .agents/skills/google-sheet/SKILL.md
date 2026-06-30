@@ -1,14 +1,14 @@
 ---
 name: google-sheet
-description: Read and write data to/from the Custom Auto-Battler Google Sheet.
+description: Read and write data to/from the Custom Auto-Battler Google Sheet using the background sheet_sync.py script.
 ---
 
-# Google Sheet Sync Skill
+# Google Sheet Sync Skill (Background API)
 
-This skill allows the agent to read and write to the Custom Auto-Battler Google Sheet in the background.
+This skill allows the agent to read and write to the Custom Auto-Battler Google Sheet directly in the background using the [sheet_sync.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/sheet_sync.py) command-line utility. This avoids launching a browser and interrupting the user.
 
 ## Purpose of the Google Sheet
-This Google Sheet acts as the **design database** for the game. It is used by designers to balance the game and contains the source of truth for:
+This Google Sheet acts as the **design database** for the game. It contains the source of truth for:
 * **Heroes**: All 10 champions, their costs, classes, origins, roles, and combat logic.
 * **Origins (Vertical Classes)**: Vanguard, Striker, Elementalist, and Ranger breakpoints and effects.
 * **Classes (Horizontal Classes)**: Kinetic, Dreadknight, Warden, and Trickster breakpoints and effects.
@@ -16,21 +16,41 @@ This Google Sheet acts as the **design database** for the game. It is used by de
 
 The code in [ChampionRoster.cs](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/Assets/Scripts/Battle/Traits/ChampionRoster.cs) and [TraitSystem.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/production/gdd/TraitSystem.md) must remain in sync with this sheet.
 
-## Sheet URL
-[Custom Auto-Battler Google Sheet](https://docs.google.com/spreadsheets/d/1lz_WS8Vw0YjfmNZLI3JmRArfFBU2sPAk2qAG8AKN3jg/edit?usp=sharing)
+## Credentials
+The credentials for this connection are stored in the root credential file [google-service-credential.json](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/google-service-credential.json).
 
 ## Steps to Read the Sheet
-1. Spawn a `browser_subagent` task to navigate to the Google Sheet URL.
-2. Wait for the page and spreadsheet interface to load.
-3. Access specific tabs:
-   * **Heroes**: Click tab pixel or select from "All sheets" menu.
-   * **Origin**: Click tab pixel or select from "All sheets" menu.
-   * **Class**: Click tab pixel or select from "All sheets" menu.
-   * **Dashboard**: Click tab pixel or select from "All sheets" menu.
-4. Read table cells from the DOM or screenshots and return them.
+To fetch data from any tab in the spreadsheet, use the `run_command` tool to execute `sheet_sync.py` in the workspace root.
+
+* **Format as Table (Human-Readable):**
+  ```bash
+  python sheet_sync.py read <TabName>
+  ```
+* **Format as JSON (For parsing):**
+  ```bash
+  python sheet_sync.py read <TabName> --format json
+  ```
+* **Format as CSV:**
+  ```bash
+  python sheet_sync.py read <TabName> --format csv
+  ```
+
+*Available TabNames: `Heroes`, `Origin`, `Class`, `Dashboard`.*
 
 ## Steps to Write to the Sheet
-1. Navigate to the desired tab.
-2. Select the cell by clicking its coordinates or targeting it in the grid.
-3. Simulate typing the new value.
-4. Verify that Google Sheets displays "Saved to Drive" in the header status bar before closing.
+To update a cell in the spreadsheet, run the script's `write` command:
+
+```bash
+python sheet_sync.py write <TabName> <Cell> "<Value>"
+```
+*Example:*
+```bash
+python sheet_sync.py write Heroes B2 "Ironclad"
+```
+
+## Steps to Dump All Sheet Content
+To download all data from the spreadsheet into a single local JSON file (`sheet_dump.json`):
+
+```bash
+python sheet_sync.py dump
+```

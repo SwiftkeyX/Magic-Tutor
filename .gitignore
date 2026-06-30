@@ -5,6 +5,8 @@ Thumbs.db
 .env
 *.pem
 .gh-token
+google-service-credential.json
+sheet_dump.json
 
 # Unity generated folders
 [Ll]ibrary/
