@@ -28,7 +28,15 @@ namespace MagicSchool.Battle
         private void Awake()
         {
             _sprite = GetComponent<SpriteRenderer>();
+
+            if (GetComponent<Collider2D>() == null)
+            {
+                var col = gameObject.AddComponent<BoxCollider2D>();
+                col.size = new Vector2(0.9f, 0.9f);
+            }
         }
+
+        private void OnMouseDown() => HeroSelection.Select(CombatantId);
 
         public void Init(string combatantId, HexCoord startCell)
         {

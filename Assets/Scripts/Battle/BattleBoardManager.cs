@@ -520,7 +520,7 @@ namespace MagicSchool.Battle
 
     // ── Drag helper component ─────────────────────────────────────────────────
     [RequireComponent(typeof(Image))]
-    internal class BenchCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    internal class BenchCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
     {
         private string             _studentId;
         private BattleBoardManager _board;
@@ -534,5 +534,6 @@ namespace MagicSchool.Battle
         public void OnBeginDrag(PointerEventData e) => _board.OnCardDragStart(_studentId, gameObject);
         public void OnDrag(PointerEventData e)      => _board.OnCardDrag(e.position);
         public void OnEndDrag(PointerEventData e)   => _board.OnCardDragEnd(e.position);
+        public void OnPointerClick(PointerEventData e) => HeroSelection.Select(_studentId);
     }
 }

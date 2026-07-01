@@ -60,6 +60,22 @@ Each card (one per combatant) displays:
 - Active flag icons (e.g., fire icon for `AOEAttack`, skull for `FirstHitDouble`)
 - Defeat animation slot (plays on `OnCombatantDefeated`)
 
+### Hero Info Panel (Pre-Battle / In-Battle Inspector)
+
+A right-docked panel that shows a single selected hero's stats, skill, and traits. Implemented as its own script, `HeroInfoPanel.cs` — not part of the future `BattleHUD.cs` monolith — because it must be usable during Placement Phase (before any `AutoBattleResolver` events exist), not only during the battle-watching phase this doc otherwise covers.
+
+**Trigger**: clicking a bench card (Placement Phase) or a placed `BattleUnit` on the board (either phase) selects that hero. There is no hover trigger. Clicking a different hero swaps the panel's content; there is no close/dismiss button in this pass — the panel simply holds the last-selected hero's info.
+
+**Fields shown**:
+- Header: `DisplayName`, `Role`, `Cost`
+- Stats: `MaxHP, ATK, DEF, MG, MR, AttackSpeed, CRIT, Range, MaxMana, StartingMana` — read directly from `ChampionData`
+- Skill: the hero's `BattleBehaviorFlag`(s), each rendered through a static one-line description (e.g. "Magic Attack — uses MG/MR instead of ATK/DEF"). Empty list → "No active skill". **This is a placeholder mapping, not a real Skill/Ability system** — no dedicated Skill data model exists yet (`MaxMana`/`StartingMana` on `ChampionData` hint at one for the future, but it isn't designed). Do not treat this section as a spec for a future ability system.
+- Traits: `VerticalTrait` and `HorizontalTrait` (skipped if `None`), each shown with its live count and active-breakpoint status pulled from `TraitTracker`
+
+**Explicitly out of scope for this pass**: enemy units (the panel only inspects the player's own heroes — enemies are a separate future concern once `EnemyDatabase` per `EnemyDatabase.md` is real), and any close/dismiss control.
+
+**Architecture — decoupled from `BattleBoardManager`, like `TraitHUDController`**: `HeroInfoPanel` is never referenced by `BattleBoardManager`, and never references it back — consistent with this doc's existing peer relationship with `BattleBoardManager` (see Interactions below) and with `best-practices.md`'s "Game systems never reference HUDs" rule. Selection travels through a small static event class, `HeroSelection` (`OnHeroSelected(string championId)` / `Select(string championId)`), which `BenchCardDrag` and `BattleUnit` call into directly on click. `HeroInfoPanel` subscribes to `HeroSelection.OnHeroSelected` in `OnEnable`/unsubscribes in `OnDisable`, then resolves the `ChampionData` itself via its own `ChampionRoster` reference and reads trait progress via its own `TraitTracker` reference — the same self-sufficient pattern `TraitHUDController` already uses for `TraitTracker`. `HeroSelection` is a lightweight decoupling utility, not a new game system.
+
 ### Damage Number Variants
 
 | Damage Type | Color | Size Modifier |
@@ -77,6 +93,9 @@ Each card (one per combatant) displays:
 | `BattleBoardManager` | BattleHUD overlays HP bars and damage numbers over the hex board; BattleHUD does NOT own the board — it is a peer that shares `AutoBattleResolver` events |
 | `InputHandler` | Subscribes to `OnSpeedUpStarted` / `OnSpeedUpCancelled` to toggle the speed indicator UI |
 | `RunManager` | "Continue" button on outcome screen calls `RunManager` to advance phase (read-only access to confirm battle is done) |
+| `HeroInfoPanel` → `ChampionRoster` | `HeroInfoPanel` reads `ChampionData` directly via `ChampionRoster.GetChampionById()` — same self-sufficient read pattern as `TraitHUDController` → `TraitTracker` |
+| `HeroInfoPanel` → `TraitTracker` | Reads `GetTraitCounts()` / `GetActiveBreakpoints()` to show the selected hero's live trait progress |
+| `BenchCardDrag` / `BattleUnit` → `HeroSelection` (static event) | Both call `HeroSelection.Select(championId)` on click; `HeroInfoPanel` subscribes to `HeroSelection.OnHeroSelected` — no direct reference between `BattleBoardManager` and `HeroInfoPanel` in either direction |
 
 ---
 
@@ -200,6 +219,7 @@ hpBarFill = currentHP / maxHP   (clamped 0–1, computed in UI Toolkit binding)
 | Speed-up indicator (">> FAST") | Top-right corner | On `OnSpeedUpStarted` / `OnSpeedUpCancelled` | When held |
 | Outcome overlay (Victory / Defeated) | Full-screen overlay | On `OnBattleComplete` | After battle |
 | "Continue" button | Outcome overlay footer | On `OnBattleComplete` | After battle |
+| Hero Info Panel (stats/skill/traits) | Right-docked panel | On `HeroSelection.OnHeroSelected` | Placement Phase and during battle |
 
 ---
 
@@ -213,6 +233,8 @@ hpBarFill = currentHP / maxHP   (clamped 0–1, computed in UI Toolkit binding)
 | `DamageType.Physical` / `DamageType.Magic` | `TraitSystem.md` | `DamageType` enum | Data dependency |
 | `InputHandler.OnSpeedUpStarted` | `InputHandler.md` | Speed-up event | Rule dependency |
 | HUDs are read/listen only | `best-practices.md` | "HUDs are read/listen only" rule | Rule dependency |
+| `ChampionData`, `ChampionRoster` | `BattleBoardManager.md` | Champion stat/trait data source | Data dependency |
+| `TraitTracker.GetTraitCounts()` / `GetActiveBreakpoints()` | `TraitSystem.md` | Live trait progress | Data dependency |
 
 ---
 
@@ -227,6 +249,9 @@ hpBarFill = currentHP / maxHP   (clamped 0–1, computed in UI Toolkit binding)
 - [ ] Speed-up indicator appears within 1 frame of `OnSpeedUpStarted`
 - [ ] No `FindObjectOfType` in `BattleHUD.cs`
 - [ ] No direct reads from `StudentRoster` or `EnemyDatabase` after initialization
+- [ ] Clicking a bench card or a placed `BattleUnit` shows that hero's stats, skill (from `BattleBehaviorFlag`s), and trait progress in the Hero Info Panel
+- [ ] `HeroInfoPanel` holds no reference to `BattleBoardManager` and is held by no reference from it — selection travels only through the `HeroSelection` static event
+- [ ] Clicking an enemy unit does not open the Hero Info Panel
 
 ---
 

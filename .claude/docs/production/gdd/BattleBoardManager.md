@@ -67,7 +67,7 @@ Enemy positions mirror these: enemy "Front Line" is row 7 (closest to player sid
    - `OnCombatantActed(actorId, targetId, ...)` → call `BattleUnit.PlayAttackAnim(targetTileWorldPos)`.
    - `OnCombatantDefeated(id)` → call `BattleUnit.PlayDeathAnim()` then `Destroy(go)`.
 4. BattleBoardManager **never calls `Resolve()`** — that is RunManager's responsibility.
-5. BattleBoardManager **never reads student stats** — it only reads IDs and display names from snapshots.
+5. BattleBoardManager may read `ChampionData` via `ChampionRoster` for trait bookkeeping only — registering/unregistering placements with `TraitTracker` (`RegisterPlacement`/`UnregisterPlacement`) and applying trait bonuses via `TraitEffectApplier` before battle start. It must still **never read `StudentRoster` or `EnemyDatabase` directly**, and it does not itself own or render any stat-display UI — that's `HeroInfoPanel`'s job (see `BattleHUD.md`), which resolves `ChampionData` independently and is never referenced by BattleBoardManager.
 
 ### States
 
@@ -138,6 +138,8 @@ y = row * HEX_HEIGHT
 |---|---|---|
 | `AutoBattleResolver` | This depends on it | Reads snapshots; subscribes to movement/action/defeat/complete events; calls `SetUnitPositions()` |
 | `HexGrid` | This depends on it | Grid adjacency, distance, BFS pathing |
+| `ChampionRoster` | This depends on it | Reads `ChampionData` for trait bookkeeping only (see Core Rule 5) — not for any UI display |
+| `TraitTracker` | This depends on it | Registers/unregisters placements so trait breakpoints stay current |
 
 ---
 
