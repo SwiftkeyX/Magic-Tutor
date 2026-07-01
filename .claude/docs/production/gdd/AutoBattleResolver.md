@@ -1,20 +1,20 @@
 # AutoBattleResolver
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
+> **Last Updated**: 2026-06-30
 > **Implements Pillar**: Empowering — the payoff moment; the player watches the team they built and trained dismantle the enemy
 
 ## Summary
 
-AutoBattleResolver runs a tick-based combat simulation between the trained student team and the year's enemy squad. It runs as a coroutine with configurable tick delays (so the player can watch the battle unfold), fires per-tick events for BattleHUD to animate, and fires `OnBattleComplete(BattleResult)` when the fight ends. No player input occurs during battle. It reads student stats from StudentRoster (already modified by `TraitSystem.ResolveBattleBuffs()`), enemy data from EnemyDatabase, and behavior flags from TraitSystem.
+AutoBattleResolver runs a tick-based combat simulation between the placed champion team and the enemy squad. It runs as a coroutine with configurable tick delays (so the player can watch the battle unfold), fires per-tick events for BattleBoardManager and BattleHUD to animate, and fires `OnBattleComplete(BattleResult)` when the fight ends. No player input occurs during battle. It receives pre-applied trait stat bonuses via `ApplyPreBattleTraitModifiers()` (called by `TraitEffectApplier` before `BeginBattle()`), and resolves all trait combat mechanics (shields, omnivamp, stacks, dashes, DoTs, explosions, mana) during the tick loop.
 
-> **Quick reference** — Layer: `Core` · Priority: `MVP` · Key deps: `TraitSystem, EnemyDatabase`
+> **Quick reference** — Layer: `Core` · Priority: `MVP` · Key deps: `TraitSystem (via TraitEffectApplier), BattleBoardManager`
 
 ---
 
 ## Overview
 
-AutoBattleResolver is a MonoBehaviour in the Battle scene. RunManager calls `Resolve()` after `TraitSystem.ResolveBattleBuffs()` completes. `Resolve()` is a coroutine: each tick it advances all combatants' action timers, resolves actions for any unit whose timer hits zero (in Speed order), applies damage and behavior flags, removes defeated units, and checks the win condition. Between ticks it yields for `TickDelay` seconds (default 0.5s) so the player can see each step. When `OnSpeedUpStarted` fires from InputHandler, `TickDelay` is reduced to `FastTickDelay` (default 0.05s). When the fight resolves, `OnBattleComplete(BattleResult)` fires and the coroutine ends.
+AutoBattleResolver is a MonoBehaviour in the Battle scene. In the **Prototype phase**, `BattleBoardManager` calls `ApplyPreBattleTraitModifiers()`, then `BeginBattle()` — there is no RunManager. `BeginBattle()` starts the coroutine: each tick it runs 6 pre-action phases (DoT, Dreadknight shield check, Trickster dash trigger, untargetable countdown, Kinetic mana tick, bonus actions), then the standard action-timer loop (decrement → find ready actors → attack or move → win check). Between ticks it yields for `TickDelay` seconds (default 0.6s). When the fight resolves, `OnBattleComplete(BattleResult)` fires and the coroutine ends.
 
 ## Player Fantasy
 
@@ -30,24 +30,65 @@ AutoBattleResolver builds this from StudentData/EnemyData at the start of `Resol
 
 ```csharp
 class BattleCombatant {
-    string Id;                         // matches StudentId or EnemyId
+    // --- Core identity ---
+    string Id;                              // matches ChampionData.Id or EnemyId
     string DisplayName;
-    bool IsStudent;                    // false = enemy unit
+    bool   IsPlayer;                        // false = enemy unit
+    ChampionRole Role;                      // Tank / Carry / Support
+    bool   IsFrontRow;                      // player row >= 2
+
+    // --- Base stats ---
     int MaxHP;
     int CurrentHP;
-    int ATK;                           // physical attack damage
-    int DEF;                           // armor — reduces incoming physical damage
-    int MG;                            // magic power — used when a flag specifies magic damage
-    int MR;                            // magic resistance — reduces incoming magic damage
-    int SPD;                           // speed — determines ActionInterval
-    int CRIT;                          // critical strike chance (0–100 integer %)
-    int Range;                         // attack range in hex distance (1 = melee, 2 = ranged)
-    HexCoord Position;                 // current cell on the full 8×7 board
-    int ActionTimer;                   // ticks remaining until this unit acts; initialized to ActionInterval
-    int ActionInterval;                // = max(1, BaseActionInterval - SPD)
-    List<BattleBehaviorFlag> Flags;    // from TraitSystem (students) or EnemyDatabase (enemies)
-    bool HasActedThisBattle;           // used by FirstHitDouble flag
+    int ATK;                                // physical attack damage
+    int DEF;                                // armor — reduces incoming physical damage
+    int MG;                                 // magic power — used when MagicAttack flag active
+    int MR;                                 // magic resistance — reduces incoming magic damage
+    int SPD;                                // speed — determines ActionInterval
+    int CRIT;                               // critical strike chance (0–100 integer %)
+    int Range;                              // attack range in hex distance (1 = melee, 2+ = ranged)
+    HexCoord Position;                      // current cell
+    int ActionTimer;                        // ticks until next action; initialized to ActionInterval
+    int ActionInterval;                     // = max(1, BaseActionInterval - SPD)
+    List<BattleBehaviorFlag> Flags;         // MagicAttack (and future flags)
+    bool HasActedThisBattle;                // FirstHitDouble guard
     bool IsDefeated => CurrentHP <= 0;
+
+    // --- Shield (Warden / Dreadknight 4) ---
+    int  Shield;                            // absorbs damage before HP; set pre-battle by Warden trait
+
+    // --- Omnivamp (Dreadknight) ---
+    float OmnivampPct;                      // % of damage dealt healed to attacker
+    bool  DreadknightShieldEnabled;         // BP4: trigger low-HP shield
+    bool  DreadknightShieldGranted;         // one-time guard per combat
+
+    // --- Striker stacks ---
+    int   StrikerStacks;                    // current stack count (0–8)
+    float StrikerPctPerStack;               // 0 = trait not active on this unit
+    bool  StrikerBypassArmor;               // BP8: attacks ignore 40% of DEF
+    bool  StrikerMaxStackSpeedBonus;        // BP6 + Carry: ActionInterval −30% at max stacks
+
+    // --- Mana (Kinetic) ---
+    int   Mana;                             // current mana; bonus attack at 100
+
+    // --- Trickster ---
+    bool  TricksterDashEnabled;             // BP2
+    bool  TricksterBleedEnabled;            // BP4
+    bool  TricksterDashTriggered;           // one-time per combat
+    bool  TricksterUntargetable;            // true during 2-tick post-dash window
+    int   TricksterUntargetableTicks;       // countdown
+    bool  TricksterBleedNextAttack;         // next attack applies bleed
+
+    // --- Bleed DoT (lives on the victim) ---
+    int   BleedDamagePerTick;
+    int   BleedTicksRemaining;
+
+    // --- Elementalist ---
+    float ElementalistExplosionPct;         // 0 = not active; 0.10 (BP6) or 0.20 (BP8)
+    bool  ElementalistTrueDamage;           // BP8: explosion ignores MR
+
+    // --- Ranger ---
+    float RangerBonusDmgPerHex;             // 0 = not active; 0.05 (BP4) or 0.12 (BP6)
 }
 ```
 
@@ -81,33 +122,92 @@ struct BattleResult {
 13. **Timeout**: if `TicksElapsed ≥ MaxBattleTicks` and no win condition is met, the battle times out. Outcome: if more students are alive than enemies (by count), students win; otherwise students lose. `BattleResult.TimedOut = true`.
 14. **`OnBattleComplete`** fires once, after the coroutine resolves. RunManager subscribes to it to advance the phase.
 
+### Pre-Battle API
+
+**`ApplyPreBattleTraitModifiers(perUnitMods, globalSettings)`** — called by `TraitEffectApplier` before `BeginBattle()`. Applies all trait-derived stat deltas (DEF, MR, MG, Range, Shield, Mana, ActionInterval) and sets all runtime flags (OmnivampPct, StrikerPctPerStack, TricksterDashEnabled, etc.) on the Combatant objects. Logs an error and no-ops if called after battle has started.
+
 ### Battle Simulation Flow
 
 ```
-Resolve() coroutine:
-  1. Guard: check CurrentPhase == Battle
-  2. Build BattleCombatant list from StudentRoster + EnemyDatabase
-  3. Apply BattleBehaviorFlags from TraitSystem.GetActiveBattleBehaviors()
-  4. Initialize ActionTimers to each unit's ActionInterval
-  5. Apply positions from SetUnitPositions() (player-side); auto-place enemies on their front row
-  6. TICK LOOP:
-     a. Decrement all ActionTimers by 1
-     b. Collect units with ActionTimer == 0, sort by Speed DESC
-     c. For each acting unit:
-        i.  Find nearest enemy in range (HexGrid.Distance <= unit.Range)
-        ii. If enemy in range → compute + apply damage (base + behavior flags)
-                               → fire OnCombatantActed
-                               → if target defeated: mark, fire OnCombatantDefeated
-                               → reset ActionTimer to ActionInterval
-        iii.If no enemy in range → move one hex toward nearest enemy (BFS next step)
-                                 → fire OnCombatantMoved(id, from, to)
-                                 → do NOT reset ActionTimer (movement doesn't consume action slot)
-     d. Check win condition → if met, break loop
-     e. TicksElapsed++
-     f. If TicksElapsed >= MaxBattleTicks → timeout, determine outcome, break
-     g. yield return new WaitForSeconds(TickDelay)   ← observes _currentTickDelay
-  7. Fire OnBattleComplete(BattleResult)
+BeginBattle():
+  1. Apply player positions from SetUnitPositions(); auto-place enemies on enemy front row
+  2. Start BattleLoop coroutine
+
+BattleLoop coroutine per tick:
+  --- Pre-action phases (run before timer decrement) ---
+  Phase 1 — Bleed DoT:
+    For each combatant with BleedTicksRemaining > 0:
+      ApplyDamage(target, BleedDamagePerTick)  [bypasses mitigation — true DoT]
+      BleedTicksRemaining--
+      if IsDefeated → HandleKill(null, target)
+
+  Phase 2 — Dreadknight low-HP shield:
+    For each combatant with DreadknightShieldEnabled and !DreadknightShieldGranted:
+      if CurrentHP < 40% MaxHP → Shield += 25% MaxHP; DreadknightShieldGranted = true
+
+  Phase 3 — Trickster dash trigger:
+    For each combatant with TricksterDashEnabled and !TricksterDashTriggered:
+      if CurrentHP < 50% MaxHP → ExecuteTricksterDash(c)
+
+  Phase 4 — Untargetable countdown:
+    For each combatant with TricksterUntargetable:
+      TricksterUntargetableTicks--
+      if TricksterUntargetableTicks <= 0 → TricksterUntargetable = false
+
+  Phase 5 — Kinetic mana tick (every 5 ticks):
+    For each living player combatant:
+      Mana += KineticManaPerInterval (+ 10 if Support and KineticSupportExtraBonus)
+      if Mana >= 100 → Mana -= 100; add to pendingBonusActions
+
+  Phase 6 — Kinetic bonus actions:
+    For each unit in pendingBonusActions:
+      if not defeated: find target in range → Attack(); else skip
+    Clear pendingBonusActions
+
+  --- Standard action loop ---
+  a. Decrement all ActionTimers by 1
+  b. Collect units with ActionTimer <= 0, sort by SPD DESC
+  c. For each acting unit:
+     i.  Skip untargetable check on potential targets (FindInRange filters TricksterUntargetable)
+     ii. Find nearest enemy in range (HexGrid.Distance <= unit.Range)
+     iii.If enemy in range → Attack(actor, target)
+                           → fire OnCombatantActed
+                           → if target defeated: HandleKill(actor, target)
+                           → reset ActionTimer to ActionInterval
+                             (if Striker max-stacks + Carry: ActionInterval × 0.70 this reset)
+     iv. If no enemy in range → move one hex toward nearest enemy (BFS next step)
+                              → fire OnCombatantMoved(id, from, to)
+                              → do NOT reset ActionTimer
+  d. Check win condition → if met, break loop
+  e. TicksElapsed++
+  f. If TicksElapsed >= MaxBattleTicks → timeout, determine outcome, break
+  g. yield return new WaitForSeconds(TickDelay)
+  Fire OnBattleComplete(BattleResult)
 ```
+
+### New Methods
+
+**`Attack(actor, target)`** — full attack resolution:
+1. Determine type: `MagicAttack` flag → use MG vs MR; else ATK vs DEF
+2. Apply Striker stack multiplier to rawOffense; if `StrikerBypassArmor`: `effectiveDEF = DEF × 0.6`
+3. Apply Ranger per-hex bonus: `damage × (1 + RangerBonusDmgPerHex × hexDistance)` (physical only)
+4. Apply base LoL formula: `Max(1, floor(rawOffense × 100 / (100 + effectiveDEF)))`
+5. Increment Striker stacks (after calc, before applying damage)
+6. Apply shield: `shieldAbsorbed = Min(Shield, damage); Shield -= absorbed; damage -= absorbed`
+7. Apply HP damage: `target.CurrentHP -= damage`
+8. Apply Omnivamp: `actor.CurrentHP = Min(MaxHP, CurrentHP + floor((damage+absorbed) × OmnivampPct))`
+9. Trickster bleed trigger: if `TricksterBleedNextAttack` → set bleed on target; clear flag
+10. If `target.IsDefeated` → `HandleKill(actor, target)`
+
+**`HandleKill(actor, target)`** — clears grid occupant, fires `OnCombatantDefeated`, triggers `TriggerElementalistExplosion` if actor has `ElementalistExplosionPct > 0`. `actor` may be null (DoT kill) — no explosion for DoT kills.
+
+**`TriggerElementalistExplosion(actor, killed)`** — deals explosion damage to all adjacent enemy hexes. BP8: true damage (no MR), chains on secondary kills (one level of chaining only).
+
+**`ExecuteTricksterDash(combatant)`** — sets `TricksterDashTriggered = true`, `TricksterUntargetable = true`, `TricksterUntargetableTicks = 2`, `TricksterBleedNextAttack = TricksterBleedEnabled`. Finds the furthest enemy backliner, teleports to an adjacent unoccupied hex, fires `OnCombatantMoved`.
+
+**`ApplyDamage(target, damage)`** — shared helper: absorbs shield first, then HP. Used by DoT and explosion to avoid duplicating shield logic.
+
+**`FindInRange(actor, opponents)`** — filters out `TricksterUntargetable` units before range check.
 
 ### Speed-Up Mode
 
@@ -124,6 +224,10 @@ When RunManager calls `Pause()`, AutoBattleResolver sets `_paused = true`. The c
 ### SetUnitPositions (pre-battle injection)
 
 `void SetUnitPositions(Dictionary<string, HexCoord> placements)` — called by `BattleBoardManager` after the player confirms placement. Injects the player's chosen positions into the simulation before `Resolve()` is called. Enemy positions are auto-assigned: enemies fill row 4 of the enemy side (staggered left-to-right by insertion order). Must be called before `Resolve()`; calling it after logs an error and no-ops.
+
+### GetCombatantSnapshots (bench population API)
+
+`List<CombatantSnapshot> GetCombatantSnapshots()` — returns a read-only list of all combatants as lightweight snapshots. Each `CombatantSnapshot` carries: `id`, `displayName`, `isStudent`, `maxHP`, `currentHP`. Called by `BattleBoardManager` during Placement Phase to populate the bench panel without reading `StudentRoster` or `EnemyDatabase` directly. Before `Resolve()` is called the list reflects the full pre-battle roster; once the simulation is running it reflects live battle state (HP updates as combatants take damage). `CombatantSnapshot` is defined in `BattleData.cs`.
 
 ### Per-Tick Events (for BattleHUD and BattleBoardManager)
 
@@ -145,12 +249,12 @@ event Action<BattleResult>
 
 | System | Interaction |
 |---|---|
-| `RunManager` | Calls `Resolve()` after `TraitSystem.ResolveBattleBuffs()`; subscribes to `OnBattleComplete` to advance phase |
-| `TraitSystem` | Reads modified student stats from StudentData (already applied by `ResolveBattleBuffs()`); reads `GetActiveBattleBehaviors(studentId)` for behavior flags |
-| `EnemyDatabase` | Reads `GetEnemiesForYear(currentYear)` to build enemy combatants |
-| `InputHandler` | Subscribes to `OnSpeedUpStarted` / `OnSpeedUpCancelled` to toggle `_currentTickDelay` |
+| `BattleBoardManager` | Calls `SetUnitPositions()` then `ApplyPreBattleTraitModifiers()` then `BeginBattle()`; subscribes to all events for visual updates |
+| `TraitEffectApplier` | Calls `ApplyPreBattleTraitModifiers(perUnitMods, globalSettings)` — sole writer of trait-derived Combatant fields |
+| `ChampionRoster` | Provides champion stat data via `GetStudents()` in the lazy-init path (replaces `StudentRosterStub`) |
+| `EnemyDatabaseStub` | Provides enemy data until Phase 2 `EnemyDatabase` is built |
 | `BattleHUD` | Subscribes to `OnCombatantActed`, `OnCombatantDefeated`, `OnBattleComplete` for animation |
-| `StudentRoster` | Reads `GetAll()` at the start of `Resolve()` — never writes |
+| `HexGrid` | Queried for occupancy during movement and Trickster dash; `GetInRange` used for Elementalist explosion |
 
 ---
 
@@ -159,15 +263,20 @@ event Action<BattleResult>
 ### Action Interval
 
 ```
-ActionInterval = max(1, BaseActionInterval - combatant.SPD)
+ActionInterval = max(2, round(1.0 / (combatant.AttackSpeed × TickDelay)))
+// TickDelay = 0.6f (seconds per tick, constant in AutoBattleResolver)
 ```
 
 | Variable | Type | Range | Source | Description |
 |---|---|---|---|---|
-| `BaseActionInterval` | int | 10–15 | `BattleConfig` ScriptableObject | Ticks at SPD 0; higher = slower combat pace |
-| `combatant.SPD` | int | 1–∞ | StudentData / EnemyData | Higher = shorter interval = more frequent actions |
+| `combatant.AttackSpeed` | float | 0.1–2.0 | `ChampionData` / `EnemyData` | Attacks per second. Linear scale: doubling AS doubles frequency. |
+| `TickDelay` | float | 0.6 | `AutoBattleResolver` constant | Seconds per simulation tick |
 
-**Expected output**: SPD 3 → interval 7; SPD 8 → interval 2; SPD 10 → interval 1 (minimum).
+**Expected output**: AS 0.21 → interval 8; AS 0.33 → interval 5; AS 0.56 → interval 3 (minimum 2).
+
+**Trait speed bonuses** multiply `AttackSpeed` directly (e.g. ×1.176 for Ranger), then re-derive interval. This keeps trait scaling linear and equal across all units regardless of base speed.
+
+> **Why not `BaseActionInterval − SPD`?** The old subtraction formula was non-linear: going from SPD 6→7 gave +33% more attacks, while SPD 2→3 gave only +14%. The same +1 stat had 2.4× more impact at the high end. The AS formula eliminates this imbalance. See `.claude/docs/other/balance-framework.md` for the full derivation.
 
 ### Physical Damage Calculation (default)
 

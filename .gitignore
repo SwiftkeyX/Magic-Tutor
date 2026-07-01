@@ -5,6 +5,12 @@ Thumbs.db
 .env
 *.pem
 .gh-token
+google-service-credential.json
+sheet_dump.json
+
+# Duplicate scene guard — correct path is Assets/Scenes/Battle.unity
+Assets/Battle.unity
+Assets/Battle.unity.meta
 
 # Unity generated folders
 [Ll]ibrary/

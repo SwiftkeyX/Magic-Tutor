@@ -10,6 +10,17 @@
 - [x] Fill out `docs/preproduction/best-practices.md` — add project-critical patterns section
 - [x] Milestone 0 — vision complete, all systems tiered, architecture and tech stack finalized
 
+## Prototype — Playable Proof of Concept
+
+Rapid prototype on feature branches to validate the core loop before committing to full GDD-gated production. Each milestone ships independently.
+
+- [x] **Milestone 1 — Battle Grid** — hex board, drag-drop placement, AutoBattleResolver tick simulation, VICTORY/DEFEAT overlay (`feat/battle-grid-milestone1`)
+- [ ] **Milestone 2 — Trait System** — 4 traits wired into AutoBattleResolver (MG/MR/CRIT/Flags); requires deep research first
+- [ ] **Milestone 3 — Training System** — deferred; design TBD
+- [ ] **Prototype Exit** — all 3 milestones playable; core loop validated → Phase 2 unlocks
+
+---
+
 ## Phase 2 — Production
 
 ### Sub-phase A — Design (GDDs)
@@ -23,9 +34,9 @@
 #### Tier 2 — Core Loop GDDs
 - [ ] Design `RunManager`
 - [ ] Design `StudentRoster`
-- [ ] Design `TrainingSystem`
-- [ ] Design `TraitSystem`
-- [ ] Design `AutoBattleResolver`
+- [ ] Design `TrainingSystem` _(retroactive — document what was built in Prototype)_
+- [ ] Design `TraitSystem` _(retroactive — document what was built in Prototype)_
+- [ ] Design `AutoBattleResolver` _(retroactive — document what was built in Prototype)_
 - [ ] Design `EnemyDatabase`
 - [ ] Design `PromotionSystem`
 - [ ] Design `TeacherRoster`
@@ -50,11 +61,11 @@
 - [ ] 🧪 Test Gate 1 — Foundation wired; game launches, Bootstrap scene loads, no console errors
 
 #### Tier 2 — Core Loop
+
+> `AutoBattleResolver`, `TraitSystem`, and `TrainingSystem` were built during the Prototype phase. Their GDDs (Sub-phase A) must be written before the Architecture pass.
+
 - [ ] Code `RunManager`
 - [ ] Code `StudentRoster`
-- [ ] Code `TrainingSystem`
-- [ ] Code `TraitSystem`
-- [ ] Code `AutoBattleResolver`
 - [ ] Code `EnemyDatabase`
 - [ ] Code `PromotionSystem`
 - [ ] Code `TeacherRoster`

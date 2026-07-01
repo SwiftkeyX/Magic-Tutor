@@ -31,7 +31,7 @@ The user (or a calling skill) describes, in plain language, a change about to be
 
 1. **Identify the target system(s)** the change will touch. Map each to its GDD at `.claude/docs/production/gdd/<Name>.md`.
    - If the change is a brand-new system with no GDD yet → report "No GDD exists for `<Name>` — author one with `/write-gdd` (or `/design-system` in Phase 2) before coding."
-2. **Read the contract** — the full GDD for each target system, plus `design-decisions.md`, `game-vision.md`, and `best-practices.md` for the constraints that bound it.
+2. **Read the contract** — the full GDD for each target system. **Also read `design-decisions.md`, `game-vision.md`, and `best-practices.md` only if** the change touches a core mechanic, introduces a new cross-system dependency, or creates a brand-new system. For routine changes (bug fix within an existing system, tuning a value, adding a method that doesn't alter the system's contract), skip these three docs.
 3. **Emit a verdict** for each target system:
    - **YES** — the GDD already describes the intended change correctly → state "GDD is the spec — implement to match" and list the governing sections (SRP, relevant Detailed Design / Interactions / Tuning Knobs rows, Core Rules bullets).
    - **NO / PARTIAL** — the GDD is wrong, incomplete, or the change alters the design (behavior, mechanic, tuning value, cross-system dependency, or responsibility) → state what is missing/wrong and recommend running `/write-gdd` to correct the owning doc before coding.
