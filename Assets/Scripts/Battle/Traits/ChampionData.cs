@@ -15,6 +15,7 @@ namespace MagicSchool.Battle
         public float AttackSpeed;    // attacks per second (TFT-style AS)
         public int   MaxMana     = 100;
         public int   StartingMana = 0;
+        public SkillDefinition Skill = new SkillDefinition();
 
         public StudentCombatData ToStudentCombatData()
         {
@@ -29,7 +30,7 @@ namespace MagicSchool.Battle
                 MaxHP = MaxHP, ATK = ATK, DEF = DEF,
                 MG = MG, MR = MR, AttackSpeed = AttackSpeed, CRIT = CRIT,
                 Range = Range, MaxMana = MaxMana, StartingMana = StartingMana,
-                Flags = flags
+                Flags = flags, Skill = Skill
             };
         }
     }

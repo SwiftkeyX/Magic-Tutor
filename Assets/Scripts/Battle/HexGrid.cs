@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -93,6 +94,79 @@ namespace MagicSchool.Battle
                 {
                     bestDist = d;
                     best = c;
+                }
+            }
+            return best;
+        }
+
+        // Hexes intersected by a line from `origin` through `through`, extended to
+        // the board edge or `maxRange` steps (whichever comes first). Used by the
+        // Linear Path targeting filter (Laser/Piercing Beam archetype).
+        public List<HexCoord> GetLinearPath(HexCoord origin, HexCoord through, int maxRange)
+        {
+            var result = new List<HexCoord>();
+            HexCoord.ToCube(origin, out int ox, out int oy, out int oz);
+            HexCoord.ToCube(through, out int tx, out int ty, out int tz);
+
+            int n = HexCoord.Distance(origin, through);
+            if (n == 0) return result;
+
+            for (int step = 1; step <= maxRange; step++)
+            {
+                double t = (double)step / n;
+                double cx = ox + (tx - ox) * t;
+                double cy = oy + (ty - oy) * t;
+                double cz = oz + (tz - oz) * t;
+
+                HexCoord hex = CubeRound(cx, cy, cz);
+                if (hex.Col < 0 || hex.Col >= Cols || hex.Row < 0 || hex.Row >= Rows)
+                    break;
+
+                if (result.Count == 0 || result[result.Count - 1] != hex)
+                    result.Add(hex);
+            }
+            return result;
+        }
+
+        private static HexCoord CubeRound(double x, double y, double z)
+        {
+            int rx = (int)Math.Round(x);
+            int ry = (int)Math.Round(y);
+            int rz = (int)Math.Round(z);
+
+            double xDiff = Math.Abs(rx - x);
+            double yDiff = Math.Abs(ry - y);
+            double zDiff = Math.Abs(rz - z);
+
+            if (xDiff > yDiff && xDiff > zDiff)
+                rx = -ry - rz;
+            else if (yDiff > zDiff)
+                ry = -rx - rz;
+            else
+                rz = -rx - ry;
+
+            return HexCoord.FromCube(rx, ry, rz);
+        }
+
+        // Among `candidates`, finds the hex whose radius-C neighborhood contains the
+        // most `enemyPositions`. Used by the Largest Cluster targeting sort.
+        public HexCoord? FindLargestClusterCenter(IEnumerable<HexCoord> candidates, IEnumerable<HexCoord> enemyPositions, int radius)
+        {
+            var enemyList = new List<HexCoord>(enemyPositions);
+            HexCoord? best = null;
+            int bestCount = -1;
+            foreach (HexCoord candidate in candidates)
+            {
+                int count = 0;
+                foreach (HexCoord enemy in enemyList)
+                {
+                    if (HexCoord.Distance(candidate, enemy) <= radius)
+                        count++;
+                }
+                if (count > bestCount)
+                {
+                    bestCount = count;
+                    best = candidate;
                 }
             }
             return best;

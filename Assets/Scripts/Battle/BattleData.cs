@@ -39,6 +39,7 @@ namespace MagicSchool.Battle
         public int MaxMana      = 100;  // mana threshold to cast ability
         public int StartingMana = 0;    // mana at battle start (before trait bonuses)
         public List<BattleBehaviorFlag> Flags = new List<BattleBehaviorFlag>();
+        public SkillDefinition Skill = new SkillDefinition();
     }
 
     // Minimal data contract for an enemy.
@@ -59,6 +60,7 @@ namespace MagicSchool.Battle
         public int MaxMana      = 100;
         public int StartingMana = 0;
         public List<BattleBehaviorFlag> Flags = new List<BattleBehaviorFlag>();
+        public SkillDefinition Skill = new SkillDefinition();
     }
 
     // Read-only snapshot exposed to BattleHUD and BattleBoardManager for initialization.
@@ -72,5 +74,7 @@ namespace MagicSchool.Battle
         public HexCoord Position;
         public int Range;
         public List<BattleBehaviorFlag> Flags;
+        public int Mana;
+        public int MaxMana;
     }
 }
