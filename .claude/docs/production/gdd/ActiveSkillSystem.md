@@ -6,7 +6,7 @@
 
 ## Summary
 
-The Active Skill System introduces mana, mana generation rules, and active spellcasting to all 10 heroes in the auto-battler. Each hero is assigned an ability archetype (such as Projectile, Laser, Area AoE, Bouncing Chain, Teleport, or Self-Buff) and a unique active ability that triggers automatically when their mana bar reaches maximum capacity ($100\%$ mana).
+The Active Skill System introduces mana, mana generation rules, and active spellcasting to all 30 heroes in the auto-battler. Each hero is assigned an ability archetype (such as Projectile, Laser, Area AoE, Bouncing Chain, Teleport, or Self-Buff) and a unique active ability that triggers automatically when their mana bar reaches maximum capacity ($100\%$ mana).
 
 > **Quick reference** — Layer: `Core` · Priority: `MVP` · Key deps: `AutoBattleResolver`, `HexGrid`, `BattleBoardManager`
 
@@ -203,7 +203,6 @@ All active abilities are implemented by extending or parameterizing these 7 temp
     - Initial: Range 3 $\rightarrow$ Current Target.
     - Bounces: Range 3 from last bounce $\rightarrow$ Closest Untargeted.
 *   **Skill: Chain Lightning**: Bounces up to 4 times. Deals magic damage ($1.4 \times \text{MG}$) and **Silences** them for 2 ticks.
-*   **Resolved ambiguity**: an earlier draft also said "Shields hit allies for 150 HP," which didn't fit the chain's enemies-only targeting (Current Target → Closest Untargeted). Dropped per design decision — Chain Lightning is damage + Silence only, no ally shield.
 
 ### 9. Phantom Assassin (4 Gold, Elementalist / Trickster, Carry)
 *   **Template**: `Template F: Blink & Strike (Multi-Target Teleportation)`
@@ -218,6 +217,146 @@ All active abilities are implemented by extending or parameterizing these 7 temp
 *   **Mana**: 50/150
 *   **Targeting**: Global $\rightarrow$ Largest Cluster (2-hex radius)
 *   **Skill: Dread Cataclysm**: Leaps and crashes on the largest cluster of enemies. Deals magic damage ($2.0 \times \text{MG}$), knocks up and **stuns** all enemies within 2 hexes for 2 ticks. Impacted cells become a "Dread Zone" reducing enemy defenses by $40\%$ for 5 ticks.
+
+### 11. Aegis (1 Gold, Vanguard / Guardian, Tank)
+*   **Template**: `Template G: Self-Buff` (Utility Shield)
+*   **TFT Counterpart**: *Poppy / Leona (1-Cost)*
+*   **Mana**: 0/80
+*   **Targeting**: Self & Lowest HP % adjacent ally
+*   **Skill: Shield Cover**: Gains a Shield of $1.5 \times \text{DEF}$. Shields the lowest-HP % adjacent ally for $1.5 \times \text{DEF}$ as well. Both shields last 3 ticks (0.3 seconds).
+
+### 12. Wildcat (1 Gold, Wild / Trickster, Carry)
+*   **Template**: `Template F: Blink & Strike`
+*   **TFT Counterpart**: *Olaf / Warwick (1-Cost)*
+*   **Mana**: 0/60
+*   **Targeting**: Current Target
+*   **Skill: Claw Dash**: Blinks to the hex behind the current target, slashes for physical damage ($1.4 \times \text{ATK}$), and gains $+20\%$ Attack Speed for 4 ticks (0.4 seconds).
+
+### 13. Cosmic Sprite (1 Gold, Astral / Kinetic, Support)
+*   **Template**: `Template B: Exploding Projectile`
+*   **TFT Counterpart**: *Brand / Annie (1-Cost)*
+*   **Mana**: 0/80
+*   **Targeting**: Current Target (1-hex splash radius)
+*   **Skill: Starlight Spark**: Launches a magic spark that explodes on first collision. Deals magic damage ($1.8 \times \text{MG}$) to hit enemies. Restores $+15$ Mana to adjacent allies.
+
+### 14. Novice Cleric (1 Gold, Astral / Oracle, Support)
+*   **Template**: `Template A: Standard Projectile`
+*   **TFT Counterpart**: *Soraka (1-Cost)*
+*   **Mana**: 0/65
+*   **Targeting**: Global $\rightarrow$ Lowest HP % ally
+*   **Skill: Holy Blessing**: Fires a healing spark at the lowest HP % ally. Heals them for magic healing ($2.0 \times \text{MG}$) and removes any active stuns or silences.
+
+### 15. Tech Scrapper (1 Gold, Striker / Tech, Carry)
+*   **Template**: `Template G: Self-Buff` (Conic Slash)
+*   **TFT Counterpart**: *Kha'Zix (1-Cost)*
+*   **Mana**: 0/70
+*   **Targeting**: Current Target (Frontal Cone)
+*   **Skill: Scrap Cleave**: Swings a makeshift blade. Deals physical damage ($1.3 \times \text{ATK}$) in a 3-hex frontal cone and shreds target DEF by $20\%$ for 4 ticks (0.4 seconds).
+
+### 16. Sun Warden (2 Gold, Astral / Warden, Tank)
+*   **Template**: `Template G: Self-Buff` (Aura shield)
+*   **TFT Counterpart**: *Taric (2-Cost)*
+*   **Mana**: 0/90
+*   **Targeting**: Self (Adjacent Allies)
+*   **Skill: Solar Flare**: Shines solar energy. Deals magic damage ($1.0 \times \text{MG}$) to adjacent enemies and shields adjacent allies for $1.5 \times \text{DEF}$ for 3 ticks (0.3 seconds).
+
+### 17. Venom Stalker (2 Gold, Shadow / Void, Carry)
+*   **Template**: `Template G: Self-Buff` (Poison claws)
+*   **TFT Counterpart**: *Cassiopeia (2-Cost)*
+*   **Mana**: 0/75
+*   **Targeting**: Current Target
+*   **Skill: Toxic Bite**: Bites the target, dealing physical damage ($1.5 \times \text{ATK}$) and infecting them with venom. The venom deals magic DoT ($0.3 \times \text{MG}$) per tick for 5 ticks. If target HP drops below $15\%$ during this time, they are executed.
+
+### 18. Forest Sentinel (2 Gold, Wild / Guardian, Tank)
+*   **Template**: `Template G: Self-Buff` (Wood armor)
+*   **TFT Counterpart**: *Rammus (2-Cost)*
+*   **Mana**: 0/100
+*   **Targeting**: Self (2-hex Taunt)
+*   **Skill: Barkshield**: Gains $+40$ DEF/MR and Taunts all enemies within 2 hexes for 3 ticks (0.3 seconds). While active, basic attacks deal $+15$ bonus physical damage on-hit.
+
+### 19. Void Mage (2 Gold, Elementalist / Void, Carry)
+*   **Template**: `Template B: Exploding Projectile`
+*   **TFT Counterpart**: *Malzahar (2-Cost)*
+*   **Mana**: 0/80
+*   **Targeting**: Current Target (1-hex splash radius)
+*   **Skill: Void Sphere**: Fires a dark orb that explodes on target, dealing magic damage ($1.6 \times \text{MG}$) and reducing MR by $30\%$ for 4 ticks (0.4 seconds) to all units hit.
+
+### 20. Starweaver (3 Gold, Astral / Oracle, Support)
+*   **Template**: `Template G: Channel` (Healing Beam)
+*   **TFT Counterpart**: *Soraka / Janna (3-Cost)*
+*   **Mana**: 0/100
+*   **Targeting**: Global $\rightarrow$ Lowest HP % ally
+*   **Skill: Astral Cascade**: Channels for 3 ticks (0.3 seconds). Every tick, heals the lowest HP % ally for $1.2 \times \text{MG}$ and grants them a $100$ HP Shield. Interrupted if Starweaver is stunned.
+
+### 21. Rust Colossus (3 Gold, Wild / Tech, Tank)
+*   **Template**: `Template A: Standard Projectile` (Slam)
+*   **TFT Counterpart**: *Blitzcrank / Nautilus (3-Cost)*
+*   **Mana**: 0/90
+*   **Targeting**: Current Target
+*   **Skill: Iron Fist**: Slams the ground, dealing physical damage ($1.4 \times \text{ATK} + 0.5 \times \text{DEF}$) to the current target and stunning them for 2 ticks (0.2 seconds).
+
+### 22. Night Stalker (3 Gold, Shadow / Trickster, Carry)
+*   **Template**: `Template F: Blink & Strike`
+*   **TFT Counterpart**: *Shaco (3-Cost)*
+*   **Mana**: 0/60
+*   **Targeting**: Global $\rightarrow$ Lowest HP % enemy
+*   **Skill: Shadow Shroud**: Teleports behind the lowest-health enemy, shedding threat. The next attack is guaranteed to Crit and deals $+50\%$ bonus physical damage.
+
+### 23. Storm Ranger (3 Gold, Ranger / Tech, Carry)
+*   **Template**: `Template C: Laser / Piercing Beam`
+*   **TFT Counterpart**: *Lucian / Ezreal (3-Cost)*
+*   **Mana**: 0/80
+*   **Targeting**: Linear Path (Through Current Target)
+*   **Skill: Overcharge Beam**: Fires a linear lightning beam. Deals physical damage ($1.5 \times \text{ATK}$) to all enemies on the line and shocks them (reduces Attack Speed by $25\%$ for 3 ticks).
+
+### 24. Grave Knight (4 Gold, Shadow / Dreadknight, Tank)
+*   **Template**: `Template G: Self-Buff` (Siphon Aura)
+*   **TFT Counterpart**: *Aatrox / Hecarim (4-Cost)*
+*   **Mana**: 0/110
+*   **Targeting**: Self (Adjacent Hexes)
+*   **Skill: Soul Drain**: Emits a shadow aura for 4 ticks. Every tick, deals magic damage ($0.5 \times \text{MG}$) to adjacent enemies, heals self for $100\%$ of damage dealt, and steals $5$ Armor/MR from each hit target (stacking).
+
+### 25. Arcane Sage (4 Gold, Elementalist / Tech, Carry)
+*   **Template**: `Template D: Ground-Targeted AoE`
+*   **TFT Counterpart**: *Viktor / Karma (4-Cost)*
+*   **Mana**: 0/95
+*   **Targeting**: Global $\rightarrow$ Largest Cluster (2-hex radius)
+*   **Skill: Chrono Shift**: Drops a time distortion field. Deals magic damage ($2.5 \times \text{MG}$) to all enemies hit. The field lasts 4 ticks: enemies inside have action progress slowed by $30\%$, while allies inside have action progress accelerated by $+30\%$.
+
+### 26. Void Ranger (4 Gold, Ranger / Void, Carry)
+*   **Template**: `Template C: Laser / Piercing Beam`
+*   **TFT Counterpart**: *Caitlyn (4-Cost)*
+*   **Mana**: 0/90
+*   **Targeting**: Linear Path (Through Current Target)
+*   **Skill: Nether Arrow**: Fires a heavy dark arrow that pierces all targets. Deals physical damage ($2.2 \times \text{ATK}$) to all enemies on the line, executing any hit target whose health drops below $20\%$.
+
+### 27. Divine Paladin (4 Gold, Vanguard / Oracle, Support/Tank)
+*   **Template**: `Template G: Self-Buff` (Guardian Stance)
+*   **TFT Counterpart**: *Galio (4-Cost)*
+*   **Mana**: 0/100
+*   **Targeting**: Self (2-hex radius Taunt)
+*   **Skill: Guardian Shield**: Taunts all enemies within 2 hexes for 3 ticks. Gains a Shield of $3.5 \times \text{DEF}$. While active, heals adjacent allies for $1.0 \times \text{MG}$ every tick.
+
+### 28. Cosmic Leviathan (5 Gold, Astral / Guardian, Tank)
+*   **Template**: `Template D: Ground-Targeted AoE (Leap & Pull)`
+*   **TFT Counterpart**: *Ornn / Malphite (5-Cost)*
+*   **Mana**: 0/150
+*   **Targeting**: Global $\rightarrow$ Largest Cluster (2-hex radius)
+*   **Skill: Supernova**: Leaps and crashes on the largest enemy cluster. Deals magic damage ($2.5 \times \text{MG}$), stuns all targets hit for 2 ticks, and pulls them toward the center hex of the impact.
+
+### 29. Reaper (5 Gold, Shadow / Void, Carry)
+*   **Template**: `Template F: Blink & Strike`
+*   **TFT Counterpart**: *Karthus / Urgot / Yasuo (5-Cost)*
+*   **Mana**: 0/80
+*   **Targeting**: Global $\rightarrow$ Lowest HP % enemy
+*   **Skill: Death's Scythe**: Teleports to the lowest HP % enemy and slashes, dealing true damage ($3.5 \times \text{ATK}$). If the target dies, executes them and resets Reaper's Mana to $50$, casting again on the next tick.
+
+### 30. Beastmaster (5 Gold, Wild / Warden, Tank/Support)
+*   **Template**: `Template G: Self-Buff` (Primal Cry)
+*   **TFT Counterpart**: *Sejuani / Gnar (5-Cost)*
+*   **Mana**: 50/150
+*   **Targeting**: Self (Board-wide)
+*   **Skill: Primal Roar**: Stuns all enemies on the board for 1.5 ticks (0.15s). Increases all allies' AD and AP by $+50\%$ and Attack Speed by $+30\%$ for 6 ticks (0.6 seconds).
 
 ---
 
