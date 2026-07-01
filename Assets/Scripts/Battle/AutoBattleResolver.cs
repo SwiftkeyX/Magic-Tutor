@@ -581,6 +581,11 @@ namespace MagicSchool.Battle
         // ── Skill execution support (internal — called by SkillArchetypeExecutor) ────
         internal HexGrid Grid => _grid;
 
+        // Exposes all combatants (both teams) as a read-only list so SkillArchetypeExecutor
+        // can call SkillTargetSelector for secondary-target resolution (e.g. Aegis's
+        // SecondaryFilter ally shield) without needing a separate lookup path.
+        internal IReadOnlyList<Combatant> AllCombatants => _combatants;
+
         internal List<Combatant> GetOpponentsOf(Combatant c) =>
             _combatants.Where(x => !x.IsDefeated && x.IsPlayer != c.IsPlayer).ToList();
 
@@ -719,7 +724,9 @@ namespace MagicSchool.Battle
             }
             else if (skill != null && skill.Archetype != SkillArchetype.None)
             {
-                var hexes = SkillTargetSelector.SelectTargetHexes(_grid, caster, _combatants, skill.BaseFilter, skill.Sorts, skill.Range, skill.Radius);
+                // Pass skill.TargetTeam so ally-scoped skills (e.g. Novice Cleric) aim at
+                // the correct team. TargetTeam defaults to Enemy, preserving all existing behavior.
+                var hexes = SkillTargetSelector.SelectTargetHexes(_grid, caster, _combatants, skill.BaseFilter, skill.Sorts, skill.Range, skill.Radius, skill.TargetTeam);
                 aimHex = hexes.Count > 0 ? hexes[0] : (HexCoord?)null;
             }
             else

@@ -3,14 +3,18 @@ using System.Collections.Generic;
 
 namespace MagicSchool.Battle
 {
-    public enum VerticalTrait   { None, Vanguard, Striker, Elementalist, Ranger }
-    public enum HorizontalTrait { None, Kinetic, Dreadknight, Warden, Trickster }
+    // Vertical traits: original 4 + 3 new (Astral, Wild, Shadow) for the 30-champion roster.
+    public enum VerticalTrait   { None, Vanguard, Striker, Elementalist, Ranger, Astral, Wild, Shadow }
+    // Horizontal traits: original 4 + 4 new (Oracle, Guardian, Tech, Void) for the 30-champion roster.
+    public enum HorizontalTrait { None, Kinetic, Dreadknight, Warden, Trickster, Oracle, Guardian, Tech, Void }
     public enum ChampionRole    { Tank, Carry, Support }
 
     public enum TraitType
     {
         Vanguard, Striker, Elementalist, Ranger,
-        Kinetic, Dreadknight, Warden, Trickster
+        Kinetic, Dreadknight, Warden, Trickster,
+        // New traits (Batch 1 — champion data only; trait effects not yet wired in TraitTracker/TraitEffectApplier)
+        Astral, Wild, Shadow, Oracle, Guardian, Tech, Void,
     }
 
     public struct CombatantTraitModifiers

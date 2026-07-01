@@ -41,20 +41,41 @@ The player watches their champions trade blows, build up their blue mana bars, a
 
 ### Stackable Targeting System
 
-| Base Filter | Target List Scoped To |
-| :--- | :--- |
-| **Adjacent** | The 6 surrounding hex tiles (1-hex distance). |
-| **Within Range** | Enemy units within $R$ hex distance from the caster. |
-| **Global** | All active enemy units on the board. |
-| **Linear Path** | Hexes intersected by a line from the caster through the target hex to the board edge. |
+Every skill declares a **Target Team** — `Enemy` (default) or `Ally` — which the Base Filter is
+scoped to. `Enemy` is the original behavior (all 10 launch heroes use it). `Ally` scopes the same
+4 filters and 5 sorts to the caster's own team instead, so e.g. "Global → Lowest HP % ally" reuses
+the exact `Global` + `Lowest HP %` building blocks, just aimed at allies. This keeps the filter/sort
+vocabulary unified rather than forking a parallel ally-only set.
+
+| Base Filter | Target List Scoped To (Enemy Team) | Target List Scoped To (Ally Team) |
+| :--- | :--- | :--- |
+| **Adjacent** | The 6 surrounding hex tiles, if enemy-occupied. | The 6 surrounding hex tiles, if ally-occupied. |
+| **Within Range** | Enemy units within $R$ hex distance from the caster. | Ally units within $R$ hex distance from the caster. |
+| **Global** | All active enemy units on the board. | All active ally units on the board (including self). |
+| **Linear Path** | Hexes intersected by a line from the caster through the target hex to the board edge, aimed at the best-sorted enemy in range. | Same, aimed at the best-sorted ally in range. |
 
 | Priority Sort | Sorting Rule |
 | :--- | :--- |
-| **Current Target** | The target currently being basic-attacked. |
+| **Current Target** | The target currently being basic-attacked (Enemy team only — has no ally equivalent). |
 | **Furthest** | Sorts filtered list by hex distance (descending). |
 | **Closest** | Sorts filtered list by hex distance (ascending). |
 | **Lowest HP %** | Sorts filtered list by (Current HP / Max HP) (ascending). |
-| **Largest Cluster** | Sorts hexes by the highest count of enemies within a radius of $C$ hexes. |
+| **Largest Cluster** | Sorts hexes by the highest count of same-team units within a radius of $C$ hexes. |
+
+#### Ally-Support Resolution
+
+When Target Team = `Ally`, an archetype's damage-resolution step is replaced by a support step,
+using the same flat-multiplier pattern as damage (mirrors `OffenseMultiplier`, just for support):
+
+| Field | Effect |
+| :--- | :--- |
+| **Heal Multiplier** | Restores magic healing equal to `caster.MG * HealMultiplier` to the target ally. |
+| **Mana Restore** | Restores a flat amount of Mana to the target ally. |
+| **Cleanses Status** | If true, removes any active Stun or Silence from the target ally. |
+| **Shield (existing fields)** | `FlatShieldAmount` / `ShieldPctOfMaxHP` apply to the target ally instead of the caster when Target Team = `Ally`. |
+
+A single cast can combine these (e.g. a heal-and-cleanse, or a shield-and-mana-restore) — they are
+independent flags/values, not a single enum choice.
 
 ---
 
@@ -100,13 +121,13 @@ All active abilities are implemented by extending or parameterizing these 7 temp
 ### Template A: Standard Projectile
 *   **Targeting**: `Base Filter` $\rightarrow$ `Priority Sort`.
 *   **Delivery**: Projectile travels at speed $V$ (hexes/sec) to the target's hex. Single-target collision.
-*   **Resolution**: Deals magic/physical damage and applies status effects on impact.
+*   **Resolution**: Deals magic/physical damage and applies status effects on impact (Target Team = `Enemy`), or applies Ally-Support Resolution to the target (Target Team = `Ally`, e.g. Novice Cleric's heal).
 *   **Lockout**: Caster pauses basic attacks for 1 tick during cast launch.
 
 ### Template B: Exploding Projectile
 *   **Targeting**: `Base Filter` $\rightarrow$ `Priority Sort`.
-*   **Delivery**: Projectile travels to target hex; collides with the first enemy unit intersected.
-*   **Resolution**: Triggers an AoE explosion in a radius of $R$ hexes. Deals $100\%$ damage to the collided unit, and $Splash\%$ damage to adjacent enemies.
+*   **Delivery**: Projectile travels to target hex; collides with the first unit intersected (matching Target Team).
+*   **Resolution**: Triggers an AoE explosion in a radius of $R$ hexes. Deals $100\%$ damage to the collided unit and $Splash\%$ damage to adjacent units (Target Team = `Enemy`); or applies Ally-Support Resolution to the collided ally and the splash radius (Target Team = `Ally`, e.g. Cosmic Sprite's mana restore splashed to adjacent allies).
 *   **Lockout**: Caster locked out of attacks for 2 ticks (1 tick launch, 1 tick recovery).
 
 ### Template C: Laser / Piercing Beam
@@ -137,9 +158,9 @@ All active abilities are implemented by extending or parameterizing these 7 temp
 *   **Lockout**: Caster locked out of attacks for 1 tick.
 
 ### Template G: Self-Buff / Steroid
-*   **Targeting**: Self.
+*   **Targeting**: Self, optionally extended to an Ally-Team `Base Filter` for a secondary target (e.g. Aegis's "Self & Lowest HP % adjacent ally", Beastmaster's "Self (Board-wide)" hitting all allies).
 *   **Delivery**: Caster plays an activation animation (particle burst/aura).
-*   **Resolution**: Grants temporary stats or alters basic attacks (AS buff, splash, bleed) for $T$ ticks.
+*   **Resolution**: Grants temporary stats or alters basic attacks (AS buff, splash, bleed) to self for $T$ ticks; if a secondary Ally-Team target/filter is set, also applies Ally-Support Resolution to that target/those targets (shield, heal, or stat buff).
 *   **Lockout**: Caster locked out of attacks for 1 tick (activation cast).
 
 ---
@@ -401,3 +422,4 @@ All active abilities are implemented by extending or parameterizing these 7 temp
 - [ ] Stunned units interrupt active channels and lose mana.
 - [ ] All skill damage and shielding scales precisely with champion stats ($\text{ATK}, \text{DEF}, \text{MG}$) as detailed in their GDD definitions.
 - [ ] Visual log output or floating text notifies the board when a skill is cast.
+- [ ] Ally-Team skills (heal, shield, mana restore, cleanse) resolve against the caster's own team and produce an observable effect (HP/mana/shield change, trace-logged) rather than a silent no-op.

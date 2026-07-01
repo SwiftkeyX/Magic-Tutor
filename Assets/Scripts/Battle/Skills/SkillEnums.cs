@@ -47,4 +47,12 @@ namespace MagicSchool.Battle
         Taunt,
         Silence,
     }
+
+    // Whether a skill's Base Filter scopes to the caster's opponents (Enemy, default)
+    // or the caster's own team (Ally). All 10 launch champions default to Enemy.
+    public enum TargetTeam
+    {
+        Enemy,
+        Ally,
+    }
 }
