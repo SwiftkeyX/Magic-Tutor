@@ -9,6 +9,8 @@ Generated: 2569-06-29 18:45
 - `Assets/Scripts/Battle/BattleData.cs`
 - `Assets/Scripts/Battle/BattleUnit.cs`
 - `Assets/Scripts/Battle/EnemyDatabaseStub.cs`
+- `Assets/Scripts/Battle/HeroInfoPanel.cs`
+- `Assets/Scripts/Battle/HeroSelection.cs`
 - `Assets/Scripts/Battle/HexCoord.cs`
 - `Assets/Scripts/Battle/HexGrid.cs`
 - `Assets/Scripts/Battle/HexTileView.cs`
