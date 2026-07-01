@@ -5,14 +5,18 @@ namespace MagicSchool.Battle
 {
     public class EnemyDatabaseStub : MonoBehaviour
     {
-        public List<EnemyCombatData> GetEnemies() => new List<EnemyCombatData>
+        [SerializeField] private List<EnemyCombatData> _enemies = new List<EnemyCombatData>();
+
+        public List<EnemyCombatData> GetEnemies() => new List<EnemyCombatData>(_enemies);
+
+        private void Reset()
         {
-            new EnemyCombatData { Id = "brute", DisplayName = "Brute",
-                MaxHP = 55, ATK = 10, DEF = 3, MG = 0, MR = 1, AttackSpeed = 0.24f, CRIT = 0, Range = 1 },
-            new EnemyCombatData { Id = "witch", DisplayName = "Witch",
-                MaxHP = 35, ATK = 5, DEF = 1, MG = 12, MR = 4, AttackSpeed = 0.33f, CRIT = 8, Range = 2 },
-            new EnemyCombatData { Id = "sniper", DisplayName = "Sniper",
-                MaxHP = 40, ATK = 9, DEF = 2, MG = 0, MR = 2, AttackSpeed = 0.42f, CRIT = 20, Range = 3 },
-        };
+            _enemies = new List<EnemyCombatData>
+            {
+                new EnemyCombatData { Id = "brute",  DisplayName = "Brute",  MaxHP = 600, ATK = 55, DEF = 40, MG = 0,  MR = 30, AttackSpeed = 0.55f, Range = 1, Flags = new List<BattleBehaviorFlag>() },
+                new EnemyCombatData { Id = "witch",  DisplayName = "Witch",  MaxHP = 450, ATK = 0,  DEF = 20, MG = 50, MR = 20, AttackSpeed = 0.60f, Range = 2, Flags = new List<BattleBehaviorFlag> { BattleBehaviorFlag.MagicAttack } },
+                new EnemyCombatData { Id = "sniper", DisplayName = "Sniper", MaxHP = 500, ATK = 60, DEF = 15, MG = 0,  MR = 15, AttackSpeed = 0.65f, Range = 3, Flags = new List<BattleBehaviorFlag>() },
+            };
+        }
     }
 }
