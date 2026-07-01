@@ -35,6 +35,10 @@ Game Design Documents (GDD) for individual gameplay and meta systems.
 * [Trait System](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/production/gdd/TraitSystem.md)
 * [Year End HUD](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/production/gdd/YearEndHUD.md)
 
+## Beta (`beta/`)
+Bug tracking, build notes, and release checklist for Phase 3.
+* [Known Issues](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/beta/known-issues.md)
+
 ## Other (`other/`)
 Cross-phase frameworks, onboarding resources, and general references.
 * [Balance Framework](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/balance-framework.md)
