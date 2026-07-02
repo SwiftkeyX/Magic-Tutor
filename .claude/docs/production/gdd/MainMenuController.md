@@ -1,7 +1,7 @@
 # MainMenuController
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
+> **Last Updated**: 2026-07-02
 > **Implements Pillar**: Empowering — the main menu is the player's gateway into and out of each run; it should feel welcoming and purposeful, never a blocker
 
 ## Summary
@@ -14,7 +14,7 @@ MainMenuController handles the main menu screen: new run, settings, and quit. It
 
 ## Overview
 
-MainMenuController is a MonoBehaviour on a Canvas in the MainMenu scene. On `Start()`, it reads `GameManager.Instance.CurrentState` to configure which buttons are visible (e.g., "Continue Run" is hidden if no run is in progress). Button callbacks invoke `GameManager.Instance.StartNewRun()` or `SceneLoader.Instance.LoadScene()` directly — no intermediate events. Settings are presented as an in-scene overlay panel toggled by the Settings button, not a separate scene.
+MainMenuController is a MonoBehaviour on a `UIDocument` (UI Toolkit) in the MainMenu scene — per `best-practices.md`, all UI in this project uses UI Toolkit, not UGUI Canvas. On `Start()`, it reads `GameManager.Instance.CurrentState` to configure which buttons are visible (e.g., "Continue Run" is hidden if no run is in progress). Button callbacks invoke `GameManager.Instance.StartNewRun()` or `SceneLoader.Instance.LoadScene()` directly — no intermediate events. Settings are presented as an in-scene overlay panel toggled by the Settings button, not a separate scene.
 
 ## Player Fantasy
 
