@@ -13,6 +13,8 @@ Every skill folder under `.claude/skills/<name>/` follows a naming convention so
 | Production steps | `<verb>-system` | `design-system`, `code-system` | Internal (via `production-task`) |
 | Production-exit pass | `<noun>-pass` | `architecture-pass` | User (handed off by `production-task`) |
 | Beta steps | `<x>-pass` (+ `ship` concept) | `juice-pass`, `tune-pass`, `performance-pass`, `release-pass` | Internal (via `beta-task`) |
+| Cross-phase pass | `<noun>-pass` | `balance-pass` | User |
+| Balance steps | `verb-noun` | `check-balance`, `tune-champion`, `validate-balance`, `push-champion-stats` | Internal (via `balance-pass`) |
 | Workers | `verb-noun` | `read-gdd`, `write-gdd`, `edit-unity`, `fix-bug`, `log-bug`, `fix-all-bugs` | Internal (via `code` / `debug` / `fix-bug`) |
 | Utilities | `verb-noun` | `explain-workflow`, `check-pipeline-stage`, `read-architecture`, `sync-template`, `sync-sheet`, `setup-gh-bot`, `clean-docs`, `check-consistency-gdd-and-code` _(named exception to the 3-segment rule — user decision)_ | User |
 | Automation | `verb` / `verb-noun` | `regress`, `watch-project` | Internal / scheduled |
@@ -21,7 +23,7 @@ Every skill folder under `.claude/skills/<name>/` follows a naming convention so
 
 - **Lowercase kebab-case only.** No camelCase, no underscores, no `task`/`session` filler words.
 - **Default to `verb-noun`** for any action skill (worker, utility, lifecycle). The verb says what it does; the noun says to what.
-- **Use the family suffix** when a skill joins an existing family: `-task` (orchestrator), `-system` (production step), `-pass` (a *pass* — the beta steps, plus the single production-exit `architecture-pass`). `-pass` signals an iterative refinement pass; it is no longer beta-exclusive.
+- **Use the family suffix** when a skill joins an existing family: `-task` (orchestrator), `-system` (production step), `-pass` (a *pass* — the beta steps, the production-exit `architecture-pass`, and the cross-phase `balance-pass`). `-pass` signals an iterative refinement pass; it is no longer beta-exclusive.
 - **Bare single-word names** are reserved for the two entry routers (`code`, `debug`) and a few self-evident actions (`regress`).
 - **No verbose phrases.** A name longer than three kebab segments is a smell — shorten it (e.g. `fix-all-bugs`, not `open-session-for-fix-all-bug`).
 - **When you rename a skill, update every reference in the same change** — other SKILL.md files, `.claude/rules/`, `CLAUDE.md`, and any doc index. A dangling skill reference is a broken structure (see `doc-conventions.md`).
