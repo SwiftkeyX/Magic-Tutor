@@ -1,14 +1,14 @@
 # SchoolHUD
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
+> **Last Updated**: 2026-07-02
 > **Implements Pillar**: Strategic — the school management screen is where all player decisions happen; it must make every stat, trait, and training option legible at a glance
 
 ## Summary
 
 SchoolHUD renders the School scene UI for the Recruit and Train phases. It displays the active student roster with all 7 stats and traits, shows the training budget and trait synergy panel, and provides the controls for allocating training actions and advancing to the next phase. It is read/listen-only — it never mutates game state directly; all player actions route through TrainingSystem and RunManager.
 
-> **Quick reference** — Layer: `Presentation` · Priority: `MVP` · Key deps: `StudentRoster, TrainingSystem, TraitSystem`
+> **Quick reference** — Layer: `Presentation` · Priority: `MVP` · Key deps: `StudentRoster, TrainingSystem`
 
 ---
 
@@ -33,8 +33,7 @@ The player sits in front of a magical class register — each student card shows
    - `StudentRoster.OnStudentStatChanged` → update the affected student card's stat display
    - `TrainingSystem.OnTrainingActionUsed` → decrement remaining-actions counter
    - `TrainingSystem.OnTrainingExhausted` → enable "Proceed to Battle" button
-   - `TraitSystem.OnTraitThresholdReached` → animate trait synergy badge
-   - `TraitSystem.OnTraitThresholdLost` → dim trait synergy badge
+   - Trait synergy panel has no separate system dependency — SchoolHUD recomputes it itself (see Core Rule 6) whenever `StudentRoster.OnRosterChanged` or `OnStudentStatChanged` fires
 2. **HUDs never write game state.** Player inputs are forwarded:
    - Training stat button click → `TrainingSystem.AllocateTraining(selectedStudentId, statType)`
    - "Proceed to Battle" button → `TrainingSystem.ConfirmTrainingComplete()`
@@ -42,7 +41,7 @@ The player sits in front of a magical class register — each student card shows
 3. A student card is selected by clicking it. The selected student's stat buttons become active. Only one student can be selected at a time.
 4. During Recruit phase, stat training buttons are hidden (or disabled). Student cards are displayed in read-only mode.
 5. During Train phase, each student card shows all 7 stats (HP, ATK, DEF, MG, MR, SPD, CRIT) with their total values (Base + Bonus). A "+N" float animates on a stat that was just trained.
-6. The trait synergy panel shows each trait type (Fire, Healer, Shield, Arcane, Storm, Shadow), the current team count, and which threshold tier is active (0/1/2). It updates synchronously on `OnRosterChanged`.
+6. **Trait synergy panel is self-computed, not read from a system.** The real trait-breakpoint system (`TraitTracker`/`TraitEffectApplier`, see `TraitSystem.md`) is built around `BattleBoardManager` placement counting, not the School roster — reusing it here would be the wrong dependency. Instead, SchoolHUD tallies `TraitType` occurrences directly from `StudentRoster.GetAll()[].Traits` (client-side `GroupBy`/count — reading data it already owns, not a new dependency) and displays a count per trait among the 15 `TraitType` values (`Vanguard, Striker, Elementalist, Ranger, Astral, Wild, Shadow, Kinetic, Dreadknight, Warden, Trickster, Oracle, Guardian, Tech, Void`). This is informational only — it does **not** apply `TraitTracker`'s battle breakpoint thresholds (2/4/6/8, role-conditional effects, etc.); it just shows the player which traits their current roster leans toward. Recomputes synchronously on `OnRosterChanged` and `OnStudentStatChanged`.
 7. "Proceed to Battle" button is **disabled** until `TrainingSystem.ConfirmTrainingComplete()` is callable (i.e., always enabled during Train phase — the player may proceed early). It becomes visually highlighted when `OnTrainingExhausted` fires.
 8. The remaining-actions counter (e.g., "Actions: 3 / 5") is always visible during Train phase and updates on every `OnTrainingActionUsed`.
 
@@ -65,11 +64,10 @@ Each student card (rendered per `StudentData`) displays:
 
 ### Trait Synergy Panel
 
-One row per TraitType (6 rows). Each row shows:
+One row per `TraitType` present in the current roster (count > 0 only — traits with zero members are omitted, not shown grayed-out, to keep the panel short). Each row shows:
 - Trait icon + name
-- Count label (e.g., "Fire: 2")
-- Threshold progress indicator (e.g., filled/unfilled stars — 0/1/2 tier)
-- Threshold effect tooltip on hover (e.g., "Fire 2: ATK ×1.30 for Fire students")
+- Count label (e.g., "Vanguard: 2")
+- No threshold tier / no tooltip — this panel is informational only (see Core Rule 6). Actual breakpoint effects only apply in Battle via `TraitTracker`/`TraitEffectApplier`, not here.
 
 ### Interactions with Other Systems
 
@@ -78,13 +76,12 @@ One row per TraitType (6 rows). Each row shows:
 | `RunManager` | Reads `CurrentPhase` and `CurrentYear` on scene load; subscribes to `OnPhaseChanged` and `OnYearChanged` |
 | `StudentRoster` | Subscribes to `OnRosterChanged` to rebuild cards; subscribes to `OnStudentStatChanged` to refresh one card |
 | `TrainingSystem` | Forwards training button clicks to `AllocateTraining()`; reads `RemainingActions` for counter; subscribes to `OnTrainingActionUsed` and `OnTrainingExhausted` |
-| `TraitSystem` | Reads `GetTeamTraitCounts()` and `GetActiveThresholdTier()` on load; subscribes to `OnTraitThresholdReached` and `OnTraitThresholdLost` |
 
 ---
 
 ## Formulas
 
-No formulas — SchoolHUD only reads computed values from game systems. Stat totals (TotalHP = BaseHP + BonusHP, etc.) are computed by `StudentData` properties, not by the HUD.
+SchoolHUD reads computed values from game systems for stats — totals (TotalHP = BaseHP + BonusHP, etc.) are `StudentData` properties, not HUD math. The one exception is the trait synergy panel (Core Rule 6): SchoolHUD tallies `TraitType` counts itself via `GroupBy` over `StudentRoster.GetAll()[].Traits` — simple aggregation of data it already reads, not a new formula or a new dependency.
 
 ---
 
@@ -106,7 +103,6 @@ No formulas — SchoolHUD only reads computed values from game systems. Stat tot
 |---|---|---|
 | `StudentRoster` | This depends on it | Data dependency + state trigger — reads student data; subscribes to roster/stat events |
 | `TrainingSystem` | This depends on it | Rule dependency + state trigger — forwards training calls; subscribes to training events |
-| `TraitSystem` | This depends on it | Data dependency + state trigger — reads trait counts; subscribes to threshold events |
 | `RunManager` | This depends on it | State trigger — subscribes to phase/year changes |
 
 ---
@@ -189,7 +185,7 @@ No formulas — SchoolHUD only reads computed values from game systems. Stat tot
 | Current phase label | HUD header | On `OnPhaseChanged` | Always during run |
 | Student cards (name, traits, 7 stats) | Main card grid | On `OnRosterChanged` / `OnStudentStatChanged` | Always during School scene |
 | Training actions remaining ("Actions: 3/5") | Training controls bar | On `OnTrainingActionUsed` | During Train phase |
-| Trait synergy panel | Right side panel | On `OnRosterChanged` / `OnTraitThresholdReached` | Always during School scene |
+| Trait synergy panel (self-computed count, see Core Rule 6) | Right side panel | On `OnRosterChanged` / `OnStudentStatChanged` | Always during School scene |
 | "Begin Training" button | Bottom action bar | Static | During Recruit phase |
 | Stat training buttons (HP/ATK/DEF/MG/MR/SPD/CRIT) | Below selected student card | On student select | During Train phase, when student selected |
 | "Proceed to Battle" button | Bottom action bar | Static (enabled after Recruit complete) | During Train phase |
@@ -203,7 +199,7 @@ No formulas — SchoolHUD only reads computed values from game systems. Stat tot
 | `TrainingSystem.AllocateTraining()` | `TrainingSystem.md` | `AllocateTraining(studentId, StatType)` | Rule dependency |
 | `TrainingSystem.ConfirmTrainingComplete()` | `TrainingSystem.md` | `ConfirmTrainingComplete()` | Rule dependency |
 | `RunManager.CompleteRecruitPhase()` | `RunManager.md` | `CompleteRecruitPhase()` | Rule dependency |
-| `TraitSystem.GetTeamTraitCounts()` | `TraitSystem.md` | `GetTeamTraitCounts()` | Data dependency |
+| `StudentData.Traits` | `StudentRoster.md` | `List<TraitType>` | Data dependency — SchoolHUD tallies this itself; not a `TraitSystem` dependency (see Core Rule 6) |
 | `StudentData` 7-stat structure | `StudentRoster.md` | `TotalHP/ATK/DEF/MG/MR/SPD/CRIT` properties | Data dependency |
 | HUDs are read/listen only | `best-practices.md` | "HUDs are read/listen only" rule | Rule dependency |
 
@@ -214,8 +210,7 @@ No formulas — SchoolHUD only reads computed values from game systems. Stat tot
 - [ ] All 7 stats (HP, ATK, DEF, MG, MR, SPD, CRIT) are displayed per student card with correct total values
 - [ ] Training button click calls `TrainingSystem.AllocateTraining()` — never writes `StudentData` directly
 - [ ] "+N" animation fires correctly for the stat that was trained
-- [ ] Trait synergy panel correctly reflects team trait counts after every roster change
-- [ ] `OnTraitThresholdReached` triggers badge animation within 1 frame
+- [ ] Trait synergy panel correctly reflects team trait counts (self-tallied from `StudentRoster.GetAll()[].Traits`) after every roster change
 - [ ] "Proceed to Battle" button is accessible at any point during Train phase (not locked behind budget exhaustion)
 - [ ] No `FindObjectOfType` in `SchoolHUD.cs`
 - [ ] No direct mutation of `StudentData` from `SchoolHUD.cs`
