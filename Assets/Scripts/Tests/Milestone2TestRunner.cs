@@ -81,6 +81,11 @@ namespace MagicSchool.Tests
                     Debug.Log("[TestRunner] Cleared save data for a fresh run.");
                 }
 
+                if (TeacherRoster.Instance != null)
+                {
+                    TeacherRoster.Instance.LoadFromSaveSystem();
+                }
+
                 // 2. Start a new run
                 if (GameManager.Instance == null)
                 {
