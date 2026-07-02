@@ -184,6 +184,12 @@ namespace MagicSchool.Tests
                 }
 
                 // Verify promotion candidates
+                float elapsed1 = 0f;
+                while (FindObjectOfType<PromotionSystem>() == null && elapsed1 < 3f)
+                {
+                    yield return new WaitForSeconds(0.1f);
+                    elapsed1 += 0.1f;
+                }
                 var promo = FindObjectOfType<PromotionSystem>();
                 if (promo == null)
                 {
@@ -238,7 +244,18 @@ namespace MagicSchool.Tests
                 yield return new WaitForSeconds(1.5f);
 
                 // YearEnd 2 - confirm promotions with 0 selected (valid case!)
+                float elapsed2 = 0f;
+                while (FindObjectOfType<PromotionSystem>() == null && elapsed2 < 3f)
+                {
+                    yield return new WaitForSeconds(0.1f);
+                    elapsed2 += 0.1f;
+                }
                 promo = FindObjectOfType<PromotionSystem>();
+                if (promo == null)
+                {
+                    Debug.LogError("[TestRunner] PromotionSystem not found in YearEnd scene (Year 2)!");
+                    yield break;
+                }
                 promo.ConfirmPromotions();
                 yield return new WaitForSeconds(1.5f);
 
@@ -268,7 +285,18 @@ namespace MagicSchool.Tests
                 yield return new WaitForSeconds(1.5f);
 
                 // YearEnd 3 - promote one more student
+                float elapsed3 = 0f;
+                while (FindObjectOfType<PromotionSystem>() == null && elapsed3 < 3f)
+                {
+                    yield return new WaitForSeconds(0.1f);
+                    elapsed3 += 0.1f;
+                }
                 promo = FindObjectOfType<PromotionSystem>();
+                if (promo == null)
+                {
+                    Debug.LogError("[TestRunner] PromotionSystem not found in YearEnd scene (Year 3)!");
+                    yield break;
+                }
                 var finalCandidates = promo.GetCandidates();
                 promo.ToggleSelection(finalCandidates[0].StudentId);
                 promo.ConfirmPromotions();
