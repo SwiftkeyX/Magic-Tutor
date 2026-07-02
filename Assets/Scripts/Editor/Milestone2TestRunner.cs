@@ -12,19 +12,49 @@ namespace MagicSchool.Tests
 {
     public class Milestone2TestRunner : MonoBehaviour
     {
+        private const string TestPrefsKey = "MagicSchool_RunMilestone2Test";
+
 #if UNITY_EDITOR
         [MenuItem("Tools/Magic School/Run Milestone 2 Play Mode Test")]
         public static void RunTestFromMenu()
         {
+            if (EditorApplication.isPlaying)
+            {
+                Debug.LogWarning("[TestRunner] Cannot trigger test while already in Play Mode. Exiting Play Mode first.");
+                EditorApplication.isPlaying = false;
+                return;
+            }
+
+            // Set the flag to run the test once play mode starts
+            EditorPrefs.SetBool(TestPrefsKey, true);
+
             // Open Bootstrap scene
+            EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
             EditorSceneManager.OpenScene("Assets/Scenes/Bootstrap.unity");
             
-            // Create a temporary test runner GameObject
-            var go = new GameObject("Milestone2TestRunner");
-            go.AddComponent<Milestone2TestRunner>();
-            
-            // Start play mode
+            // Enter Play Mode
             EditorApplication.isPlaying = true;
+        }
+
+        [InitializeOnLoadMethod]
+        private static void InitializeOnLoad()
+        {
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.EnteredPlayMode)
+            {
+                if (EditorPrefs.GetBool(TestPrefsKey, false))
+                {
+                    EditorPrefs.SetBool(TestPrefsKey, false);
+
+                    // Create the runner in the running play mode
+                    var go = new GameObject("Milestone2TestRunner");
+                    go.AddComponent<Milestone2TestRunner>();
+                }
+            }
         }
 #endif
 
