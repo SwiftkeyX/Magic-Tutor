@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ad1740f03ec5404abea4e92bce4d71c, type: 3}
+  m_Name: StudentConfig
+  m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.StudentConfig
+  RecruitCountPerSemester: 5
+  BaseHPRange: {x: 40, y: 80}
+  BaseATKRange: {x: 5, y: 15}
+  BaseDEFRange: {x: 0, y: 10}
+  BaseMGRange: {x: 0, y: 10}
+  BaseMRRange: {x: 0, y: 10}
+  BaseSPDRange: {x: 3, y: 8}
+  BaseCRITRange: {x: 0, y: 10}
+  TraitsPerStudent: {x: 1, y: 2}
+  AvailableTraits: 0000000001000000020000000300000004000000050000000600000007000000
+  NamePool:
+  - Alaric
+  - Bartholomew
+  - Cedric
+  - Dorian
+  - Elric
+  - Finneas
+  - Gideon
+  - Hadrian
+  - Ignatius
+  - Julian
+  - Aurelia
+  - Beatrice
+  - Cassandra
+  - Diana
+  - Evelyn
+  - Fiona
+  - Genevieve
+  - Helena
+  - Iris
+  - Juliet
+  - Kaelen
+  - Lysander
+  - Myron
+  - Nesta
+  - Orion
+  - Percival
+  - Quentin
+  - Rowan
+  - Silas
+  - Tristan
+  - Valerius
+  - Zephyr
+  - Maeve
+  - Ophelia
+  - Penelope
+  - Rowena
+  - Seraphina
+  - Theodora
+  - Ursula
+  - Vivian

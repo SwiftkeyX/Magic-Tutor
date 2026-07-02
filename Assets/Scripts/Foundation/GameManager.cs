@@ -14,6 +14,11 @@ namespace MagicSchool.Battle
     {
         public static GameManager Instance { get; private set; }
 
+        [SerializeField] private RunConfig _runConfig;
+        [SerializeField] private EnemyDatabase _enemyDatabase;
+        [SerializeField] private PromotionConfig _promotionConfig;
+        [SerializeField] private StudentConfig _studentConfig;
+
         public GameState CurrentState { get; private set; } = GameState.MainMenu;
         public RunSnapshot LastRunResult { get; private set; }
         
@@ -42,6 +47,7 @@ namespace MagicSchool.Battle
             {
                 var rosterGO = new GameObject("StudentRoster");
                 var comp = rosterGO.AddComponent<StudentRoster>();
+                comp.Initialize(_studentConfig);
                 Debug.Log($"[GameManager] Dynamically created StudentRoster. Component Null: {comp == null}");
                 DontDestroyOnLoad(rosterGO);
             }
@@ -101,7 +107,8 @@ namespace MagicSchool.Battle
 
             // Instantiate dynamic RunManager to orchestrate the active gameplay run
             var runManagerGO = new GameObject("RunManager");
-            runManagerGO.AddComponent<RunManager>();
+            var runManager = runManagerGO.AddComponent<RunManager>();
+            runManager.Initialize(_runConfig, _enemyDatabase, _promotionConfig);
         }
 
         public void EndRun(bool won, int yearReached)

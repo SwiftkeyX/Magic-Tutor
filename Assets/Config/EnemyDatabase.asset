@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1cf0c9eab77bad498844e9c6e292bcc, type: 3}
+  m_Name: EnemyDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.EnemyDatabase
+  Year1Squad:
+  - EnemyId: goblin_scout
+    DisplayName: Goblin Scout
+    BaseHP: 50
+    BaseATK: 6
+    BaseDEF: 0
+    BaseMG: 0
+    BaseMR: 0
+    BaseSPD: 3
+    BaseCRIT: 0
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}
+  - EnemyId: forest_slime
+    DisplayName: Forest Slime
+    BaseHP: 70
+    BaseATK: 5
+    BaseDEF: 5
+    BaseMG: 0
+    BaseMR: 0
+    BaseSPD: 2
+    BaseCRIT: 0
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}
+  - EnemyId: bark_golem
+    DisplayName: Bark Golem
+    BaseHP: 60
+    BaseATK: 7
+    BaseDEF: 8
+    BaseMG: 0
+    BaseMR: 0
+    BaseSPD: 2
+    BaseCRIT: 0
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}
+  Year2Squad:
+  - EnemyId: iron_hound
+    DisplayName: Iron Hound
+    BaseHP: 80
+    BaseATK: 10
+    BaseDEF: 5
+    BaseMG: 0
+    BaseMR: 5
+    BaseSPD: 6
+    BaseCRIT: 0
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}
+  - EnemyId: shadow_sprite
+    DisplayName: Shadow Sprite
+    BaseHP: 60
+    BaseATK: 8
+    BaseDEF: 0
+    BaseMG: 0
+    BaseMR: 0
+    BaseSPD: 8
+    BaseCRIT: 20
+    Range: 1
+    Flags: 00000000
+    Icon: {fileID: 0}
+  - EnemyId: stone_troll
+    DisplayName: Stone Troll
+    BaseHP: 110
+    BaseATK: 9
+    BaseDEF: 30
+    BaseMG: 0
+    BaseMR: 10
+    BaseSPD: 3
+    BaseCRIT: 0
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}
+  - EnemyId: fire_imp
+    DisplayName: Fire Imp
+    BaseHP: 55
+    BaseATK: 11
+    BaseDEF: 0
+    BaseMG: 8
+    BaseMR: 0
+    BaseSPD: 5
+    BaseCRIT: 10
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}
+  Year3Squad:
+  - EnemyId: arcane_guardian
+    DisplayName: Arcane Guardian
+    BaseHP: 130
+    BaseATK: 12
+    BaseDEF: 10
+    BaseMG: 18
+    BaseMR: 5
+    BaseSPD: 5
+    BaseCRIT: 0
+    Range: 1
+    Flags: 0100000004000000
+    Icon: {fileID: 0}
+  - EnemyId: void_wraith
+    DisplayName: Void Wraith
+    BaseHP: 90
+    BaseATK: 14
+    BaseDEF: 0
+    BaseMG: 0
+    BaseMR: 0
+    BaseSPD: 9
+    BaseCRIT: 30
+    Range: 1
+    Flags: 00000000
+    Icon: {fileID: 0}
+  - EnemyId: iron_colossus
+    DisplayName: Iron Colossus
+    BaseHP: 180
+    BaseATK: 11
+    BaseDEF: 50
+    BaseMG: 0
+    BaseMR: 20
+    BaseSPD: 2
+    BaseCRIT: 0
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}
+  - EnemyId: ember_witch
+    DisplayName: Ember Witch
+    BaseHP: 80
+    BaseATK: 10
+    BaseDEF: 5
+    BaseMG: 15
+    BaseMR: 0
+    BaseSPD: 7
+    BaseCRIT: 15
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}
+  - EnemyId: plague_lurker
+    DisplayName: Plague Lurker
+    BaseHP: 100
+    BaseATK: 12
+    BaseDEF: 15
+    BaseMG: 0
+    BaseMR: 15
+    BaseSPD: 6
+    BaseCRIT: 0
+    Range: 1
+    Flags: 
+    Icon: {fileID: 0}

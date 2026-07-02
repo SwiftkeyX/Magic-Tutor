@@ -43,7 +43,7 @@ This project is primarily driven by Claude Code; its full process lives in `CLAU
 
 - **Centralized Skills:** All agent skills, tools, and custom behaviors must reside under `.claude/`. The `.agents/` directory must remain empty, save for `.agents/skills.json` which maps to `.claude/skills/` to pull in centralized definitions.
 - **No Local Skills:** Antigravity (and other secondary agents) must not define independent local skills or plugins under `.agents/`. Any custom workflows must be read and followed directly from `.claude/skills/`.
-- **Role Alignment:** Antigravity operates as "Claude Code no. 2"—meaning it strictly follows the same constraints, GDD gates, branch conventions, and Unity editor orchestration as Claude Code, ensuring a single unified development lifecycle.
+- **Role Alignment (Antigravity - Game Balance Specialist):** Antigravity operates under a specialized role focused entirely on game balancing. Antigravity can read the entire codebase and project files, but only has write permission to files within `.claude/docs/balance/` and the project's Google Sheets (such as the custom auto-battler sheet, while TFT reference sheets are read-only). All coding, Unity editor manipulation, and implementation tasks are strictly handled by Claude Code.
 
 ## Claude Command Guide (Co-pilot Integration)
 

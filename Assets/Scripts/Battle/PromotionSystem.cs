@@ -17,6 +17,11 @@ namespace MagicSchool.Battle
 
         public event Action OnPromotionComplete;
 
+        public void Initialize(PromotionConfig config)
+        {
+            if (config != null) _config = config;
+        }
+
         private void Awake()
         {
             if (Instance != null)
@@ -31,14 +36,11 @@ namespace MagicSchool.Battle
 
         private void Start()
         {
+            // Config is normally supplied by RunManager.Initialize(); this is a last-resort safety net.
             if (_config == null)
             {
-                _config = Resources.Load<PromotionConfig>("PromotionConfig");
-                if (_config == null)
-                {
-                    _config = ScriptableObject.CreateInstance<PromotionConfig>();
-                    Debug.LogWarning("[PromotionSystem] PromotionConfig not found in Resources. Using defaults.");
-                }
+                _config = ScriptableObject.CreateInstance<PromotionConfig>();
+                Debug.LogWarning("[PromotionSystem] PromotionConfig not assigned via RunManager or Inspector. Using in-memory defaults.");
             }
 
             PopulateCandidates();

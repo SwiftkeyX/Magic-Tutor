@@ -21,6 +21,14 @@ namespace MagicSchool.Battle
 
         [SerializeField] private RunConfig _config;
         [SerializeField] private EnemyDatabase _enemyDatabase;
+        [SerializeField] private PromotionConfig _promotionConfig;
+
+        public void Initialize(RunConfig config, EnemyDatabase enemyDatabase, PromotionConfig promotionConfig)
+        {
+            if (config != null) _config = config;
+            if (enemyDatabase != null) _enemyDatabase = enemyDatabase;
+            if (promotionConfig != null) _promotionConfig = promotionConfig;
+        }
 
         public int CurrentYear { get; private set; } = 1;
         public RunPhase CurrentPhase { get; private set; } = RunPhase.None;
@@ -51,24 +59,16 @@ namespace MagicSchool.Battle
                 GameManager.Instance.ActiveRun = this;
             }
 
-            // Load configs if not assigned
+            // Configs are normally supplied by GameManager.Initialize(); these are last-resort safety nets.
             if (_config == null)
             {
-                _config = Resources.Load<RunConfig>("RunConfig");
-                if (_config == null)
-                {
-                    _config = ScriptableObject.CreateInstance<RunConfig>();
-                    Debug.LogWarning("[RunManager] RunConfig not found in Resources. Using defaults.");
-                }
+                _config = ScriptableObject.CreateInstance<RunConfig>();
+                Debug.LogWarning("[RunManager] RunConfig not assigned via GameManager or Inspector. Using in-memory defaults.");
             }
 
             if (_enemyDatabase == null)
             {
-                _enemyDatabase = Resources.Load<EnemyDatabase>("EnemyDatabase");
-                if (_enemyDatabase == null)
-                {
-                    Debug.LogError("[RunManager] EnemyDatabase not found in Resources!");
-                }
+                Debug.LogError("[RunManager] EnemyDatabase not assigned via GameManager or Inspector. Battles will resolve with no enemies.");
             }
 
             // Subscribe to scene change events to hook scene-specific managers
@@ -217,6 +217,7 @@ namespace MagicSchool.Battle
                     Debug.Log("[RunManager] PromotionSystem not found in scene. Instantiating dynamically.");
                     var promoGO = new GameObject("PromotionSystem");
                     promo = promoGO.AddComponent<PromotionSystem>();
+                    promo.Initialize(_promotionConfig);
                 }
                 
                 promo.OnPromotionComplete += HandlePromotionComplete;
