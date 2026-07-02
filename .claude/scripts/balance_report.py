@@ -44,8 +44,8 @@ def read_sheet_tabs(offline_path=None):
         with open(offline_path, encoding="utf-8") as f:
             dump = json.load(f)
         return {tab: dump[tab] for tab in wanted}
-    import sheet_sync  # reuse credentials + spreadsheet key
-    sh = sheet_sync.get_spreadsheet(sheet_sync.get_client())
+    import sheet_sync  # reuse credentials + sheet registry
+    sh = sheet_sync.get_spreadsheet(sheet_sync.get_client(), sheet_name="auto-battler")
     return {tab: sh.worksheet(tab).get_all_values() for tab in wanted}
 
 

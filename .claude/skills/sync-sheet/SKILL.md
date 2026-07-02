@@ -1,13 +1,15 @@
 ---
 name: sync-sheet
-description: Read and write data to/from the Custom Auto-Battler Google Sheet using the background sheet_sync.py script.
+description: Read and write data to/from any of the project's 3 Google Sheets (Custom Auto-Battler, TFT Set 9, TFT Set 10) using the background sheet_sync.py script.
 ---
 
 # Google Sheet Sync Skill (Background API)
 
-This skill allows the agent to read and write to the Custom Auto-Battler Google Sheet directly in the background using the [sheet_sync.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/scripts/sheet_sync.py) command-line utility. This avoids launching a browser and interrupting the user.
+This skill allows the agent to read and write to the project's Google Sheets directly in the background using the [sheet_sync.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/scripts/sheet_sync.py) command-line utility. This avoids launching a browser and interrupting the user.
 
-## Purpose of the Google Sheet
+There are **3 registered sheets** (see [`sheets_config.json`](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/scripts/sheets_config.json) and [`data-sources.md`](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/data-sources.md) for the full registry): `auto-battler` (default — ours, writable), `tft-set9` and `tft-set10` (external references, read-only — `write` is refused against them). Select a non-default sheet with `--sheet <name>` before the subcommand, e.g. `python .claude/scripts/sheet_sync.py --sheet tft-set9 read <TabName>`.
+
+## Purpose of the Google Sheet (`auto-battler`, the default)
 This Google Sheet acts as the **design database** for the game. It contains the source of truth for:
 * **Heroes**: All champions — cost, classes, origins, roles, combat logic, and full numeric stats (HP, ATK, DEF, MG, MR, AS, CRIT, Range, MaxMana, StartingMana).
 * **Origins (Vertical Classes)**: breakpoints and effects.
@@ -51,8 +53,9 @@ python .claude/scripts/sheet_sync.py write Heroes B2 "Ironclad"
 ```
 
 ## Steps to Dump All Sheet Content
-To download all data from the spreadsheet into a single local JSON file (`sheet_dump.json`, written at repo root):
+To download all tabs of a sheet into a single local, self-describing JSON file (default name `<sheet>_dump_<date>.json`, embeds a `_meta` block with sheet name/key/timestamp):
 
 ```bash
 python .claude/scripts/sheet_sync.py dump
+python .claude/scripts/sheet_sync.py --sheet tft-set9 dump
 ```

@@ -6,12 +6,18 @@ This document serves as our long-term research plan and tracking document for un
 
 ## Methodology (sheet-first)
 
-The **Google Sheet is the live design database** (read via the `sync-sheet` skill /
-`sheet_sync.py`); champion numeric stats live in `ChampionRoster.cs` and must stay in
-sync with it. `.claude/scripts/balance_report.py` is the analysis tool: it reads the
-Heroes/Origin/Class tabs live, joins code stats, and applies the framework in
-`balance-framework.md`. The local TFT JSON dumps under `.claude/reference/json/` are
-**archived reference only** — the workflow no longer reads them.
+Three live Google Sheets back this workflow — see `data-sources.md` for the full registry
+(spreadsheet keys, tabs, read/write access). Our own **`auto-battler`** sheet is the live
+design database (read via the `sync-sheet` skill / `sheet_sync.py`); champion numeric stats
+live in `ChampionRoster.cs` and must stay in sync with it. `.claude/scripts/balance_report.py`
+is the analysis tool: it reads the Heroes/Origin/Class tabs live, joins code stats, and
+applies the framework in `balance-framework.md`. **`tft-set9`** and **`tft-set10`** are
+external, read-only reference sheets — TFT's own Set 9/10 champion and trait data — used to
+ground the TFT math in `tft-balancing-analysis.md`/`tft-balancing-rules.md` and to cross-check
+that formulas (EHP, mana, star scaling) hold across sets. Local JSON snapshots of all three
+live under `.claude/reference/json/`, refreshed via `sheet_sync.py --sheet <name> dump`
+(see `data-sources.md` for the exact commands) — they are a **reproducible offline mirror**,
+not archived-and-abandoned data.
 
 ## Roadmap Overview
 

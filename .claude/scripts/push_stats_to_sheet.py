@@ -27,7 +27,7 @@ def main():
     by_name = {c["DisplayName"]: c for c in champions}
 
     client = sheet_sync.get_client()
-    sh = sheet_sync.get_spreadsheet(client)
+    sh = sheet_sync.get_spreadsheet(client, sheet_name="auto-battler")
     ws = sh.worksheet("Heroes")
     rows = ws.get_all_values()
     header, data_rows = rows[0], rows[1:]

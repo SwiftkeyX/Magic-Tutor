@@ -1,0 +1,20 @@
+{
+  "auto-battler": {
+    "key": "1lz_WS8Vw0YjfmNZLI3JmRArfFBU2sPAk2qAG8AKN3jg",
+    "role": "canonical",
+    "writable": true,
+    "description": "Custom Auto-Battler design database - our own Heroes/Origin/Class/Dashboard tabs."
+  },
+  "tft-set9": {
+    "key": "1xj6em5XlvIN1gWHTKOPDsssmkgnS3jIsaLnAMjYyPUA",
+    "role": "reference",
+    "writable": false,
+    "description": "TFT Set 9 Champions reference sheet (external, read-only)."
+  },
+  "tft-set10": {
+    "key": "1Eutkil9U8RJ4Lqo3l6wk9pbUeVVH80M4JmcRyMEqa2E",
+    "role": "reference",
+    "writable": false,
+    "description": "TFT Set 10 Champions reference sheet (external, read-only)."
+  }
+}

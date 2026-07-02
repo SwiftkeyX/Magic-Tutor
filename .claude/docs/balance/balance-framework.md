@@ -196,16 +196,18 @@ Prints a win-rate matrix and flags matchups outside the expected band.
 The Google Sheet is the design source of truth (see the `sync-sheet` skill); numeric
 stats live in `ChampionRoster.cs` and must stay in sync with it.
 
-When adding or tuning a champion:
-1. Run `python .claude/scripts/balance_report.py` (from repo root). It reads the Heroes/Origin/Class tabs
-   live, parses `ChampionRoster.cs`, and reports: the sheet↔code **consistency gate**,
-   Layer 2 scores vs tier bands, skill/mana cycle stats, and the live trait tables.
-2. Resolve any consistency-gate mismatches first — a champion whose sheet row and code
-   stats disagree cannot be meaningfully balanced.
-3. Adjust stats until the Score is in band, then run **Magic School → Validate Balance**
-   and check the printed outlier list (win rates in band).
-4. Regenerate the "Current Scores" table above from the report output.
-5. Update the champion stat table in `TraitSystem.md`.
+Run **`/balance-pass`** to execute the full loop end to end, or invoke its steps individually:
+
+1. **`/check-balance`** — reads the Heroes/Origin/Class tabs live, parses `ChampionRoster.cs`,
+   and reports the sheet↔code **consistency gate**, Layer 2 scores vs. tier bands, skill/mana
+   cycle stats, and the live trait tables. Resolve any consistency-gate mismatches first — a
+   champion whose sheet row and code stats disagree cannot be meaningfully balanced.
+2. **`/tune-champion`** — per out-of-band champion, proposes and applies one stat change at a
+   time until the Score is in band.
+3. **`/validate-balance`** — runs **Magic School → Validate Balance** and checks the printed
+   win-rate outlier list; routes back to `/tune-champion` if outliers are found.
+4. **`/push-champion-stats`** — refreshes the sheet's stat mirror, updates the champion stat
+   table in `TraitSystem.md`, and regenerates the "Current Scores" table above.
 
 ---
 
