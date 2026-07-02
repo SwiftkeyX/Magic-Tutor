@@ -64,16 +64,16 @@ Rapid prototype on feature branches to validate the core loop before committing 
 
 > `AutoBattleResolver`, `TraitSystem`, and `TrainingSystem` were built during the Prototype phase. Their GDDs (Sub-phase A) must be written before the Architecture pass.
 
-- [ ] Code `RunManager`
-- [ ] Code `StudentRoster`
-- [ ] Code `EnemyDatabase`
-- [ ] Code `PromotionSystem`
-- [ ] Code `TeacherRoster`
+- [x] Code `RunManager`
+- [x] Code `StudentRoster`
+- [x] Code `EnemyDatabase`
+- [x] Code `PromotionSystem`
+- [x] Code `TeacherRoster`
 - [x] Code `ActiveSkillSystem`
   - [x] Base system (7 templates, mana, lockout)
   - [x] Champion roster wiring: Batch 1 [x], Batch 2 [x], Batch 3 [x], Batch 4 [x], Batch 5 [x]
-- [ ] Milestone 2 — core loop playable end-to-end (run starts, 3 years cycle, win/lose resolves)
-- [ ] 🧪 Test Gate 2 — One full 3-year run completes without errors
+- [x] Milestone 2 — core loop playable end-to-end (run starts, 3 years cycle, win/lose resolves)
+- [x] 🧪 Test Gate 2 — One full 3-year run completes without errors
 
 #### Tier 3 — Supporting Systems
 - [ ] Code `AudioSystem`
