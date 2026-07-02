@@ -17,6 +17,7 @@ namespace MagicSchool.Battle
     public class RunManager : MonoBehaviour
     {
         public static RunManager Instance { get; private set; }
+        public static bool EnableTeacherSystem = false; // Disabled by default for stability
 
         [SerializeField] private RunConfig _config;
         [SerializeField] private EnemyDatabase _enemyDatabase;
@@ -232,7 +233,33 @@ namespace MagicSchool.Battle
 
             if (result.Won)
             {
-                TransitionToPhase(RunPhase.YearEnd);
+                if (EnableTeacherSystem)
+                {
+                    TransitionToPhase(RunPhase.YearEnd);
+                }
+                else
+                {
+                    // Clear roster, advance year or end run directly
+                    if (StudentRoster.Instance != null)
+                    {
+                        StudentRoster.Instance.Clear();
+                    }
+
+                    if (CurrentYear < _config.MaxYears)
+                    {
+                        CurrentYear++;
+                        OnYearChanged?.Invoke(CurrentYear);
+                        TransitionToPhase(RunPhase.Recruit);
+                    }
+                    else
+                    {
+                        if (GameManager.Instance != null)
+                        {
+                            GameManager.Instance.EndRun(won: true, yearReached: 3);
+                        }
+                        Destroy(gameObject);
+                    }
+                }
             }
             else
             {

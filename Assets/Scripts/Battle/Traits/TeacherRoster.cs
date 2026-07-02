@@ -108,6 +108,8 @@ namespace MagicSchool.Battle
 
         public int GetTrainingBuff(StatType stat)
         {
+            if (!RunManager.EnableTeacherSystem) return 0;
+
             int total = 0;
             foreach (var t in _teachers)
             {
