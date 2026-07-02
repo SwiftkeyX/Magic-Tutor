@@ -251,6 +251,7 @@ MonoBehaviour:
   _root: {fileID: 328798264}
   _championRoster: {fileID: 1670095326}
   _traitTracker: {fileID: 1670095325}
+  _enemyDatabase: {fileID: 1670095319}
 --- !u!114 &328798266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -813,6 +814,30 @@ MonoBehaviour:
     MaxMana: 100
     StartingMana: 0
     Flags: 
+    Skill:
+      Archetype: 0
+      SkillName: 
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
   - Id: witch
     DisplayName: Witch
     MaxHP: 450
@@ -826,6 +851,30 @@ MonoBehaviour:
     MaxMana: 100
     StartingMana: 0
     Flags: 04000000
+    Skill:
+      Archetype: 0
+      SkillName: 
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
   - Id: sniper
     DisplayName: Sniper
     MaxHP: 500
@@ -839,6 +888,30 @@ MonoBehaviour:
     MaxMana: 100
     StartingMana: 0
     Flags: 
+    Skill:
+      Archetype: 0
+      SkillName: 
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
 --- !u!114 &1670095320
 MonoBehaviour:
   m_ObjectHideFlags: 0

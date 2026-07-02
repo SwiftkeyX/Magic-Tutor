@@ -60,3 +60,7 @@ Thumbs.db
 
 # Crashlytics
 crashlytics-build.properties
+
+# Python
+__pycache__/
+*.pyc

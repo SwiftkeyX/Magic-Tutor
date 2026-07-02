@@ -9,6 +9,8 @@ namespace MagicSchool.Battle
 
         public List<EnemyCombatData> GetEnemies() => new List<EnemyCombatData>(_enemies);
 
+        public EnemyCombatData GetEnemyById(string id) => _enemies.Find(e => e.Id == id);
+
         private void Reset()
         {
             _enemies = new List<EnemyCombatData>

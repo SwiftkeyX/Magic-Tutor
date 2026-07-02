@@ -41,10 +41,18 @@ namespace MagicSchool.Battle
         private Camera      _cam;
         private HexTileView _hoveredTile;
 
+        private Camera Cam
+        {
+            get
+            {
+                if (_cam == null) _cam = Camera.main;
+                return _cam;
+            }
+        }
+
         // ── Lifecycle ────────────────────────────────────────────────────────
         private void Awake()
         {
-            _cam  = Camera.main;
             _grid = GetComponent<HexGrid>();
             if (_grid == null) { Debug.LogError("[BattleBoardManager] HexGrid missing", this); enabled = false; return; }
         }
@@ -74,6 +82,7 @@ namespace MagicSchool.Battle
             _resolver.OnManaChanged       += HandleManaChanged;
             _resolver.OnCastStateChanged  += HandleCastStateChanged;
 
+            SetupBenchScrollView();
             BuildBench(students);
 
             _startBattleButton.interactable = false;
@@ -83,6 +92,86 @@ namespace MagicSchool.Battle
 #if UNITY_EDITOR
             if (_debugAutoStart) TestAutoPlace();
 #endif
+        }
+
+        private void SetupBenchScrollView()
+        {
+            if (_benchPanel == null) return;
+
+            // 1. Get original parent and RectTransform properties
+            var parent = _benchPanel.parent;
+            var originalRT = _benchPanel;
+
+            // 2. Create the ScrollView container at the same position/size
+            var scrollViewGO = new GameObject("BenchScrollView", typeof(RectTransform));
+            scrollViewGO.transform.SetParent(parent, false);
+            var scrollRT = scrollViewGO.GetComponent<RectTransform>();
+            
+            // Copy RectTransform layout properties from _benchPanel
+            scrollRT.anchorMin = originalRT.anchorMin;
+            scrollRT.anchorMax = originalRT.anchorMax;
+            scrollRT.anchoredPosition = originalRT.anchoredPosition;
+            scrollRT.sizeDelta = originalRT.sizeDelta;
+            scrollRT.pivot = originalRT.pivot;
+
+            // Move the dark background Image from _benchPanel to scroll view
+            var originalImage = _benchPanel.GetComponent<Image>();
+            if (originalImage != null)
+            {
+                var scrollImage = scrollViewGO.AddComponent<Image>();
+                scrollImage.color = originalImage.color;
+                scrollImage.sprite = originalImage.sprite;
+                scrollImage.material = originalImage.material;
+                scrollImage.type = originalImage.type;
+                Destroy(originalImage);
+            }
+
+            // 3. Create Viewport under ScrollView for masking
+            var viewportGO = new GameObject("Viewport", typeof(RectTransform));
+            viewportGO.transform.SetParent(scrollViewGO.transform, false);
+            var viewRT = viewportGO.GetComponent<RectTransform>();
+            viewRT.anchorMin = Vector2.zero;
+            viewRT.anchorMax = Vector2.one;
+            viewRT.offsetMin = Vector2.zero;
+            viewRT.offsetMax = Vector2.zero;
+            viewportGO.AddComponent<RectMask2D>();
+
+            // 4. Reparent _benchPanel to Viewport
+            _benchPanel.SetParent(viewportGO.transform, false);
+            
+            // Left-align the bench panel inside the viewport
+            _benchPanel.anchorMin = new Vector2(0, 0.5f);
+            _benchPanel.anchorMax = new Vector2(0, 0.5f);
+            _benchPanel.pivot = new Vector2(0, 0.5f);
+            _benchPanel.anchoredPosition = Vector2.zero;
+            _benchPanel.sizeDelta = new Vector2(0, originalRT.sizeDelta.y); // dynamic width, fixed height
+
+            // 5. Configure layout group and fitter on _benchPanel
+            var layout = _benchPanel.GetComponent<HorizontalLayoutGroup>();
+            if (layout != null)
+            {
+                layout.childForceExpandWidth = false;
+                layout.childForceExpandHeight = false;
+                layout.childControlWidth = false;
+                layout.childControlHeight = false;
+                layout.padding = new RectOffset(10, 10, 10, 10);
+            }
+
+            var fitter = _benchPanel.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            // 6. Setup ScrollRect on BenchScrollView
+            var scrollRect = scrollViewGO.AddComponent<ScrollRect>();
+            scrollRect.content = _benchPanel;
+            scrollRect.viewport = viewRT;
+            scrollRect.horizontal = true;
+            scrollRect.vertical = false;
+            scrollRect.horizontalScrollbar = null;
+            scrollRect.verticalScrollbar = null;
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            scrollRect.inertia = true;
+            scrollRect.decelerationRate = 0.135f;
+            scrollRect.scrollSensitivity = 25f;
         }
 
         private void OnDestroy()
@@ -257,7 +346,7 @@ namespace MagicSchool.Battle
         public void OnCardDrag(Vector2 screenPos)
         {
             if (_dragGhost == null) return;
-            Vector3 world = _cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -_cam.transform.position.z));
+            Vector3 world = Cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -Cam.transform.position.z));
             world.z = 0f;
             _dragGhost.transform.position = world;
 
@@ -294,7 +383,7 @@ namespace MagicSchool.Battle
             if (_draggingStudentId == null) return;
 
             // Hit-test world pos → nearest valid tile
-            Vector3 worldPos = _cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -_cam.transform.position.z));
+            Vector3 worldPos = Cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -Cam.transform.position.z));
             worldPos.z = 0f;
 
             bool hasExisting = _pendingPlacements.TryGetValue(_draggingStudentId, out var existingCoord);

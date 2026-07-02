@@ -15,6 +15,7 @@
 | TrainingSystem | Training-action allocation mechanic; modifies student stats per allocated training sessions | StudentRoster | 2 |
 | TraitSystem | Assigns traits to students, tracks team trait counts, fires threshold events, applies trait abilities | StudentRoster | 2 |
 | AutoBattleResolver | Simulates auto-battle (student stats + trait abilities vs enemy stats); returns win/lose result | TraitSystem, EnemyDatabase | 2 |
+| ActiveSkillSystem | Defines mana, spellcasting, and active abilities for all 30 champions | AutoBattleResolver | 2 |
 | EnemyDatabase | Defines enemy types and scales their stats per year; feeds data to AutoBattleResolver | RunManager | 2 |
 | PromotionSystem | Year-end screen logic; player chooses promotions → creates teacher records, discards remaining students | StudentRoster, TeacherRoster | 2 |
 | TeacherRoster | Manages persistent teacher collection across runs; computes and exposes aggregate teacher buffs | SaveSystem | 2 |

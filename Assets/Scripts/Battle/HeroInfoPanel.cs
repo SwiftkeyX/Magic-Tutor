@@ -11,9 +11,10 @@ namespace MagicSchool.Battle
     // listens for selections via the decoupled HeroSelection static event.
     public class HeroInfoPanel : MonoBehaviour
     {
-        [SerializeField] private RectTransform  _root;
-        [SerializeField] private ChampionRoster _championRoster;
-        [SerializeField] private TraitTracker   _traitTracker;
+        [SerializeField] private RectTransform     _root;
+        [SerializeField] private ChampionRoster    _championRoster;
+        [SerializeField] private TraitTracker      _traitTracker;
+        [SerializeField] private EnemyDatabaseStub _enemyDatabase;
 
         private static readonly Dictionary<BattleBehaviorFlag, string> FlagDescriptions =
             new Dictionary<BattleBehaviorFlag, string>
@@ -41,10 +42,12 @@ namespace MagicSchool.Battle
 
         private void OnHeroSelected(string championId)
         {
-            if (_championRoster == null) return;
-            var data = _championRoster.GetChampionById(championId);
-            if (data == null) return; // not a player champion (e.g. enemy click) — leave panel as-is
-            ShowHero(data);
+            var data = _championRoster != null ? _championRoster.GetChampionById(championId) : null;
+            if (data != null) { ShowHero(data); return; }
+
+            var enemy = _enemyDatabase != null ? _enemyDatabase.GetEnemyById(championId) : null;
+            if (enemy != null) { ShowEnemy(enemy); return; }
+            // Neither a player champion nor a known enemy — leave panel as-is.
         }
 
         private void BuildLayout()
@@ -90,6 +93,68 @@ namespace MagicSchool.Battle
             _traitsText.text = "Click a bench card or a placed hero to inspect it.";
         }
 
+        private string GetSkillDescriptionText(SkillDefinition skill, int maxHp, int atk, int def, int mg)
+        {
+            if (skill == null || skill.Archetype == SkillArchetype.None)
+                return null;
+
+            string scalingStat = skill.UsesMagicOffense ? "MG" : "ATK";
+            float baseStat = skill.UsesMagicOffense ? mg : atk;
+            int dmg = (int)(baseStat * skill.OffenseMultiplier);
+            string desc = "";
+
+            switch (skill.Archetype)
+            {
+                case SkillArchetype.StandardProjectile:
+                    if (skill.TargetTeam == TargetTeam.Ally)
+                    {
+                        int heal = (int)(mg * skill.HealMultiplier);
+                        desc = $"Heals lowest HP% ally for {heal} ({(int)(skill.HealMultiplier * 100)}% MG)";
+                        if (skill.FlatShieldAmount > 0)
+                            desc += $" and shields them for {skill.FlatShieldAmount} HP";
+                    }
+                    else
+                    {
+                        desc = $"Fires a projectile dealing {dmg} ({(int)(skill.OffenseMultiplier * 100)}% {scalingStat}) damage.";
+                    }
+                    break;
+                case SkillArchetype.ExplodingProjectile:
+                    desc = $"Fires an exploding projectile, dealing {dmg} ({(int)(skill.OffenseMultiplier * 100)}% {scalingStat}) damage in a {skill.Radius}-hex radius.";
+                    break;
+                case SkillArchetype.LaserBeam:
+                    desc = $"Fires a linear piercing beam, dealing {dmg} ({(int)(skill.OffenseMultiplier * 100)}% {scalingStat}) damage to all enemies hit.";
+                    break;
+                case SkillArchetype.GroundAoE:
+                    desc = $"Drops a ground hazard on the largest enemy cluster, dealing {dmg} ({(int)(skill.OffenseMultiplier * 100)}% {scalingStat}) damage.";
+                    if (skill.CrowdControl == CcType.Stun)
+                        desc += $" Stuns hit targets for {skill.DurationTicks} ticks.";
+                    else if (skill.CrowdControl == CcType.Root)
+                        desc += $" Roots hit targets for {skill.DurationTicks} ticks.";
+                    break;
+                case SkillArchetype.BlinkStrike:
+                    desc = $"Blinks to the lowest HP% enemy and strikes for {dmg} ({(int)(skill.OffenseMultiplier * 100)}% {scalingStat}) damage.";
+                    break;
+                case SkillArchetype.BouncingChain:
+                    desc = $"Fires a chain bouncing up to {skill.BounceCount} times, dealing {dmg} ({(int)(skill.OffenseMultiplier * 100)}% {scalingStat}) damage.";
+                    if (skill.CrowdControl == CcType.Silence)
+                        desc += $" Silences hit targets for {skill.DurationTicks} ticks.";
+                    break;
+                case SkillArchetype.SelfBuff:
+                    int shield = (int)(def * skill.ShieldDefMultiplier + skill.FlatShieldAmount + maxHp * skill.ShieldPctOfMaxHP);
+                    desc = $"Gains {shield} shield for {skill.DurationTicks} ticks.";
+                    if (skill.CrowdControl == CcType.Taunt)
+                        desc += " Taunts adjacent enemies.";
+                    if (skill.HealMultiplier > 0)
+                        desc += $" Heals adjacent allies for {(int)(mg * skill.HealMultiplier)} HP.";
+                    break;
+            }
+
+            if (desc.Length > 0)
+                desc = char.ToUpper(desc[0]) + desc.Substring(1);
+
+            return $"Skill: {skill.SkillName}\n{desc}";
+        }
+
         private void ShowHero(ChampionData data)
         {
             _headerText.text = $"{data.DisplayName}  ({data.Role}, Cost {data.Cost})";
@@ -100,13 +165,51 @@ namespace MagicSchool.Battle
                 $"AS {data.AttackSpeed:0.00}   Range {data.Range}\n" +
                 $"Mana {data.StartingMana}/{data.MaxMana}";
 
-            var flags = data.ToStudentCombatData().Flags;
-            _skillText.text = "Skill: " + (flags.Count == 0
-                ? "No active skill"
-                : string.Join("\n", flags.Select(f =>
-                    FlagDescriptions.TryGetValue(f, out var desc) ? $"{f} — {desc}" : f.ToString())));
+            string skillDesc = GetSkillDescriptionText(data.Skill, data.MaxHP, data.ATK, data.DEF, data.MG);
+            if (skillDesc != null)
+            {
+                _skillText.text = skillDesc;
+            }
+            else
+            {
+                var flags = data.ToStudentCombatData().Flags;
+                _skillText.text = "Skill: " + (flags.Count == 0
+                    ? "No active skill"
+                    : string.Join("\n", flags.Select(f =>
+                        FlagDescriptions.TryGetValue(f, out var desc) ? $"{f} — {desc}" : f.ToString())));
+            }
 
             _traitsText.text = "Traits: " + FormatTraits(data);
+        }
+
+        // Mirrors ShowHero — EnemyCombatData has no Role/Cost/VerticalTrait/
+        // HorizontalTrait, so the header omits those and Traits is a fixed "None"
+        // rather than calling FormatTraits (which is ChampionData-specific).
+        private void ShowEnemy(EnemyCombatData data)
+        {
+            _headerText.text = $"{data.DisplayName}  (Enemy)";
+
+            _statsText.text =
+                $"HP {data.MaxHP}   ATK {data.ATK}   DEF {data.DEF}\n" +
+                $"MG {data.MG}   MR {data.MR}   CRIT {data.CRIT}%\n" +
+                $"AS {data.AttackSpeed:0.00}   Range {data.Range}\n" +
+                $"Mana {data.StartingMana}/{data.MaxMana}";
+
+            string skillDesc = GetSkillDescriptionText(data.Skill, data.MaxHP, data.ATK, data.DEF, data.MG);
+            if (skillDesc != null)
+            {
+                _skillText.text = skillDesc;
+            }
+            else
+            {
+                var flags = data.Flags ?? new List<BattleBehaviorFlag>();
+                _skillText.text = "Skill: " + (flags.Count == 0
+                    ? "No active skill"
+                    : string.Join("\n", flags.Select(f =>
+                        FlagDescriptions.TryGetValue(f, out var desc) ? $"{f} — {desc}" : f.ToString())));
+            }
+
+            _traitsText.text = "Traits: None";
         }
 
         private string FormatTraits(ChampionData data)

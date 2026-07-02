@@ -76,7 +76,113 @@ namespace MagicSchool.Battle
                 // GDD's frontal-cone damage (1.3×ATK) and DEF-shred have no generic hook in SelfBuff
                 // yet — known gap matching the Ironclad precedent for cone/area self-buff effects.
                 Skill = new SkillDefinition { Archetype = SkillArchetype.SelfBuff, SkillName = "Scrap Cleave", OffenseMultiplier = 1.3f, UsesMagicOffense = false, LockoutTicks = 1 } },
+
+            // ── Batch 2 additions (champions #16–#19) ──────────────────────────
+            // Stats are raw (unscaled) from TraitSystem.md roster table; intentionally weaker
+            // than the existing 10 champions — explicitly accepted known gap, no rescaling.
+            // Mana and skill design from ActiveSkillSystem.md Hero Skill Definitions #16–#19.
+
+            // #16 — Sun Warden: SelfBuff (Template G) with secondary filter and hits all.
+            // Solar Flare deals magic damage (1.0×MG) to adjacent enemies (unsupported, known gap)
+            // and shields adjacent allies for 1.5×DEF for 3 ticks (Solar Flare GDD #16).
+            new ChampionData { Id="sunwarden",         DisplayName="Sun Warden",         Cost=2, Role=ChampionRole.Tank,    VerticalTrait=VerticalTrait.Astral,       HorizontalTrait=HorizontalTrait.Warden,      MaxHP=110,  ATK=12, DEF=15, MG=0,  MR=12, AttackSpeed=0.21f, CRIT=2,  Range=1, MaxMana=90,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.SelfBuff, SkillName = "Solar Flare", OffenseMultiplier = 1.0f, UsesMagicOffense = true, SecondaryFilter = TargetBaseFilter.Adjacent, SecondaryHitsAll = true, ShieldDefMultiplier = 1.5f, DurationTicks = 3, LockoutTicks = 1 } },
+
+            // #17 — Venom Stalker: SelfBuff (Template G). Bites target for 1.5×ATK physical damage
+            // and inflicts magic DoT (0.3×MG) for 5 ticks (Toxic Bite GDD #17). Active damage and DoT
+            // are unsupported in SelfBuff executor — known gap.
+            new ChampionData { Id="venomstalker",      DisplayName="Venom Stalker",      Cost=2, Role=ChampionRole.Carry,   VerticalTrait=VerticalTrait.Shadow,       HorizontalTrait=HorizontalTrait.Void,        MaxHP=85,   ATK=18, DEF=6,  MG=0,  MR=6,  AttackSpeed=0.33f, CRIT=14, Range=1, MaxMana=75,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.SelfBuff, SkillName = "Toxic Bite", OffenseMultiplier = 1.5f, UsesMagicOffense = false, DurationTicks = 5, LockoutTicks = 1 } },
+
+            // #18 — Forest Sentinel: SelfBuff (Template G). Gains Barkshield. Gains +40 DEF/MR,
+            // Taunts adjacent enemies within 2 hexes, and adds +15 physical damage on-hit (Barkshield GDD #18).
+            // Taunts are supported via CcType.Taunt. DEF/MR buff and on-hit damage are known gaps.
+            new ChampionData { Id="forestsentinel",    DisplayName="Forest Sentinel",    Cost=2, Role=ChampionRole.Tank,    VerticalTrait=VerticalTrait.Wild,         HorizontalTrait=HorizontalTrait.Guardian,    MaxHP=115,  ATK=11, DEF=18, MG=0,  MR=12, AttackSpeed=0.20f, CRIT=2,  Range=1, MaxMana=100, StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.SelfBuff, SkillName = "Barkshield", CrowdControl = CcType.Taunt, Radius = 2, DurationTicks = 3, LockoutTicks = 1 } },
+
+            // #19 — Void Mage: ExplodingProjectile (Template B). Fires a dark orb that explodes on
+            // target, dealing magic damage (1.6×MG) to all units hit (SplashPct=1.0) and reducing MR
+            // by 30% for 4 ticks (Void Sphere GDD #19). MR shred is a known gap.
+            new ChampionData { Id="voidmage",          DisplayName="Void Mage",          Cost=2, Role=ChampionRole.Carry,   VerticalTrait=VerticalTrait.Elementalist, HorizontalTrait=HorizontalTrait.Void,        MaxHP=80,   ATK=7,  DEF=5,  MG=24, MR=8,  AttackSpeed=0.26f, CRIT=8,  Range=2, MaxMana=80,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.ExplodingProjectile, SkillName = "Void Sphere", BaseFilter = TargetBaseFilter.Global, Sorts = new[] { TargetPrioritySort.CurrentTarget }, OffenseMultiplier = 1.6f, UsesMagicOffense = true, SplashPct = 1.0f, Radius = 1, LockoutTicks = 2 } },
+
+            // ── Batch 3 additions (champions #20–#23) ──────────────────────────
+            // Stats are raw (unscaled) from TraitSystem.md roster table; intentionally weaker
+            // than the existing 10 champions — explicitly accepted known gap, no rescaling.
+            // Mana and skill design from ActiveSkillSystem.md Hero Skill Definitions #20–#23.
+
+            // #20 — Starweaver: StandardProjectile (Template A) with TargetTeam=Ally.
+            // Channels and heals the lowest HP % ally for 1.2×MG and grants a 100 HP Shield
+            // (Astral Cascade GDD #20). Every-tick channel is a known gap (single-burst fallback).
+            new ChampionData { Id="starweaver",        DisplayName="Starweaver",         Cost=3, Role=ChampionRole.Support, VerticalTrait=VerticalTrait.Astral,       HorizontalTrait=HorizontalTrait.Oracle,      MaxHP=120,  ATK=10, DEF=8,  MG=28, MR=10, AttackSpeed=0.28f, CRIT=5,  Range=3, MaxMana=100, StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.StandardProjectile, SkillName = "Astral Cascade", TargetTeam = TargetTeam.Ally, BaseFilter = TargetBaseFilter.Global, Sorts = new[] { TargetPrioritySort.LowestHpPct }, HealMultiplier = 1.2f, FlatShieldAmount = 100f, IsChannel = true, LockoutTicks = 3 } },
+
+            // #21 — Rust Colossus: StandardProjectile (Template A). Slams the ground, dealing
+            // physical damage (1.4×ATK + 0.5×DEF) to current target and stuns for 2 ticks
+            // (Iron Fist GDD #21).
+            new ChampionData { Id="rustcolossus",      DisplayName="Rust Colossus",      Cost=3, Role=ChampionRole.Tank,    VerticalTrait=VerticalTrait.Wild,         HorizontalTrait=HorizontalTrait.Tech,        MaxHP=150,  ATK=15, DEF=22, MG=0,  MR=15, AttackSpeed=0.22f, CRIT=3,  Range=1, MaxMana=90,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.StandardProjectile, SkillName = "Iron Fist", BaseFilter = TargetBaseFilter.WithinRange, Sorts = new[] { TargetPrioritySort.CurrentTarget }, Range = 1, OffenseMultiplier = 1.4f, SecondaryMultiplier = 0.5f, UsesMagicOffense = false, CrowdControl = CcType.Stun, DurationTicks = 2, LockoutTicks = 2 } },
+
+            // #22 — Night Stalker: BlinkStrike (Template F). Teleports behind lowest-health enemy,
+            // dealing physical damage (1.5×ATK) and dropping threat (Shadow Shroud GDD #22).
+            // Guaranteed crit and threat shed details are known gaps of the BlinkStrike template.
+            new ChampionData { Id="nightstalker",      DisplayName="Night Stalker",      Cost=3, Role=ChampionRole.Carry,   VerticalTrait=VerticalTrait.Shadow,       HorizontalTrait=HorizontalTrait.Trickster,   MaxHP=100,  ATK=22, DEF=8,  MG=0,  MR=8,  AttackSpeed=0.35f, CRIT=18, Range=1, MaxMana=60,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.BlinkStrike, SkillName = "Shadow Shroud", BaseFilter = TargetBaseFilter.Global, Sorts = new[] { TargetPrioritySort.LowestHpPct }, OffenseMultiplier = 1.5f, UsesMagicOffense = false, LockoutTicks = 1 } },
+
+            // #23 — Storm Ranger: LaserBeam (Template C). Fires a linear beam dealing physical
+            // damage (1.5×ATK) to all enemies hit (Overcharge Beam GDD #23). Shock Attack Speed
+            // debuff is a known gap of the laser beam archetype.
+            new ChampionData { Id="stormranger",      DisplayName="Storm Ranger",       Cost=3, Role=ChampionRole.Carry,   VerticalTrait=VerticalTrait.Ranger,       HorizontalTrait=HorizontalTrait.Tech,        MaxHP=95,   ATK=20, DEF=8,  MG=0,  MR=6,  AttackSpeed=0.33f, CRIT=10, Range=3, MaxMana=80,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.LaserBeam, SkillName = "Overcharge Beam", BaseFilter = TargetBaseFilter.LinearPath, Sorts = new[] { TargetPrioritySort.CurrentTarget }, Range = 3, OffenseMultiplier = 1.5f, UsesMagicOffense = false, LockoutTicks = 2 } },
+
+            // ── Batch 4 additions (champions #24–#27) ──────────────────────────
+            // Stats are raw (unscaled) from TraitSystem.md roster table.
+            // Mana and skill design from ActiveSkillSystem.md Hero Skill Definitions #24–#27.
+
+            // #24 — Grave Knight: SelfBuff (Template G). Emits a shadow aura for 4 ticks, dealing magic
+            // damage and stealing Armor/MR (Soul Drain GDD #24). Aura damage and stat steal are known gaps.
+            new ChampionData { Id="graveknight",      DisplayName="Grave Knight",       Cost=4, Role=ChampionRole.Tank,    VerticalTrait=VerticalTrait.Shadow,       HorizontalTrait=HorizontalTrait.Dreadknight, MaxHP=160,  ATK=18, DEF=20, MG=0,  MR=16, AttackSpeed=0.25f, CRIT=4,  Range=1, MaxMana=110, StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.SelfBuff, SkillName = "Soul Drain", Radius = 1, DurationTicks = 4, LockoutTicks = 2 } },
+
+            // #25 — Arcane Sage: GroundAoE (Template D). Deals magic damage (2.5×MG) to largest enemy
+            // cluster (Chrono Shift GDD #25). Action progress slow/acceleration field is a known gap.
+            new ChampionData { Id="arcanesage",       DisplayName="Arcane Sage",        Cost=4, Role=ChampionRole.Carry,   VerticalTrait=VerticalTrait.Elementalist, HorizontalTrait=HorizontalTrait.Tech,        MaxHP=110,  ATK=12, DEF=8,  MG=38, MR=10, AttackSpeed=0.33f, CRIT=18, Range=2, MaxMana=95,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.GroundAoE, SkillName = "Chrono Shift", BaseFilter = TargetBaseFilter.Global, Sorts = new[] { TargetPrioritySort.LargestCluster }, Radius = 2, OffenseMultiplier = 2.5f, UsesMagicOffense = true, LockoutTicks = 2 } },
+
+            // #26 — Void Ranger: LaserBeam (Template C). Fires a linear arrow that pierces enemies
+            // for physical damage (2.2×ATK) (Nether Arrow GDD #26). Execute below 20% health is a known gap.
+            new ChampionData { Id="voidranger",       DisplayName="Void Ranger",        Cost=4, Role=ChampionRole.Carry,   VerticalTrait=VerticalTrait.Ranger,       HorizontalTrait=HorizontalTrait.Void,        MaxHP=105,  ATK=25, DEF=6,  MG=0,  MR=6,  AttackSpeed=0.38f, CRIT=16, Range=3, MaxMana=90,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.LaserBeam, SkillName = "Nether Arrow", BaseFilter = TargetBaseFilter.LinearPath, Sorts = new[] { TargetPrioritySort.CurrentTarget }, Range = 3, OffenseMultiplier = 2.2f, UsesMagicOffense = false, LockoutTicks = 2 } },
+
+            // #27 — Divine Paladin: SelfBuff (Template G). Taunts nearby enemies, shields self for 3.5×DEF,
+            // and heals adjacent allies for 1.0×MG (Guardian Shield GDD #27). Healing every-tick is a known
+            // gap (applied once at cast time).
+            new ChampionData { Id="divinepaladin",    DisplayName="Divine Paladin",     Cost=4, Role=ChampionRole.Support, VerticalTrait=VerticalTrait.Vanguard,     HorizontalTrait=HorizontalTrait.Oracle,      MaxHP=170,  ATK=15, DEF=24, MG=20, MR=18, AttackSpeed=0.22f, CRIT=4,  Range=1, MaxMana=100, StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.SelfBuff, SkillName = "Guardian Shield", ShieldDefMultiplier = 3.5f, DurationTicks = 3, CrowdControl = CcType.Taunt, Radius = 2, SecondaryFilter = TargetBaseFilter.Adjacent, SecondarySorts = new[] { TargetPrioritySort.LowestHpPct }, SecondaryHitsAll = true, HealMultiplier = 1.0f, LockoutTicks = 1 } },
+
+            // ── Batch 5 additions (champions #28–#30) ──────────────────────────
+            // Stats are raw (unscaled) from TraitSystem.md roster table.
+            // Mana and skill design from ActiveSkillSystem.md Hero Skill Definitions #28–#30.
+
+            // #28 — Cosmic Leviathan: GroundAoE (Template D). Crashes on the largest enemy cluster,
+            // dealing magic damage (2.5×MG) and stunning all targets hit for 2 ticks (Supernova GDD #28).
+            // Pulling hit targets toward center hex is a known gap.
+            new ChampionData { Id="cosmicleviathan",  DisplayName="Cosmic Leviathan",   Cost=5, Role=ChampionRole.Tank,    VerticalTrait=VerticalTrait.Astral,       HorizontalTrait=HorizontalTrait.Guardian,    MaxHP=250,  ATK=25, DEF=28, MG=30, MR=22, AttackSpeed=0.25f, CRIT=4,  Range=1, MaxMana=150, StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.GroundAoE, SkillName = "Supernova", BaseFilter = TargetBaseFilter.Global, Sorts = new[] { TargetPrioritySort.LargestCluster }, Radius = 2, OffenseMultiplier = 2.5f, UsesMagicOffense = true, CrowdControl = CcType.Stun, DurationTicks = 2, LockoutTicks = 2 } },
+
+            // #29 — Reaper: BlinkStrike (Template F). Teleports to lowest HP % enemy and slashes,
+            // dealing ATK-scaling physical damage (3.5×ATK) (Death's Scythe GDD #29). True damage
+            // scaling and mana reset on kill are known gaps.
+            new ChampionData { Id="reaper",           DisplayName="Reaper",             Cost=5, Role=ChampionRole.Carry,   VerticalTrait=VerticalTrait.Shadow,       HorizontalTrait=HorizontalTrait.Void,        MaxHP=180,  ATK=32, DEF=10, MG=0,  MR=10, AttackSpeed=0.45f, CRIT=22, Range=1, MaxMana=80,  StartingMana=0,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.BlinkStrike, SkillName = "Death's Scythe", BaseFilter = TargetBaseFilter.Global, Sorts = new[] { TargetPrioritySort.LowestHpPct }, OffenseMultiplier = 3.5f, UsesMagicOffense = false, LockoutTicks = 1 } },
+
+            // #30 — Beastmaster: SelfBuff (Template G). Board-wide stun and AD/AP/AS buff to allies
+            // (Primal Roar GDD #30). Board-wide stun and AD/AP stat buffs are known gaps.
+            new ChampionData { Id="beastmaster",      DisplayName="Beastmaster",        Cost=5, Role=ChampionRole.Tank,    VerticalTrait=VerticalTrait.Wild,         HorizontalTrait=HorizontalTrait.Warden,      MaxHP=220,  ATK=22, DEF=24, MG=0,  MR=20, AttackSpeed=0.24f, CRIT=4,  Range=1, MaxMana=150, StartingMana=50,
+                Skill = new SkillDefinition { Archetype = SkillArchetype.SelfBuff, SkillName = "Primal Roar", CrowdControl = CcType.Stun, DurationTicks = 2, Radius = 99, AttackSpeedBuffPct = 0.30f, LockoutTicks = 2 } },
         };
+
+        public static List<ChampionData> GetAllChampions() => _all;
 
         public List<StudentCombatData> GetStudents()
             => _all.Select(c => c.ToStudentCombatData()).ToList();

@@ -252,6 +252,9 @@ namespace MagicSchool.Battle
             // Optional secondary ally target (Template G, e.g. Aegis: "shields self AND
             // lowest-HP%-adjacent-ally"). SecondaryFilter is always resolved against
             // TargetTeam.Ally (the design intent — secondary targets are always own-team).
+            // SecondaryHitsAll = true applies Ally-Support Resolution to every living ally in
+            // the resolved hex list (e.g. Sun Warden shields ALL adjacent allies); false keeps
+            // the original single-target behavior (Aegis shields only the best-sorted one).
             if (skill.SecondaryFilter.HasValue)
             {
                 var secondaryHexes = SkillTargetSelector.SelectTargetHexes(
@@ -261,7 +264,18 @@ namespace MagicSchool.Battle
                     skill.Range, skill.Radius,
                     TargetTeam.Ally);
 
-                if (secondaryHexes.Count > 0)
+                if (skill.SecondaryHitsAll)
+                {
+                    // Loop ALL resolved hexes — e.g. Sun Warden shields every adjacent ally.
+                    foreach (var hex in secondaryHexes)
+                    {
+                        var ally = ctx.GetOccupantAt(hex);
+                        // Must be a living ally and not the caster itself (caster was already buffed above)
+                        if (ally != null && ally.IsPlayer == caster.IsPlayer && ally != caster)
+                            ApplyAllySupportResolution(ctx, caster, ally);
+                    }
+                }
+                else if (secondaryHexes.Count > 0)
                 {
                     var ally = ctx.GetOccupantAt(secondaryHexes[0]);
                     // Must be a living ally and not the caster itself (caster was already buffed above)

@@ -276,7 +276,7 @@ ActionInterval = max(2, round(1.0 / (combatant.AttackSpeed × TickDelay)))
 
 **Trait speed bonuses** multiply `AttackSpeed` directly (e.g. ×1.176 for Ranger), then re-derive interval. This keeps trait scaling linear and equal across all units regardless of base speed.
 
-> **Why not `BaseActionInterval − SPD`?** The old subtraction formula was non-linear: going from SPD 6→7 gave +33% more attacks, while SPD 2→3 gave only +14%. The same +1 stat had 2.4× more impact at the high end. The AS formula eliminates this imbalance. See `.claude/docs/other/balance-framework.md` for the full derivation.
+> **Why not `BaseActionInterval − SPD`?** The old subtraction formula was non-linear: going from SPD 6→7 gave +33% more attacks, while SPD 2→3 gave only +14%. The same +1 stat had 2.4× more impact at the high end. The AS formula eliminates this imbalance. See `.claude/docs/balance/balance-framework.md` for the full derivation.
 
 ### Physical Damage Calculation (default)
 

@@ -11,11 +11,12 @@ Under **both** `.claude/docs/` and `.claude/template-docs/`, the only allowed to
 | `preproduction/` | game-vision, design-decisions, systems-design, architecture, technical-preferences, best-practices | Phase 1 |
 | `production/` | per-system GDDs under `production/gdd/` | Phase 2 |
 | `beta/` | build-notes, known-issues, known-issues-archive | Phase 3 |
+| `balance/` | game-balance framework, TFT reference analysis/rules, research roadmap, data-source registry | Cross-phase, ongoing |
 | `other/` | anything cross-phase, auto-generated, or vague (architecture-overview, changelog, ADRs under `other/adr/`) |  — |
 
 ## Rules
 
-- **Never create a new top-level folder** under `.claude/docs/` or `.claude/template-docs/`. If a doc does not clearly belong to a development phase, put it in `other/` — never make a new folder for it.
+- **Never create a new top-level folder** under `.claude/docs/` or `.claude/template-docs/` beyond the five listed above. If a doc does not clearly belong to a development phase or to balance, put it in `other/` — never make a new folder for it.
 - The **only** permitted subfolders are the ones already established: `production/gdd/` and `other/adr/`. Do not add others.
 - `.claude/docs/` root holds exactly three control files — `index.md`, `PIPELINE.md`, `project-snapshot-index.md`. Do not add more files at the root.
 - A template in `.claude/template-docs/<folder>/` must live in the **same** folder its output doc occupies under `.claude/docs/<folder>/` — keep the two trees mirrored.

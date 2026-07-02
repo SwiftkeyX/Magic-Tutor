@@ -39,10 +39,15 @@ Game Design Documents (GDD) for individual gameplay and meta systems.
 Bug tracking, build notes, and release checklist for Phase 3.
 * [Known Issues](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/beta/known-issues.md)
 
+## Balance (`balance/`)
+Game-balance framework, TFT reference data/math, and the research roadmap. Cross-phase, ongoing.
+* [Data Sources](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/data-sources.md)
+* [Balance Framework](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/balance-framework.md)
+* [TFT Balancing & Stat Analysis](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-analysis.md)
+* [TFT Balancing Rules & Reference Guidelines](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-rules.md)
+* [TFT Balancing Research Roadmap](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-research-plan.md)
+
 ## Other (`other/`)
 Cross-phase frameworks, onboarding resources, and general references.
-* [Balance Framework](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/balance-framework.md)
-* [TFT Balancing & Stat Analysis](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/tft-balancing-analysis.md)
-* [TFT Balancing Rules & Reference Guidelines](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/tft-balancing-rules.md)
-* [TFT Balancing Research Roadmap](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/tft-balancing-research-plan.md)
+* [Architecture Overview](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/architecture-overview.md)
 
