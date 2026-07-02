@@ -182,6 +182,8 @@ namespace MagicSchool.Battle
                 Skill = new SkillDefinition { Archetype = SkillArchetype.SelfBuff, SkillName = "Primal Roar", CrowdControl = CcType.Stun, DurationTicks = 2, Radius = 99, AttackSpeedBuffPct = 0.30f, LockoutTicks = 2 } },
         };
 
+        public static List<ChampionData> GetAllChampions() => _all;
+
         public List<StudentCombatData> GetStudents()
             => _all.Select(c => c.ToStudentCombatData()).ToList();
 
