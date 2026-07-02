@@ -165,20 +165,7 @@ namespace MagicSchool.Tests
 
                 // Mock battle complete - Won = true
                 Debug.Log("[TestRunner] Intercepting AutoBattleResolver to force a WIN for Year 1.");
-                var battleCompleteMethod = resolver.GetType().GetMethod("HandleComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                if (battleCompleteMethod != null)
-                {
-                    // Force win
-                    var result = new BattleResult { Won = true, TicksElapsed = 50, TimedOut = false };
-                    battleCompleteMethod.Invoke(resolver, new object[] { result });
-                }
-                else
-                {
-                    // Fallback direct call on RunManager's handler via reflection
-                    var handleBattleCompleteMethod = RunManager.Instance.GetType().GetMethod("HandleBattleComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                    var result = new BattleResult { Won = true, TicksElapsed = 50, TimedOut = false };
-                    handleBattleCompleteMethod.Invoke(RunManager.Instance, new object[] { result });
-                }
+                MockBattleWin(50);
 
                 yield return new WaitForSeconds(1.5f);
 
@@ -240,12 +227,7 @@ namespace MagicSchool.Tests
                 yield return new WaitForSeconds(1.5f);
 
                 // Mock battle complete - Won = true for Year 2
-                resolver = FindObjectOfType<AutoBattleResolver>();
-                if (resolver != null)
-                {
-                    var result = new BattleResult { Won = true, TicksElapsed = 60, TimedOut = false };
-                    resolver.GetType().GetMethod("HandleComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.Invoke(resolver, new object[] { result });
-                }
+                MockBattleWin(60);
                 yield return new WaitForSeconds(1.5f);
 
                 // YearEnd 2 - confirm promotions with 0 selected (valid case!)
@@ -281,12 +263,7 @@ namespace MagicSchool.Tests
                 yield return new WaitForSeconds(1.5f);
 
                 // Mock battle complete - Won = true for Year 3 (Final Year)
-                resolver = FindObjectOfType<AutoBattleResolver>();
-                if (resolver != null)
-                {
-                    var result = new BattleResult { Won = true, TicksElapsed = 70, TimedOut = false };
-                    resolver.GetType().GetMethod("HandleComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.Invoke(resolver, new object[] { result });
-                }
+                MockBattleWin(70);
                 yield return new WaitForSeconds(1.5f);
 
                 // YearEnd 3 - promote one more student
@@ -349,6 +326,23 @@ namespace MagicSchool.Tests
                 Destroy(gameObject);
                 EditorApplication.isPlaying = false;
 #endif
+            }
+        }
+
+        private void MockBattleWin(int ticks)
+        {
+            var resolver = FindObjectOfType<AutoBattleResolver>();
+            var result = new BattleResult { Won = true, TicksElapsed = ticks, TimedOut = false };
+            
+            var battleCompleteMethod = resolver != null ? resolver.GetType().GetMethod("HandleComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance) : null;
+            if (battleCompleteMethod != null)
+            {
+                battleCompleteMethod.Invoke(resolver, new object[] { result });
+            }
+            else
+            {
+                var handleBattleCompleteMethod = RunManager.Instance.GetType().GetMethod("HandleBattleComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                handleBattleCompleteMethod.Invoke(RunManager.Instance, new object[] { result });
             }
         }
     }
