@@ -12,9 +12,9 @@ namespace MagicSchool.Tests
 {
     public class Milestone2TestRunner : MonoBehaviour
     {
+#if UNITY_EDITOR
         private const string TestPrefsKey = "MagicSchool_RunMilestone2Test";
 
-#if UNITY_EDITOR
         [MenuItem("Tools/Magic School/Run Milestone 2 Play Mode Test")]
         public static void RunTestFromMenu()
         {
