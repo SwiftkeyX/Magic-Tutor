@@ -35,6 +35,21 @@ namespace MagicSchool.Battle
             }
 
             Instance = this;
+
+            // Dynamically instantiate persistent roster singletons if not already present
+            if (FindObjectOfType<StudentRoster>() == null)
+            {
+                var rosterGO = new GameObject("StudentRoster");
+                rosterGO.AddComponent<StudentRoster>();
+                DontDestroyOnLoad(rosterGO);
+            }
+
+            if (FindObjectOfType<TeacherRoster>() == null)
+            {
+                var teacherRosterGO = new GameObject("TeacherRoster");
+                teacherRosterGO.AddComponent<TeacherRoster>();
+                DontDestroyOnLoad(teacherRosterGO);
+            }
         }
 
         private void Start()
