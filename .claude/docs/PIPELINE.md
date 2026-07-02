@@ -26,30 +26,30 @@ Rapid prototype on feature branches to validate the core loop before committing 
 ### Sub-phase A — Design (GDDs)
 
 #### Tier 1 — Foundation GDDs
-- [ ] Design `GameManager`
-- [ ] Design `SceneLoader`
-- [ ] Design `InputHandler`
-- [ ] Design `SaveSystem`
+- [x] Design `GameManager`
+- [x] Design `SceneLoader`
+- [x] Design `InputHandler`
+- [x] Design `SaveSystem`
 
 #### Tier 2 — Core Loop GDDs
-- [ ] Design `RunManager`
-- [ ] Design `StudentRoster`
-- [ ] Design `TrainingSystem` _(retroactive — document what was built in Prototype)_
-- [ ] Design `TraitSystem` _(retroactive — document what was built in Prototype)_
-- [ ] Design `AutoBattleResolver` _(retroactive — document what was built in Prototype)_
-- [ ] Design `EnemyDatabase`
-- [ ] Design `PromotionSystem`
-- [ ] Design `TeacherRoster`
+- [x] Design `RunManager`
+- [x] Design `StudentRoster`
+- [x] Design `TrainingSystem` _(retroactive — document what was built in Prototype)_
+- [x] Design `TraitSystem` _(retroactive — document what was built in Prototype)_
+- [x] Design `AutoBattleResolver` _(retroactive — document what was built in Prototype)_
+- [x] Design `EnemyDatabase`
+- [x] Design `PromotionSystem`
+- [x] Design `TeacherRoster`
 
 #### Tier 3 — Supporting GDDs
-- [ ] Design `AudioSystem`
-- [ ] Design `MainMenuController`
-- [ ] Design `SchoolHUD`
-- [ ] Design `BattleHUD`
-- [ ] Design `YearEndHUD`
-- [ ] Design `MetaProgressionHUD`
+- [x] Design `AudioSystem`
+- [x] Design `MainMenuController`
+- [x] Design `SchoolHUD`
+- [x] Design `BattleHUD`
+- [x] Design `YearEndHUD`
+- [x] Design `MetaProgressionHUD`
 
-- [ ] Milestone 1 — all system GDDs written and approved
+- [x] Milestone 1 — all system GDDs written and approved
 
 ### Sub-phase B — Implementation
 
