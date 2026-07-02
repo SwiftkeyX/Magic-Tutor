@@ -98,6 +98,8 @@ Offense = MG   (Elementalists and Supports where MG > ATK)
 **Offense × AS** = raw DPS at 0 armor.  
 **sqrt(EHP)** = square root of effective physical HP (reduces tank weight to reflect team-fight realism).
 
+> **Why √EHP?** Pure DPS × EHP measures a unit's theoretical duel power in a vacuum, which over-scores tanks because of their massive EHP. In team combat, a tank's damage output is rarely focused on carries, and tanks are prone to being CC'd or ignored, while carries deal damage from safety. Taking the square root of EHP dampens the weight of raw health and armor so the score reflects a unit's true utility in a dynamic team fight.
+
 > CRIT, traits, shields, omnivamp, Striker stacks excluded — base stats only.
 
 ### Target Score Bands (by cost tier, unified across roles)

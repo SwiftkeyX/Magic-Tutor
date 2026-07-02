@@ -11,9 +11,10 @@ namespace MagicSchool.Battle
     // listens for selections via the decoupled HeroSelection static event.
     public class HeroInfoPanel : MonoBehaviour
     {
-        [SerializeField] private RectTransform  _root;
-        [SerializeField] private ChampionRoster _championRoster;
-        [SerializeField] private TraitTracker   _traitTracker;
+        [SerializeField] private RectTransform     _root;
+        [SerializeField] private ChampionRoster    _championRoster;
+        [SerializeField] private TraitTracker      _traitTracker;
+        [SerializeField] private EnemyDatabaseStub _enemyDatabase;
 
         private static readonly Dictionary<BattleBehaviorFlag, string> FlagDescriptions =
             new Dictionary<BattleBehaviorFlag, string>
@@ -41,10 +42,12 @@ namespace MagicSchool.Battle
 
         private void OnHeroSelected(string championId)
         {
-            if (_championRoster == null) return;
-            var data = _championRoster.GetChampionById(championId);
-            if (data == null) return; // not a player champion (e.g. enemy click) — leave panel as-is
-            ShowHero(data);
+            var data = _championRoster != null ? _championRoster.GetChampionById(championId) : null;
+            if (data != null) { ShowHero(data); return; }
+
+            var enemy = _enemyDatabase != null ? _enemyDatabase.GetEnemyById(championId) : null;
+            if (enemy != null) { ShowEnemy(enemy); return; }
+            // Neither a player champion nor a known enemy — leave panel as-is.
         }
 
         private void BuildLayout()
@@ -107,6 +110,28 @@ namespace MagicSchool.Battle
                     FlagDescriptions.TryGetValue(f, out var desc) ? $"{f} — {desc}" : f.ToString())));
 
             _traitsText.text = "Traits: " + FormatTraits(data);
+        }
+
+        // Mirrors ShowHero — EnemyCombatData has no Role/Cost/VerticalTrait/
+        // HorizontalTrait, so the header omits those and Traits is a fixed "None"
+        // rather than calling FormatTraits (which is ChampionData-specific).
+        private void ShowEnemy(EnemyCombatData data)
+        {
+            _headerText.text = $"{data.DisplayName}  (Enemy)";
+
+            _statsText.text =
+                $"HP {data.MaxHP}   ATK {data.ATK}   DEF {data.DEF}\n" +
+                $"MG {data.MG}   MR {data.MR}   CRIT {data.CRIT}%\n" +
+                $"AS {data.AttackSpeed:0.00}   Range {data.Range}\n" +
+                $"Mana {data.StartingMana}/{data.MaxMana}";
+
+            var flags = data.Flags ?? new List<BattleBehaviorFlag>();
+            _skillText.text = "Skill: " + (flags.Count == 0
+                ? "No active skill"
+                : string.Join("\n", flags.Select(f =>
+                    FlagDescriptions.TryGetValue(f, out var desc) ? $"{f} — {desc}" : f.ToString())));
+
+            _traitsText.text = "Traits: None";
         }
 
         private string FormatTraits(ChampionData data)

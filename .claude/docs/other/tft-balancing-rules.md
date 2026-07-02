@@ -2,7 +2,7 @@
 
 This document serves as the project's official design reference for durability, damage, mana gating, and star-level scaling multipliers, mirroring the "TFT Balancing Rules" Google Sheet tab.
 
-> **Scope**: compact TFT reference tables. For in-depth explanations, see `tft-balancing-analysis.md`. For this project's implementation, see `balance-framework.md`.
+> **Scope**: compact TFT reference tables — TFT data only, no project plans. For in-depth explanations, see `tft-balancing-analysis.md`. For this project's implementation, see `balance-framework.md`. For pending research and application work, see `tft-balancing-research-plan.md`.
 
 ---
 

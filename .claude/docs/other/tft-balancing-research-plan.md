@@ -42,7 +42,9 @@ To establish a mathematically balanced combat system, we are dissecting TFT's me
   * Analyze how target acquisition rules (nearest unit, lowest health, highest threat) prevent carries from being assassinated immediately.
   * Study Lanchester's Power Laws or similar mathematical models of combat attrition.
   * Determine how tanks' EHP needs to scale as enemy team size increases.
-* **Magic School Application:** We will use this research to upgrade `BalanceValidator.cs` to simulate full team-vs-team skirmishes (e.g., $3\text{v}3$ or $4\text{v}4$) with proper front-to-back targeting lines.
+* **Magic School Application:** We will use this research to upgrade `BalanceValidator.cs` to simulate full team-vs-team skirmishes (e.g., $3\text{v}3$ or $4\text{v}4$) with proper front-to-back targeting lines. Specifically, the current validator only runs base-stat 1v1 matchups; it needs:
+  * **Synergy matchups**: $4\times4$ simulations with active traits (e.g. a Vanguard-Warden team vs a Striker-Dreadknight team) to see if synergies blow out the balance bands.
+  * **Combat variance (CRIT)**: run with `IncludeCrit = true` and check the standard deviation of win rates. If crit causes 1-cost carries to randomly beat 3-cost carries too often, the base crit rate or crit damage multiplier must be lowered.
 
 ### Topic 4: Itemization Math & Stat Modifiers
 * **Objective:** Examine the math behind items and equipment, specifically how stat additions (flat health/AD) and multipliers (% speed, % damage) interact.
@@ -57,3 +59,11 @@ To establish a mathematically balanced combat system, we are dissecting TFT's me
   * Catalog the exact shop roll percentages for 1c, 2c, 3c, 4c, and 5c champions at each player level.
   * Study the concept of "champion pool sizes" (bag sizes) and how it creates scarcity when multiple players contest the same units.
 * **Magic School Application:** This research will guide our school roster recruit rates. If upgrading a unit to 3-star increases its health and damage by $3.24\times$, the gold and rarity cost must be high enough to match this massive power spike.
+
+---
+
+## Tooling Backlog
+
+Pending tool improvements that support the research topics above:
+
+* **Auto-calculate the Stat Budget Score in the spreadsheet.** Write a script or update `sheet_sync.py` to compute the Layer 2 Stat Budget Score (see `balance-framework.md`) for every champion whenever their stats are edited, highlighting any champion whose score exits its tier's allowed band.

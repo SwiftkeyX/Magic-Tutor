@@ -22,8 +22,11 @@ namespace MagicSchool.Battle
         // Template G secondary ally target: if set, ExecuteSelfBuff resolves this
         // filter scoped to TargetTeam.Ally after self-buff and applies Ally-Support
         // Resolution to the first hit (e.g. Aegis: shields self AND lowest-HP%-adjacent-ally).
+        // If SecondaryHitsAll = true, applies to ALL resolved secondary hexes instead of just
+        // the best-sorted one (e.g. Sun Warden shields every adjacent ally, not just one).
         public TargetBaseFilter? SecondaryFilter;
         public TargetPrioritySort[] SecondarySorts;
+        public bool SecondaryHitsAll;  // false (default) = Aegis single-target; true = Sun Warden all-adjacent
 
         // Casting
         public bool IsChannel;

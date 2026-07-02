@@ -72,7 +72,9 @@ A right-docked panel that shows a single selected hero's stats, skill, and trait
 - Skill: the hero's `BattleBehaviorFlag`(s), each rendered through a static one-line description (e.g. "Magic Attack — uses MG/MR instead of ATK/DEF"). Empty list → "No active skill". **This is a placeholder mapping, not a real Skill/Ability system** — no dedicated Skill data model exists yet (`MaxMana`/`StartingMana` on `ChampionData` hint at one for the future, but it isn't designed). Do not treat this section as a spec for a future ability system.
 - Traits: `VerticalTrait` and `HorizontalTrait` (skipped if `None`), each shown with its live count and active-breakpoint status pulled from `TraitTracker`
 
-**Explicitly out of scope for this pass**: enemy units (the panel only inspects the player's own heroes — enemies are a separate future concern once `EnemyDatabase` per `EnemyDatabase.md` is real), and any close/dismiss control.
+**Enemy units are inspectable too**, via an adapter: `HeroInfoPanel` holds its own `EnemyDatabaseStub` reference (same self-resolved-reference pattern as `ChampionRoster`/`TraitTracker`) and falls back to it when a clicked ID isn't a player champion. Enemies render through the same panel layout (Header/Stats/Skill/Traits) but with no Role/Cost in the header and a hardcoded "Traits: None" (enemies have no `VerticalTrait`/`HorizontalTrait` — `EnemyDatabaseStub` stays the source of truth for enemy stats; this is not a data-model unification with `ChampionRoster`).
+
+**Still out of scope for this pass**: any close/dismiss control.
 
 **Architecture — decoupled from `BattleBoardManager`, like `TraitHUDController`**: `HeroInfoPanel` is never referenced by `BattleBoardManager`, and never references it back — consistent with this doc's existing peer relationship with `BattleBoardManager` (see Interactions below) and with `best-practices.md`'s "Game systems never reference HUDs" rule. Selection travels through a small static event class, `HeroSelection` (`OnHeroSelected(string championId)` / `Select(string championId)`), which `BenchCardDrag` and `BattleUnit` call into directly on click. `HeroInfoPanel` subscribes to `HeroSelection.OnHeroSelected` in `OnEnable`/unsubscribes in `OnDisable`, then resolves the `ChampionData` itself via its own `ChampionRoster` reference and reads trait progress via its own `TraitTracker` reference — the same self-sufficient pattern `TraitHUDController` already uses for `TraitTracker`. `HeroSelection` is a lightweight decoupling utility, not a new game system.
 
@@ -251,7 +253,7 @@ hpBarFill = currentHP / maxHP   (clamped 0–1, computed in UI Toolkit binding)
 - [ ] No direct reads from `StudentRoster` or `EnemyDatabase` after initialization
 - [ ] Clicking a bench card or a placed `BattleUnit` shows that hero's stats, skill (from `BattleBehaviorFlag`s), and trait progress in the Hero Info Panel
 - [ ] `HeroInfoPanel` holds no reference to `BattleBoardManager` and is held by no reference from it — selection travels only through the `HeroSelection` static event
-- [ ] Clicking an enemy unit does not open the Hero Info Panel
+- [ ] Clicking an enemy unit shows its stats and skill in the Hero Info Panel, with "Traits: None" (enemies have no trait data)
 
 ---
 
