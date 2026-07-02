@@ -1,7 +1,7 @@
 # RunManager
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
+> **Last Updated**: 2026-07-02
 > **Implements Pillar**: Challenging — the 3-year permadeath arc and the ordered phase sequence define the game's core tension
 
 ## Summary
@@ -60,7 +60,9 @@ enum RunPhase {
    [Battle]    ← OnPhaseChanged(Battle) + LoadScene(Battle)
         ↓  TraitSystem.ResolveBattleBuffs()
         ↓  AutoBattleResolver.Resolve()
-        ↓  ← OnBattleComplete(result)
+        ↓  ← OnBattleComplete(result)   [RunManager stores result, does NOT advance yet]
+        ↓  BattleHUD shows outcome overlay; player clicks "Continue"
+        ↓  CompleteBattlePhase()   [player-triggered — see Public API]
         ├── result.Won = false → GameManager.EndRun(false, CurrentYear) → [Run ends]
         └── result.Won = true →
    [YearEnd]   ← OnPhaseChanged(YearEnd) + LoadScene(YearEnd)
@@ -75,7 +77,7 @@ enum RunPhase {
 |---|---|---|---|---|
 | `Recruit` | Run start, or previous YearEnd complete (year < 3) | `CompleteRecruitPhase()` called | School | StudentRoster draws new random students |
 | `Train` | `CompleteRecruitPhase()` | `CompleteTrainPhase()` | School (no reload) | Player allocates training actions; TrainingSystem is active |
-| `Battle` | `CompleteTrainPhase()` | `OnBattleComplete` received | Battle | TraitSystem resolves buffs, AutoBattleResolver simulates; no player input |
+| `Battle` | `CompleteTrainPhase()` | `CompleteBattlePhase()` called | Battle | TraitSystem resolves buffs, AutoBattleResolver simulates; no player input during simulation. `OnBattleComplete` fires and stores the pending result, but RunManager does NOT advance until `CompleteBattlePhase()` is called — BattleHUD shows the outcome overlay and calls it when the player clicks "Continue" |
 | `YearEnd` | Battle won | `OnPromotionComplete` received | YearEnd | PromotionSystem presents promotion choices; player selects teachers |
 
 ### Public API
@@ -90,8 +92,10 @@ void CompleteRecruitPhase()
 // Called by SchoolHUD / Train UI when player confirms all training is done
 void CompleteTrainPhase()
 
-// Not called externally — RunManager auto-advances after OnBattleComplete
-// (internal, triggered by AutoBattleResolver event)
+// Called by BattleHUD's "Continue" button after the player has seen the outcome overlay.
+// RunManager received OnBattleComplete earlier and stored the pending result, but does
+// not act on it until this is called. No-op with a logged error if no result is pending.
+void CompleteBattlePhase()
 
 // Not called externally — RunManager auto-advances after OnPromotionComplete
 // (internal, triggered by PromotionSystem event)
@@ -113,7 +117,8 @@ RunManager exposes `PauseRun()` / `ResumeRun()`. When paused:
 | `SceneLoader` | Calls `SceneLoader.Instance.LoadScene()` at Recruit (School), Battle (Battle), and YearEnd (YearEnd) phase entries |
 | `StudentRoster` | Subscribes to `OnPhaseChanged`; draws students on Recruit, clears on run end |
 | `TraitSystem` | RunManager calls `TraitSystem.ResolveBattleBuffs()` directly before AutoBattleResolver runs |
-| `AutoBattleResolver` | RunManager calls `AutoBattleResolver.Resolve()` to start simulation; subscribes to `OnBattleComplete` |
+| `AutoBattleResolver` | RunManager calls `AutoBattleResolver.Resolve()` to start simulation; subscribes to `OnBattleComplete` (stores result, does not advance) |
+| `BattleHUD` | Calls `RunManager.Instance.CompleteBattlePhase()` when the player clicks "Continue" on the outcome overlay — the trigger for RunManager to actually advance |
 | `PromotionSystem` | RunManager subscribes to `PromotionSystem.OnPromotionComplete` to advance to the next year or end the run |
 | `EnemyDatabase` | Subscribes to `OnYearChanged` to scale enemy stats for the new year |
 | `InputHandler` | Subscribes to `OnCancelPressed` to open pause/quit prompt during Train phase |
@@ -144,6 +149,7 @@ isRunComplete = (CurrentYear == MaxYears) AND (yearEndComplete == true)
 | `CompleteRecruitPhase()` called during `Train` phase | Log error, no-op | Phases must be called in order |
 | `CompleteTrainPhase()` called before `CompleteRecruitPhase()` | Log error, no-op | Same |
 | `OnBattleComplete` fires twice | Only the first is processed; RunManager unsubscribes after the first result | AutoBattleResolver must not fire the event twice, but guard against it |
+| `CompleteBattlePhase()` called with no pending result | Log error, no-op | Guards against BattleHUD calling Continue before `OnBattleComplete` has actually fired, or calling it twice |
 | `OnPromotionComplete` fires before entering `YearEnd` phase | Log warning, discard | Ordering violation; PromotionSystem should only fire during `YearEnd` |
 | `StartRun()` called while a run is already active | Log error, no-op | GameManager should guard against this |
 | Application quit during Train phase | `OnApplicationQuit` on GameManager triggers `EndRun(false, CurrentYear)`; TeacherRoster saves any teachers earned in prior years | Mid-run quit = run loss |

@@ -1,0 +1,243 @@
+/* ── BattleHUD.uss ────────────────────────────────────────────────────────────
+   Styles for the Battle scene HUD (UI Toolkit).
+   Palette: dark-fantasy matching MainMenu / SchoolHUD.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Root ─────────────────────────────────────────────────────────────────── */
+.battle-hud-root {
+    flex-grow: 1;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0);   /* transparent — board shows through */
+}
+
+/* ── Three-column row ─────────────────────────────────────────────────────── */
+.columns-row {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+/* ── Combatant column (left / right strips) ───────────────────────────────── */
+.combatant-column {
+    width: 180px;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: rgba(8, 8, 22, 0.72);
+    padding: 6px 6px;
+    overflow: hidden;
+}
+
+.student-column {
+    border-right-color: rgba(80, 120, 200, 0.35);
+    border-right-width: 1px;
+}
+
+.enemy-column {
+    border-left-color: rgba(200, 80, 80, 0.35);
+    border-left-width: 1px;
+}
+
+/* ── Battle centre (transparent, passes events through) ───────────────────── */
+.battle-center {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* ── Bottom spacer (clears the uGUI bench panel ≈ 180 px tall) ───────────── */
+.bottom-spacer {
+    height: 180px;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* ── Combatant card ───────────────────────────────────────────────────────── */
+.combatant-card {
+    flex-direction: column;
+    background-color: rgba(20, 20, 55, 0.88);
+    border-color: rgba(100, 100, 190, 0.40);
+    border-width: 1px;
+    border-radius: 5px;
+    margin-bottom: 6px;
+    padding: 6px 8px;
+}
+
+/* ── Card name ────────────────────────────────────────────────────────────── */
+.card-name {
+    font-size: 13px;
+    color: rgb(220, 225, 255);
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -unity-text-align: upper-left;
+}
+
+/* ── HP bar ───────────────────────────────────────────────────────────────── */
+.hp-bar-bg {
+    height: 7px;
+    background-color: rgba(40, 40, 60, 1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 3px;
+}
+
+.hp-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition-property: width;
+    transition-duration: 0.15s;
+}
+
+/* HP colour states (updated in code via class swap) */
+.hp-bar-high {
+    background-color: rgb(60, 200, 80);
+}
+
+.hp-bar-mid {
+    background-color: rgb(220, 185, 30);
+}
+
+.hp-bar-low {
+    background-color: rgb(210, 50, 50);
+}
+
+/* Default: high (cards start at full HP) */
+.hp-bar-fill {
+    background-color: rgb(60, 200, 80);
+}
+
+/* ── HP text label ────────────────────────────────────────────────────────── */
+.hp-label {
+    font-size: 10px;
+    color: rgba(190, 200, 230, 0.80);
+    -unity-text-align: upper-right;
+    margin-bottom: 4px;
+}
+
+/* ── Flag badges ──────────────────────────────────────────────────────────── */
+.flags-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+
+.flag-badge {
+    font-size: 9px;
+    color: rgb(200, 240, 200);
+    background-color: rgba(30, 80, 30, 0.80);
+    border-color: rgba(80, 180, 80, 0.50);
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 1px 4px;
+    margin-right: 3px;
+    margin-bottom: 2px;
+}
+
+/* ── Damage number container (inside each card) ───────────────────────────── */
+.dmg-container {
+    flex-direction: column;
+    align-items: flex-end;
+    min-height: 0;
+}
+
+/* ── Floating damage numbers ──────────────────────────────────────────────── */
+.dmg-number {
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: upper-right;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.9);
+}
+
+.dmg-physical {
+    color: rgb(255, 255, 255);   /* physical = white */
+}
+
+.dmg-magic {
+    color: rgb(200, 120, 255);   /* magic = purple */
+}
+
+/* ── Speed-up indicator ───────────────────────────────────────────────────── */
+.speed-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: rgb(255, 230, 60);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.85);
+    background-color: rgba(0, 0, 0, 0.55);
+    border-radius: 4px;
+    padding: 4px 10px;
+}
+
+/* ── Outcome overlay (full-screen, absolute) ──────────────────────────────── */
+.outcome-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.78);
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Outcome panel (centred card) ─────────────────────────────────────────── */
+.outcome-panel {
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(12, 12, 35, 0.97);
+    border-color: rgba(255, 220, 100, 0.60);
+    border-width: 2px;
+    border-radius: 10px;
+    padding: 40px 60px;
+    min-width: 320px;
+}
+
+/* ── Outcome title (Victory! / Defeated) ─────────────────────────────────── */
+.outcome-title {
+    font-size: 48px;
+    -unity-font-style: bold;
+    color: rgb(255, 220, 80);
+    -unity-text-align: upper-center;
+    margin-bottom: 10px;
+}
+
+/* ── Outcome sub-text (Time Limit note) ──────────────────────────────────── */
+.outcome-sub {
+    font-size: 16px;
+    color: rgba(200, 200, 210, 0.75);
+    -unity-font-style: italic;
+    -unity-text-align: upper-center;
+    margin-bottom: 24px;
+}
+
+/* ── Continue button ──────────────────────────────────────────────────────── */
+.continue-button {
+    height: 48px;
+    min-width: 200px;
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: white;
+    background-color: rgba(40, 60, 120, 0.95);
+    border-color: rgba(255, 220, 100, 0.70);
+    border-width: 1px;
+    border-radius: 6px;
+    -unity-text-align: middle-center;
+    transition-property: background-color, border-color;
+    transition-duration: 0.10s;
+}
+
+.continue-button:hover {
+    background-color: rgba(65, 95, 175, 0.98);
+    border-color: rgba(255, 220, 100, 1);
+}
+
+.continue-button:active {
+    background-color: rgba(25, 40, 85, 0.98);
+}
+
+.continue-button:disabled {
+    color: rgba(160, 160, 180, 0.45);
+    border-color: rgba(160, 160, 180, 0.25);
+    background-color: rgba(25, 25, 55, 0.60);
+}

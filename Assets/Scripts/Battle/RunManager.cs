@@ -22,12 +22,14 @@ namespace MagicSchool.Battle
         [SerializeField] private RunConfig _config;
         [SerializeField] private EnemyDatabase _enemyDatabase;
         [SerializeField] private PromotionConfig _promotionConfig;
+        [SerializeField] private TrainingConfig _trainingConfig;
 
-        public void Initialize(RunConfig config, EnemyDatabase enemyDatabase, PromotionConfig promotionConfig)
+        public void Initialize(RunConfig config, EnemyDatabase enemyDatabase, PromotionConfig promotionConfig, TrainingConfig trainingConfig)
         {
             if (config != null) _config = config;
             if (enemyDatabase != null) _enemyDatabase = enemyDatabase;
             if (promotionConfig != null) _promotionConfig = promotionConfig;
+            if (trainingConfig != null) _trainingConfig = trainingConfig;
         }
 
         public int CurrentYear { get; private set; } = 1;
@@ -69,6 +71,12 @@ namespace MagicSchool.Battle
             if (_enemyDatabase == null)
             {
                 Debug.LogError("[RunManager] EnemyDatabase not assigned via GameManager or Inspector. Battles will resolve with no enemies.");
+            }
+
+            if (_trainingConfig == null)
+            {
+                _trainingConfig = ScriptableObject.CreateInstance<TrainingConfig>();
+                Debug.LogWarning("[RunManager] TrainingConfig not assigned via GameManager or Inspector. Using in-memory defaults.");
             }
 
             // Subscribe to scene change events to hook scene-specific managers
@@ -147,7 +155,21 @@ namespace MagicSchool.Battle
                     break;
 
                 case RunPhase.Train:
-                    // Same scene, no reload needed. Just let UI know.
+                    // Same scene (School), no reload needed.
+                    // Create or re-initialize TrainingSystem for this semester.
+                    if (TrainingSystem.Instance != null)
+                    {
+                        // Reuse the existing instance (year 2+ with same scene still loaded).
+                        TrainingSystem.Instance.SetConfig(_trainingConfig);
+                        TrainingSystem.Instance.InitializeSemester(_config.TrainingActionsPerSemester);
+                    }
+                    else
+                    {
+                        var tsGO = new GameObject("TrainingSystem");
+                        var ts = tsGO.AddComponent<TrainingSystem>();
+                        ts.SetConfig(_trainingConfig);
+                        ts.InitializeSemester(_config.TrainingActionsPerSemester);
+                    }
                     break;
 
                 case RunPhase.Battle:
@@ -224,6 +246,8 @@ namespace MagicSchool.Battle
             }
         }
 
+        private BattleResult? _pendingBattleResult;
+
         private void HandleBattleComplete(BattleResult result)
         {
             var resolver = FindObjectOfType<AutoBattleResolver>();
@@ -231,6 +255,25 @@ namespace MagicSchool.Battle
             {
                 resolver.OnBattleComplete -= HandleBattleComplete;
             }
+
+            // Do not advance yet — BattleHUD shows the outcome overlay and calls
+            // CompleteBattlePhase() when the player clicks "Continue".
+            _pendingBattleResult = result;
+        }
+
+        /// <summary>
+        /// Called by BattleHUD's "Continue" button after the player has seen the outcome overlay.
+        /// </summary>
+        public void CompleteBattlePhase()
+        {
+            if (!_pendingBattleResult.HasValue)
+            {
+                Debug.LogError("[RunManager] CompleteBattlePhase called with no pending battle result.");
+                return;
+            }
+
+            BattleResult result = _pendingBattleResult.Value;
+            _pendingBattleResult = null;
 
             if (result.Won)
             {
