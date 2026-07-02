@@ -70,6 +70,21 @@ namespace MagicSchool.Battle
             z = h.Row;
         }
 
+        // Public cube-coordinate conversion, for callers (e.g. linear-path queries)
+        // that need direction/line math beyond what offset coordinates support directly.
+        public static void ToCube(HexCoord h, out int x, out int y, out int z)
+        {
+            OffsetToCube(h, out x, out z);
+            y = -x - z;
+        }
+
+        public static HexCoord FromCube(int x, int y, int z)
+        {
+            int row = z;
+            int col = x + (row - (row & 1)) / 2;
+            return new HexCoord(col, row);
+        }
+
         // ── Equality ──────────────────────────────────────────────────────
         public bool Equals(HexCoord other) => Col == other.Col && Row == other.Row;
         public override bool Equals(object obj) => obj is HexCoord h && Equals(h);

@@ -13,6 +13,9 @@ namespace MagicSchool.Battle
         public event Action<string, HexCoord, HexCoord>        OnCombatantMoved;
         public event Action<string>                             OnCombatantDefeated;
         public event Action<BattleResult>                       OnBattleComplete;
+        public event Action<string, string>                     OnSkillCast;  // (casterId, skillName)
+        public event Action<string, int, int>                   OnManaChanged;  // (id, current, max)
+        public event Action<string, CastState>                  OnCastStateChanged;
 
         // ── Constants ────────────────────────────────────────────────────────
         private const float TickDelay      = 0.1f;   // 10 ticks/second — matches TFT resolution
@@ -31,8 +34,19 @@ namespace MagicSchool.Battle
         private int  _kineticTickCounter;
         private readonly List<Combatant> _pendingBonusActions = new List<Combatant>();
 
+        // ── Skill state (Dread Overlord's persistent "Dread Zone" area debuff) ──
+        private struct ActiveZoneEffect
+        {
+            public HexCoord Center;
+            public int      Radius;
+            public float    DefShredPct;
+            public int      TicksRemaining;
+        }
+        private readonly List<ActiveZoneEffect> _activeZones = new List<ActiveZoneEffect>();
+
         // ── Internal combatant ───────────────────────────────────────────────
-        private class Combatant
+        // internal (not private) so Assets/Scripts/Battle/Skills/*.cs can operate on it.
+        internal class Combatant
         {
             public string   Id;
             public string   DisplayName;
@@ -74,6 +88,19 @@ namespace MagicSchool.Battle
             public float ElementalistExplosionPct;
             public bool  ElementalistTrueDamage;
             public float RangerBonusDmgPerHex;
+
+            // ── Active Skill System fields ────────────────────────────────
+            public CastState        State;                 // default Idle
+            public int              CastTicksRemaining;
+            public HexCoord         PendingTargetHex;       // locked in at cast-trigger time
+            public bool             IsSilenced;
+            public int              SilenceTicksRemaining;
+            public bool             IsStunned;
+            public int              StunTicksRemaining;
+            public SkillDefinition  Skill;                  // Archetype.None = no skill
+            public float            InterceptPct;           // Phalanx: % of ally damage redirected to self
+            public int              InterceptTicksRemaining;
+            public string           CurrentTargetId;        // last basic-attack target; used by the "Current Target" priority sort
         }
 
         // ── Setup API ────────────────────────────────────────────────────────
@@ -99,6 +126,7 @@ namespace MagicSchool.Battle
                     MaxMana     = s.MaxMana,
                     Mana        = s.StartingMana,
                     Flags       = s.Flags ?? new List<BattleBehaviorFlag>(),
+                    Skill       = s.Skill ?? new SkillDefinition(),
                 });
 
             foreach (var e in enemies)
@@ -118,6 +146,7 @@ namespace MagicSchool.Battle
                     MaxMana     = e.MaxMana,
                     Mana        = e.StartingMana,
                     Flags       = e.Flags ?? new List<BattleBehaviorFlag>(),
+                    Skill       = e.Skill ?? new SkillDefinition(),
                 });
         }
 
@@ -169,6 +198,8 @@ namespace MagicSchool.Battle
                 CurrentHP   = c.CurrentHP,
                 Position    = c.Position,
                 Range       = c.Range,
+                Mana        = c.Mana,
+                MaxMana     = c.MaxMana,
             }).ToList();
         }
 
@@ -177,6 +208,12 @@ namespace MagicSchool.Battle
 
         public int GetMaxHP(string id) =>
             _combatants.FirstOrDefault(c => c.Id == id)?.MaxHP ?? 0;
+
+        public int GetCurrentMana(string id) =>
+            _combatants.FirstOrDefault(c => c.Id == id)?.Mana ?? 0;
+
+        public int GetMaxMana(string id) =>
+            _combatants.FirstOrDefault(c => c.Id == id)?.MaxMana ?? 0;
 
         // ── Trait pre-battle application ─────────────────────────────────────
         public void ApplyPreBattleTraitModifiers(
@@ -204,7 +241,7 @@ namespace MagicSchool.Battle
                 c.ATK       += m.BonusATK;
                 c.Range     += m.BonusRange;
                 c.Shield     = m.InitialShield;
-                c.Mana += m.InitialMana;
+                SetMana(c, c.Mana + m.InitialMana);
 
                 if (Math.Abs(m.AttackSpeedMult - 1f) > 0.001f)
                     c.AttackSpeed *= m.AttackSpeedMult;
@@ -267,6 +304,42 @@ namespace MagicSchool.Battle
 
             while (true)
             {
+                // Phase 0 — Stun/Silence tick-down. Runs first so State is settled
+                // before anything else reads it this tick (GDD: Stunned "action timers
+                // paused"; silence just gates mana/casting, no state transition needed).
+                foreach (var c in _combatants)
+                {
+                    if (c.IsDefeated) continue;
+                    if (c.IsStunned)
+                    {
+                        c.StunTicksRemaining--;
+                        if (c.StunTicksRemaining <= 0)
+                        {
+                            c.IsStunned = false;
+                            SetState(c, CastState.Idle);
+                        }
+                    }
+                    if (c.IsSilenced)
+                    {
+                        c.SilenceTicksRemaining--;
+                        if (c.SilenceTicksRemaining <= 0) c.IsSilenced = false;
+                    }
+                    if (c.InterceptTicksRemaining > 0)
+                    {
+                        c.InterceptTicksRemaining--;
+                        if (c.InterceptTicksRemaining <= 0) c.InterceptPct = 0f;
+                    }
+                }
+
+                // Dread Zone tick-down — same iterate-and-expire pattern as Bleed DoT below.
+                for (int zi = _activeZones.Count - 1; zi >= 0; zi--)
+                {
+                    var zone = _activeZones[zi];
+                    zone.TicksRemaining--;
+                    if (zone.TicksRemaining <= 0) _activeZones.RemoveAt(zi);
+                    else _activeZones[zi] = zone;
+                }
+
                 // Phase 1 — Bleed DoT
                 var bleedTargets = new List<Combatant>();
                 foreach (var c in _combatants)
@@ -314,9 +387,9 @@ namespace MagicSchool.Battle
                             if (c.IsDefeated || !c.IsPlayer) continue;
                             int gain = _kineticManaPerInterval;
                             if (_kineticSupportExtraBonus && c.Role == ChampionRole.Support) gain += 10;
-                            c.Mana += gain;
+                            SetMana(c, c.Mana + gain);
                             Debug.Log($"[Trait][Kinetic] {c.DisplayName} +{gain} mana → {c.Mana}/{c.MaxMana}");
-                            if (c.Mana >= c.MaxMana) { c.Mana = 0; _pendingBonusActions.Add(c); }
+                            if (c.Mana >= c.MaxMana) { SetMana(c, 0); _pendingBonusActions.Add(c); }
                         }
                     }
                 }
@@ -337,8 +410,36 @@ namespace MagicSchool.Battle
                 }
                 _pendingBonusActions.Clear();
 
-                // Accumulate action progress (replaces integer timer decrement)
-                foreach (var c in _combatants.Where(c => !c.IsDefeated))
+                // Phase 6.5 — Cast/Channel countdown + resolution
+                var castingUnits = new List<Combatant>();
+                foreach (var c in _combatants)
+                    if (!c.IsDefeated && (c.State == CastState.Casting || c.State == CastState.Channeling))
+                        castingUnits.Add(c);
+                foreach (var c in castingUnits)
+                {
+                    if (c.IsDefeated) continue;
+
+                    if (c.IsStunned)
+                    {
+                        // Interrupted by stun: mana was already consumed at trigger time
+                        // (never refunded), so "loses the consumed mana" falls out for free.
+                        SetState(c, CastState.Stunned);
+                        continue;
+                    }
+
+                    c.CastTicksRemaining--;
+                    if (c.CastTicksRemaining <= 0)
+                    {
+                        ResolveCastPlaceholder(c);
+                        if (!c.IsDefeated) SetState(c, CastState.Idle);
+                    }
+                }
+
+                // Accumulate action progress (replaces integer timer decrement).
+                // Casting/Channeling/Stunned units are locked out of basic attacks —
+                // their action timers do not advance (GDD: "stops basic attacking" /
+                // "frozen, cannot act, action timers paused").
+                foreach (var c in _combatants.Where(c => !c.IsDefeated && !IsActionLocked(c)))
                 {
                     float gain = c.AttackSpeed * TickDelay;
                     if (c.StrikerMaxStackSpeedBonus && c.Role == ChampionRole.Carry && c.StrikerStacks >= 8)
@@ -348,7 +449,7 @@ namespace MagicSchool.Battle
 
                 // Collect ready actors (progress ≥ 1.0 = one full attack cycle complete)
                 var ready = _combatants
-                    .Where(c => !c.IsDefeated && c.ActionProgress >= 1.0f)
+                    .Where(c => !c.IsDefeated && !IsActionLocked(c) && c.ActionProgress >= 1.0f)
                     .OrderByDescending(c => c.AttackSpeed)
                     .ToList();
 
@@ -401,6 +502,10 @@ namespace MagicSchool.Battle
         }
 
         // ── Combat helpers ───────────────────────────────────────────────────
+        // Casting/Channeling/Stunned units cannot act (basic-attack lockout / CC freeze).
+        private static bool IsActionLocked(Combatant c) =>
+            c.State == CastState.Casting || c.State == CastState.Channeling || c.State == CastState.Stunned;
+
         private Combatant FindInRange(Combatant actor, List<Combatant> opponents)
         {
             Combatant nearest = null;
@@ -414,11 +519,122 @@ namespace MagicSchool.Battle
             return nearest;
         }
 
+        // Shared shield-absorb + HP-subtract + (optional) event + (optional) kill-check
+        // choke point for all damage application. Callers that need to defer the kill
+        // check (Attack does more work first; TriggerElementalistExplosion defers to
+        // avoid mutating _combatants mid-iteration) pass autoHandleKill: false and
+        // check target.IsDefeated themselves afterward. Returns the post-shield damage
+        // actually applied to HP.
+        internal int ApplyDamageAndCheckKill(Combatant actor, Combatant target, int damage, out int shieldAbsorbed,
+            List<string> tags = null, bool bypassShield = false, bool autoHandleKill = true)
+        {
+            // Phalanx-style intercept: an adjacent ally with an active InterceptPct
+            // (set by its own skill, ticked down like stun/silence) absorbs a % of
+            // damage aimed at this target onto itself instead.
+            var interceptor = _combatants.FirstOrDefault(c =>
+                !c.IsDefeated && c != target && c.IsPlayer == target.IsPlayer &&
+                c.InterceptTicksRemaining > 0 && c.InterceptPct > 0 &&
+                HexCoord.Distance(c.Position, target.Position) <= 1);
+            if (interceptor != null)
+            {
+                int redirected = (int)(damage * interceptor.InterceptPct);
+                if (redirected > 0)
+                {
+                    damage -= redirected;
+                    Debug.Log($"[Skill] {interceptor.DisplayName} intercepts {redirected} dmg meant for {target.DisplayName}");
+                    ApplyDamageAndCheckKill(actor, interceptor, redirected, out _, tags: null, autoHandleKill: autoHandleKill);
+                }
+            }
+
+            shieldAbsorbed = 0;
+            if (!bypassShield && target.Shield > 0)
+            {
+                shieldAbsorbed = Math.Min(target.Shield, damage);
+                target.Shield -= shieldAbsorbed;
+                damage        -= shieldAbsorbed;
+            }
+            target.CurrentHP -= damage;
+
+            if (tags != null)
+                OnCombatantActed?.Invoke(actor?.Id, target.Id, damage, tags);
+
+            if (autoHandleKill && target.IsDefeated)
+                HandleKill(actor, target);
+
+            return damage;
+        }
+
+        // Single choke point for all Mana mutations, so the UI always hears about
+        // every change via one event (same philosophy as ApplyDamageAndCheckKill).
+        private void SetMana(Combatant c, int newValue)
+        {
+            c.Mana = Math.Max(0, newValue);
+            OnManaChanged?.Invoke(c.Id, c.Mana, c.MaxMana);
+        }
+
+        private void SetState(Combatant c, CastState newState)
+        {
+            c.State = newState;
+            OnCastStateChanged?.Invoke(c.Id, newState);
+        }
+
+        // ── Skill execution support (internal — called by SkillArchetypeExecutor) ────
+        internal HexGrid Grid => _grid;
+
+        // Exposes all combatants (both teams) as a read-only list so SkillArchetypeExecutor
+        // can call SkillTargetSelector for secondary-target resolution (e.g. Aegis's
+        // SecondaryFilter ally shield) without needing a separate lookup path.
+        internal IReadOnlyList<Combatant> AllCombatants => _combatants;
+
+        internal List<Combatant> GetOpponentsOf(Combatant c) =>
+            _combatants.Where(x => !x.IsDefeated && x.IsPlayer != c.IsPlayer).ToList();
+
+        internal List<Combatant> GetAlliesOf(Combatant c) =>
+            _combatants.Where(x => !x.IsDefeated && x.IsPlayer == c.IsPlayer && x != c).ToList();
+
+        internal Combatant GetOccupantAt(HexCoord hex) =>
+            _combatants.FirstOrDefault(x => !x.IsDefeated && x.Position.Equals(hex));
+
+        // Applies the strongest active Dread-Zone def/MR shred (if any) covering
+        // target's current hex. Used at damage-mitigation time by every damage
+        // formula (basic attacks, casts, skills) so a zone affects all incoming
+        // damage, not just its caster's own hits.
+        internal int GetZoneShreddedDefense(Combatant target, int baseDefense)
+        {
+            float shredPct = 0f;
+            foreach (var zone in _activeZones)
+                if (HexCoord.Distance(zone.Center, target.Position) <= zone.Radius)
+                    shredPct = Math.Max(shredPct, zone.DefShredPct);
+            return shredPct > 0f ? (int)(baseDefense * (1f - shredPct)) : baseDefense;
+        }
+
+        internal void GrantMana(Combatant c, int amount)
+        {
+            if (c.IsSilenced) return;
+            SetMana(c, c.Mana + amount);
+        }
+
+        internal void MoveUnit(Combatant c, HexCoord dest)
+        {
+            _grid.ClearOccupant(c.Position);
+            var from = c.Position;
+            c.Position = dest;
+            _grid.SetOccupant(c.Position, c.Id);
+            OnCombatantMoved?.Invoke(c.Id, from, c.Position);
+        }
+
+        internal void AddDreadZone(HexCoord center, int radius, float defShredPct, int ticks)
+        {
+            _activeZones.Add(new ActiveZoneEffect { Center = center, Radius = radius, DefShredPct = defShredPct, TicksRemaining = ticks });
+        }
+
         private void Attack(Combatant actor, Combatant target)
         {
+            actor.CurrentTargetId = target.Id;
+
             bool isMagic   = actor.Flags != null && actor.Flags.Contains(BattleBehaviorFlag.MagicAttack);
             int rawOffense = isMagic ? actor.MG  : actor.ATK;
-            int rawDefense = isMagic ? target.MR : target.DEF;
+            int rawDefense = GetZoneShreddedDefense(target, isMagic ? target.MR : target.DEF);
             int preMitDmg  = rawOffense;  // captured before mitigation for mana-on-hit
 
             if (!isMagic && actor.StrikerPctPerStack > 0)
@@ -442,14 +658,7 @@ namespace MagicSchool.Battle
                 Debug.Log($"[Trait][Striker] {actor.DisplayName} stack {actor.StrikerStacks}/8");
             }
 
-            int shieldAbsorbed = 0;
-            if (target.Shield > 0)
-            {
-                shieldAbsorbed = Math.Min(target.Shield, damage);
-                target.Shield -= shieldAbsorbed;
-                damage        -= shieldAbsorbed;
-            }
-            target.CurrentHP -= damage;
+            damage = ApplyDamageAndCheckKill(actor, target, damage, out int shieldAbsorbed, tags: null, autoHandleKill: false);
 
             int totalRaw = damage + shieldAbsorbed;
             if (actor.OmnivampPct > 0 && totalRaw > 0)
@@ -466,46 +675,97 @@ namespace MagicSchool.Battle
             Debug.Log($"[AutoBattle] {actor.DisplayName} → {target.DisplayName}: {damage} dmg (HP:{target.CurrentHP}/{target.MaxHP})");
             OnCombatantActed?.Invoke(actor.Id, target.Id, damage, new List<string>());
 
-            // Mana-on-attack (attacker) and mana-on-hit (defender, 7% pre-mitigation, cap 42)
-            actor.Mana  += 10;
-            Debug.Log($"[Mana] {actor.DisplayName} +10 atk → {actor.Mana}/{actor.MaxMana}");
-            target.Mana += Mathf.Min(42, Mathf.RoundToInt(preMitDmg * 0.07f));
-
-            // Ability cast — zero mana first to prevent cascade if CastAbility calls back into Attack
-            if (actor.Mana >= actor.MaxMana)
+            // Mana-on-attack (attacker, +10/hit) and mana-on-hit (defender, GDD formula:
+            // max(1, (preMitDmg * 0.08) / MaxHP) * 100, capped at 40). Silenced units
+            // generate no mana at all (GDD: "cannot cast skills and cannot generate mana").
+            if (!actor.IsSilenced)
             {
-                actor.Mana = 0;
-                CastAbility(actor);
+                SetMana(actor, actor.Mana + 10);
+                Debug.Log($"[Mana] {actor.DisplayName} +10 atk → {actor.Mana}/{actor.MaxMana}");
             }
-            if (!target.IsDefeated && target.Mana >= target.MaxMana)
+            if (!target.IsSilenced)
             {
-                target.Mana = 0;
-                CastAbility(target);
+                int manaGain = Mathf.Min(40, Mathf.Max(1, Mathf.RoundToInt(preMitDmg * 0.08f / target.MaxHP * 100f)));
+                SetMana(target, target.Mana + manaGain);
+                Debug.Log($"[Mana] {target.DisplayName} +{manaGain} def (preMitDmg:{preMitDmg}, MaxHP:{target.MaxHP}) → {target.Mana}/{target.MaxMana}");
+            }
+
+            // Cast trigger — consume mana (reset to 0, plus any overflow past MaxMana per
+            // GDD) before entering the Casting state, so a unit already mid-cast can't be
+            // re-triggered by mana granted during its own attack resolution.
+            if (actor.Mana >= actor.MaxMana && actor.State == CastState.Idle)
+            {
+                SetMana(actor, actor.Mana - actor.MaxMana);
+                TriggerCast(actor);
+            }
+            if (!target.IsDefeated && target.Mana >= target.MaxMana && target.State == CastState.Idle)
+            {
+                SetMana(target, target.Mana - target.MaxMana);
+                TriggerCast(target);
             }
 
             if (target.IsDefeated)
                 HandleKill(actor, target);
         }
 
-        private void CastAbility(Combatant caster)
+        // Mana capped — lock the target (or aim hex) in now, using the real
+        // SkillTargetSelector when the caster has skill data, so casts/projectiles
+        // resolve against whoever occupies that hex later even if the original
+        // target moved or died. Falls back to the original placeholder (first-in-
+        // range) for combatants with no Skill data yet (e.g. enemies).
+        private void TriggerCast(Combatant caster)
         {
-            var opponents = _combatants.Where(c => !c.IsDefeated && c.IsPlayer != caster.IsPlayer).ToList();
-            if (opponents.Count == 0) return;
-            var target = FindInRange(caster, opponents);
+            var skill = caster.Skill;
+            HexCoord? aimHex;
+
+            if (skill != null && skill.Archetype == SkillArchetype.SelfBuff)
+            {
+                aimHex = caster.Position;  // GDD: Self-Buff templates target self, not an enemy hex
+            }
+            else if (skill != null && skill.Archetype != SkillArchetype.None)
+            {
+                // Pass skill.TargetTeam so ally-scoped skills (e.g. Novice Cleric) aim at
+                // the correct team. TargetTeam defaults to Enemy, preserving all existing behavior.
+                var hexes = SkillTargetSelector.SelectTargetHexes(_grid, caster, _combatants, skill.BaseFilter, skill.Sorts, skill.Range, skill.Radius, skill.TargetTeam);
+                aimHex = hexes.Count > 0 ? hexes[0] : (HexCoord?)null;
+            }
+            else
+            {
+                var opponents = _combatants.Where(c => !c.IsDefeated && c.IsPlayer != caster.IsPlayer).ToList();
+                aimHex = opponents.Count > 0 ? FindInRange(caster, opponents)?.Position : null;
+            }
+
+            if (aimHex == null) return;
+
+            caster.PendingTargetHex   = aimHex.Value;
+            caster.CastTicksRemaining = (skill != null && skill.LockoutTicks > 0) ? skill.LockoutTicks : 1;
+            SetState(caster, (skill != null && skill.IsChannel) ? CastState.Channeling : CastState.Casting);
+            Debug.Log($"[Skill] {caster.DisplayName} begins {caster.State} (target hex {caster.PendingTargetHex})");
+            OnSkillCast?.Invoke(caster.Id, skill?.SkillName ?? "Basic Ability");
+        }
+
+        // Resolves the cast via SkillArchetypeExecutor when the caster has skill data;
+        // otherwise falls back to the original placeholder single-target damage stub.
+        private void ResolveCastPlaceholder(Combatant caster)
+        {
+            if (caster.Skill != null && caster.Skill.Archetype != SkillArchetype.None)
+            {
+                SkillArchetypeExecutor.Execute(this, caster);
+                return;
+            }
+
+            Combatant target = null;
+            foreach (var c in _combatants)
+                if (!c.IsDefeated && c.Position.Equals(caster.PendingTargetHex) && c.IsPlayer != caster.IsPlayer)
+                { target = c; break; }
             if (target == null) return;
 
             bool isMagic   = caster.Flags != null && caster.Flags.Contains(BattleBehaviorFlag.MagicAttack);
             int rawOffense = isMagic ? caster.MG : caster.ATK;
-            int rawDefense = isMagic ? target.MR : target.DEF;
+            int rawDefense = GetZoneShreddedDefense(target, isMagic ? target.MR : target.DEF);
             int damage     = Math.Max(1, (int)(rawOffense * (100f / (100 + rawDefense))));
 
-            if (target.Shield > 0)
-            {
-                int absorbed  = Math.Min(target.Shield, damage);
-                target.Shield -= absorbed;
-                damage        -= absorbed;
-            }
-            target.CurrentHP -= damage;
+            damage = ApplyDamageAndCheckKill(caster, target, damage, out _, tags: null, autoHandleKill: false);
 
             Debug.Log($"[Ability] {caster.DisplayName} casts on {target.DisplayName}: {damage} dmg (HP:{target.CurrentHP}/{target.MaxHP})");
             OnCombatantActed?.Invoke(caster.Id, target.Id, damage, new List<string> { "ABILITY" });
@@ -514,13 +774,7 @@ namespace MagicSchool.Battle
 
         private void ApplyDamage(Combatant target, int damage)
         {
-            if (target.Shield > 0)
-            {
-                int absorbed   = Math.Min(target.Shield, damage);
-                target.Shield -= absorbed;
-                damage        -= absorbed;
-            }
-            target.CurrentHP -= damage;
+            ApplyDamageAndCheckKill(null, target, damage, out _, tags: null, autoHandleKill: false);
         }
 
         private void HandleKill(Combatant actor, Combatant target)
@@ -550,7 +804,9 @@ namespace MagicSchool.Battle
                 int dmg = (int)(killed.MaxHP * actor.ElementalistExplosionPct);
                 if (!actor.ElementalistTrueDamage)
                     dmg = Math.Max(1, (int)(dmg * (100f / (100 + hit.MR))));
-                hit.CurrentHP -= dmg;
+
+                // Explosion damage has always bypassed shields — preserved exactly (bypassShield: true).
+                dmg = ApplyDamageAndCheckKill(actor, hit, dmg, out _, tags: null, bypassShield: true, autoHandleKill: false);
 
                 Debug.Log($"[Trait] Elementalist explosion: {hit.DisplayName} -{dmg}");
                 OnCombatantActed?.Invoke(actor.Id, hit.Id, dmg, new List<string> { "EXPLOSION" });
@@ -606,6 +862,15 @@ namespace MagicSchool.Battle
         {
             foreach (var c in _combatants)
                 if (c.IsPlayer) c.CurrentHP = Mathf.Max(1, Mathf.RoundToInt(c.MaxHP * pct));
+        }
+
+        // Force-triggers a cast for the named combatant regardless of current mana,
+        // bypassing battle RNG/positioning. QA hook for exercising targeting/archetype
+        // resolution directly (see ActiveSkillSystem plan's AC4 verification approach).
+        public void DebugForceCast(string combatantId)
+        {
+            var c = _combatants.FirstOrDefault(x => x.Id == combatantId);
+            if (c != null && !c.IsDefeated && c.State == CastState.Idle) TriggerCast(c);
         }
 #endif
 

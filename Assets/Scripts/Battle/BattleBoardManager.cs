@@ -70,6 +70,9 @@ namespace MagicSchool.Battle
             _resolver.OnCombatantActed    += HandleActed;
             _resolver.OnCombatantDefeated += HandleDefeated;
             _resolver.OnBattleComplete    += HandleComplete;
+            _resolver.OnSkillCast         += HandleSkillCast;
+            _resolver.OnManaChanged       += HandleManaChanged;
+            _resolver.OnCastStateChanged  += HandleCastStateChanged;
 
             BuildBench(students);
 
@@ -89,6 +92,9 @@ namespace MagicSchool.Battle
             _resolver.OnCombatantActed    -= HandleActed;
             _resolver.OnCombatantDefeated -= HandleDefeated;
             _resolver.OnBattleComplete    -= HandleComplete;
+            _resolver.OnSkillCast         -= HandleSkillCast;
+            _resolver.OnManaChanged       -= HandleManaChanged;
+            _resolver.OnCastStateChanged  -= HandleCastStateChanged;
         }
 
         // ── Board construction ───────────────────────────────────────────────
@@ -366,6 +372,7 @@ namespace MagicSchool.Battle
             var unit = go.GetComponent<BattleUnit>();
             unit.Init(studentId, coord);
             unit.InitHealthBar(snap.MaxHP, snap.MaxHP);
+            unit.InitManaBar(snap.Mana, snap.MaxMana);
             var sr = go.GetComponent<SpriteRenderer>();
             if (sr != null)
             {
@@ -437,6 +444,7 @@ namespace MagicSchool.Battle
                 var unit = go.GetComponent<BattleUnit>();
                 unit.Init(e.Id, coord);
                 unit.InitHealthBar(e.MaxHP, e.MaxHP);
+                unit.InitManaBar(e.Mana, e.MaxMana);
                 var sr = go.GetComponent<SpriteRenderer>();
                 if (sr != null)
                 {
@@ -476,6 +484,30 @@ namespace MagicSchool.Battle
             if (!_units.TryGetValue(id, out var unit)) return;
             unit.PlayDeathAnim();
             _units.Remove(id);
+        }
+
+        // GDD AC: "Visual log output or floating text notifies the board when a
+        // skill is cast." Satisfied via the log branch — no floating-text widget
+        // exists yet (that's BattleHUD's stated home per ActiveSkillSystem.md).
+        private void HandleSkillCast(string casterId, string skillName)
+        {
+            string displayName = _studentSnapshots.TryGetValue(casterId, out var snap) ? snap.DisplayName : casterId;
+            Debug.Log($"[Skill] {displayName} casts {skillName}!");
+
+            if (_units.TryGetValue(casterId, out var unit))
+                unit.PlayCastText(skillName);
+        }
+
+        private void HandleManaChanged(string id, int current, int max)
+        {
+            if (_units.TryGetValue(id, out var unit))
+                unit.UpdateMana(current, max);
+        }
+
+        private void HandleCastStateChanged(string id, CastState state)
+        {
+            if (_units.TryGetValue(id, out var unit))
+                unit.SetCastingVisual(state == CastState.Casting || state == CastState.Channeling);
         }
 
         private void HandleComplete(BattleResult result)
