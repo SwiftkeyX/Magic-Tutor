@@ -4,14 +4,23 @@ This document serves as our long-term research plan and tracking document for un
 
 ---
 
+## Methodology (sheet-first)
+
+The **Google Sheet is the live design database** (read via the `sync-sheet` skill /
+`sheet_sync.py`); champion numeric stats live in `ChampionRoster.cs` and must stay in
+sync with it. `.claude/scripts/balance_report.py` is the analysis tool: it reads the
+Heroes/Origin/Class tabs live, joins code stats, and applies the framework in
+`balance-framework.md`. The local TFT JSON dumps under `.claude/reference/json/` are
+**archived reference only** — the workflow no longer reads them.
+
 ## Roadmap Overview
 
 To establish a mathematically balanced combat system, we are dissecting TFT's mechanics into distinct research topics. Progress will be tracked here.
 
 | Topic | Focus Area | Status | Target Application |
 | :--- | :--- | :---: | :--- |
-| **Topic 1** | Trait Synergies & Breakpoint Budgeting | **Pending** | Validate and align Vertical/Horizontal trait weights |
-| **Topic 2** | Ability Scaling & Spell Multipliers | **Pending** | Design our future champion ability system |
+| **Topic 1** | Trait Synergies & Breakpoint Budgeting | **First pass applied** — breakpoint tables read live by `.claude/scripts/balance_report.py` §4; gold-value budgeting still pending | Validate and align Vertical/Horizontal trait weights |
+| **Topic 2** | Ability Scaling & Spell Multipliers | **First pass applied** — skill/mana cycle analysis in `.claude/scripts/balance_report.py` §3; TFT-side spell-scaling research still pending | Design our future champion ability system |
 | **Topic 3** | Team Combat & Simulation Modeling | **Pending** | Upgrade `BalanceValidator.cs` to test group comps |
 | **Topic 4** | Itemization Math & Stat Modifiers | **Pending** | Set up rules for equipment and teacher upgrades |
 | **Topic 5** | Shop Economy, Roll Rates & Pool Sizes | **Pending** | Establish recruit/shop probabilities per level |
