@@ -54,6 +54,7 @@ namespace MagicSchool.Battle
 
         private void Awake()
         {
+            Debug.Log($"[StudentRoster] Awake called on GameObject: {gameObject.name}. Existing Instance: {Instance != null}");
             if (Instance != null)
             {
                 Debug.LogWarning($"[StudentRoster] Duplicate instance found on {gameObject.name}. Destroying duplicate.");
@@ -62,6 +63,7 @@ namespace MagicSchool.Battle
             }
 
             Instance = this;
+            Debug.Log($"[StudentRoster] Instance set to: {Instance.gameObject.name}");
         }
 
         public void GenerateStudents()

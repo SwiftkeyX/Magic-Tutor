@@ -212,14 +212,14 @@ namespace MagicSchool.Battle
             else if (newScene == SceneName.YearEnd && CurrentPhase == RunPhase.YearEnd)
             {
                 var promo = FindObjectOfType<PromotionSystem>();
-                if (promo != null)
+                if (promo == null)
                 {
-                    promo.OnPromotionComplete += HandlePromotionComplete;
+                    Debug.Log("[RunManager] PromotionSystem not found in scene. Instantiating dynamically.");
+                    var promoGO = new GameObject("PromotionSystem");
+                    promo = promoGO.AddComponent<PromotionSystem>();
                 }
-                else
-                {
-                    Debug.LogError("[RunManager] PromotionSystem not found in YearEnd scene.");
-                }
+                
+                promo.OnPromotionComplete += HandlePromotionComplete;
             }
         }
 

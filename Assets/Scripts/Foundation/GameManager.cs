@@ -35,20 +35,31 @@ namespace MagicSchool.Battle
             }
 
             Instance = this;
+            Debug.Log("[GameManager] Awake initialized.");
 
             // Dynamically instantiate persistent roster singletons if not already present
             if (FindObjectOfType<StudentRoster>() == null)
             {
                 var rosterGO = new GameObject("StudentRoster");
-                rosterGO.AddComponent<StudentRoster>();
+                var comp = rosterGO.AddComponent<StudentRoster>();
+                Debug.Log($"[GameManager] Dynamically created StudentRoster. Component Null: {comp == null}");
                 DontDestroyOnLoad(rosterGO);
+            }
+            else
+            {
+                Debug.Log("[GameManager] StudentRoster already exists in scene.");
             }
 
             if (FindObjectOfType<TeacherRoster>() == null)
             {
                 var teacherRosterGO = new GameObject("TeacherRoster");
-                teacherRosterGO.AddComponent<TeacherRoster>();
+                var comp = teacherRosterGO.AddComponent<TeacherRoster>();
+                Debug.Log($"[GameManager] Dynamically created TeacherRoster. Component Null: {comp == null}");
                 DontDestroyOnLoad(teacherRosterGO);
+            }
+            else
+            {
+                Debug.Log("[GameManager] TeacherRoster already exists in scene.");
             }
         }
 
@@ -87,11 +98,6 @@ namespace MagicSchool.Battle
             // Instantiate dynamic RunManager to orchestrate the active gameplay run
             var runManagerGO = new GameObject("RunManager");
             runManagerGO.AddComponent<RunManager>();
-
-            if (SceneLoader.Instance != null)
-            {
-                SceneLoader.Instance.LoadScene(SceneName.School);
-            }
         }
 
         public void EndRun(bool won, int yearReached)
