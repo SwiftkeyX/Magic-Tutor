@@ -15,7 +15,7 @@
 Rapid prototype on feature branches to validate the core loop before committing to full GDD-gated production. Each milestone ships independently.
 
 - [x] **Milestone 1 — Battle Grid** — hex board, drag-drop placement, AutoBattleResolver tick simulation, VICTORY/DEFEAT overlay (`feat/battle-grid-milestone1`)
-- [ ] **Milestone 2 — Trait System** — 4 traits wired into AutoBattleResolver (MG/MR/CRIT/Flags); requires deep research first
+- [x] **Milestone 2 — Trait System** — 4 traits wired into AutoBattleResolver (MG/MR/CRIT/Flags); requires deep research first
 - [ ] **Milestone 3 — Training System** — deferred; design TBD
 - [ ] **Prototype Exit** — all 3 milestones playable; core loop validated → Phase 2 unlocks
 
@@ -54,11 +54,11 @@ Rapid prototype on feature branches to validate the core loop before committing 
 ### Sub-phase B — Implementation
 
 #### Tier 1 — Foundation
-- [ ] Code `GameManager`
-- [ ] Code `SceneLoader`
-- [ ] Code `InputHandler`
-- [ ] Code `SaveSystem`
-- [ ] 🧪 Test Gate 1 — Foundation wired; game launches, Bootstrap scene loads, no console errors
+- [x] Code `GameManager`
+- [x] Code `SceneLoader`
+- [x] Code `InputHandler`
+- [x] Code `SaveSystem`
+- [x] 🧪 Test Gate 1 — Foundation wired; game launches, Bootstrap scene loads, no console errors
 
 #### Tier 2 — Core Loop
 
