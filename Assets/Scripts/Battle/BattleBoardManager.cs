@@ -41,10 +41,18 @@ namespace MagicSchool.Battle
         private Camera      _cam;
         private HexTileView _hoveredTile;
 
+        private Camera Cam
+        {
+            get
+            {
+                if (_cam == null) _cam = Camera.main;
+                return _cam;
+            }
+        }
+
         // ── Lifecycle ────────────────────────────────────────────────────────
         private void Awake()
         {
-            _cam  = Camera.main;
             _grid = GetComponent<HexGrid>();
             if (_grid == null) { Debug.LogError("[BattleBoardManager] HexGrid missing", this); enabled = false; return; }
         }
@@ -338,7 +346,7 @@ namespace MagicSchool.Battle
         public void OnCardDrag(Vector2 screenPos)
         {
             if (_dragGhost == null) return;
-            Vector3 world = _cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -_cam.transform.position.z));
+            Vector3 world = Cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -Cam.transform.position.z));
             world.z = 0f;
             _dragGhost.transform.position = world;
 
@@ -375,7 +383,7 @@ namespace MagicSchool.Battle
             if (_draggingStudentId == null) return;
 
             // Hit-test world pos → nearest valid tile
-            Vector3 worldPos = _cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -_cam.transform.position.z));
+            Vector3 worldPos = Cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -Cam.transform.position.z));
             worldPos.z = 0f;
 
             bool hasExisting = _pendingPlacements.TryGetValue(_draggingStudentId, out var existingCoord);
