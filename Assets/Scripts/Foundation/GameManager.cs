@@ -72,6 +72,10 @@ namespace MagicSchool.Battle
                 TotalRunsStarted = save.TotalRunsStarted;
                 TotalRunsCompleted = save.TotalRunsCompleted;
             }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            gameObject.AddComponent<MagicSchool.Tests.DebugHUD>();
+#endif
         }
 
         public void StartNewRun()
