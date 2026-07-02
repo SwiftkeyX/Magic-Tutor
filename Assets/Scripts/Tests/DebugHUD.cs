@@ -27,7 +27,8 @@ namespace MagicSchool.Tests
             GUILayout.BeginVertical();
 
             // Status Display
-            GUILayout.Label($"<b>Game State:</b> {GameManager.Instance.CurrentState}");
+            string stateStr = GameManager.Instance != null ? GameManager.Instance.CurrentState.ToString() : "Not Initialized";
+            GUILayout.Label($"<b>Game State:</b> {stateStr}");
             
             var run = RunManager.Instance;
             if (run != null)
@@ -48,14 +49,14 @@ namespace MagicSchool.Tests
             GUILayout.Label("<b>Actions:</b>");
 
             // Game State transitions
-            if (GameManager.Instance.CurrentState == GameState.MainMenu)
+            if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.MainMenu)
             {
                 if (GUILayout.Button("Start New Run"))
                 {
                     GameManager.Instance.StartNewRun();
                 }
             }
-            else
+            else if (GameManager.Instance != null)
             {
                 if (GUILayout.Button("Return to Main Menu"))
                 {
