@@ -69,6 +69,10 @@ namespace MagicSchool.Battle
             CurrentState = GameState.InRun;
             OnGameStateChanged?.Invoke(CurrentState);
 
+            // Instantiate dynamic RunManager to orchestrate the active gameplay run
+            var runManagerGO = new GameObject("RunManager");
+            runManagerGO.AddComponent<RunManager>();
+
             if (SceneLoader.Instance != null)
             {
                 SceneLoader.Instance.LoadScene(SceneName.School);
