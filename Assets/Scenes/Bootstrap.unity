@@ -119,6 +119,56 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &101594285
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 101594287}
+  - component: {fileID: 101594286}
+  m_Layer: 0
+  m_Name: AudioSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &101594286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101594285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355d0d43194d2d548a50962d7ef27166, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Audio.AudioSystem
+  _clipLibrary: {fileID: 11400000, guid: 655eecc5fa713f14e9493f9e16facbcf, type: 2}
+  _sfxPoolSize: 12
+  _musicFadeDuration: 1
+  _musicVolume: 0.7
+  _sfxVolume: 1
+  _oldestInterruptThreshold: 0.15
+--- !u!4 &101594287
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101594285}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1270316925
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,6 +217,7 @@ MonoBehaviour:
   _enemyDatabase: {fileID: 11400000, guid: 4f92b5b223b61a741ba47f00e1cabb0e, type: 2}
   _promotionConfig: {fileID: 11400000, guid: 6ae3380f6ad961a4eb5aa66d968d9d03, type: 2}
   _studentConfig: {fileID: 11400000, guid: 5f806ece88386e84bb655328cf0b683b, type: 2}
+  _trainingConfig: {fileID: 11400000, guid: 7ea3817dbd65b1e43b19c4a1701dbb08, type: 2}
 --- !u!114 &1270316928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,3 +266,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1270316930}
+  - {fileID: 101594287}

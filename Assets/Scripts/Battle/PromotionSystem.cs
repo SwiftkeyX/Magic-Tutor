@@ -17,6 +17,10 @@ namespace MagicSchool.Battle
 
         public event Action OnPromotionComplete;
 
+        // Static forwarding event — AudioSystem subscribes here so it does not need
+        // FindObjectOfType to reach a non-persistent PromotionSystem instance.
+        public static event Action OnAnyPromotionComplete;
+
         public void Initialize(PromotionConfig config)
         {
             if (config != null) _config = config;
@@ -123,6 +127,7 @@ namespace MagicSchool.Battle
             }
 
             OnPromotionComplete?.Invoke();
+            OnAnyPromotionComplete?.Invoke();
         }
 
         private TeacherData ConvertStudentToTeacher(StudentData student)

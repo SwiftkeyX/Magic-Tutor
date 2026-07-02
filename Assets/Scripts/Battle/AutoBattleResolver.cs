@@ -17,6 +17,10 @@ namespace MagicSchool.Battle
         public event Action<string, int, int>                   OnManaChanged;  // (id, current, max)
         public event Action<string, CastState>                  OnCastStateChanged;
 
+        // Static forwarding event — AudioSystem subscribes here so it does not need
+        // FindObjectOfType to reach a non-singleton AutoBattleResolver instance.
+        public static event Action<BattleResult>                OnAnyBattleComplete;
+
         // ── Constants ────────────────────────────────────────────────────────
         private const float TickDelay      = 0.1f;   // 10 ticks/second — matches TFT resolution
         private const int   MaxBattleTicks = 1200;   // 120s max (was 200 × 0.6s)
@@ -200,6 +204,9 @@ namespace MagicSchool.Battle
                 Range       = c.Range,
                 Mana        = c.Mana,
                 MaxMana     = c.MaxMana,
+                Flags       = c.Flags != null
+                                  ? new List<BattleBehaviorFlag>(c.Flags)
+                                  : new List<BattleBehaviorFlag>(),
             }).ToList();
         }
 
@@ -483,6 +490,7 @@ namespace MagicSchool.Battle
                     var result = new BattleResult { Won = pCount > eCount, TicksElapsed = ticks, TimedOut = true };
                     Debug.Log($"[AutoBattle] TIMEOUT — {(result.Won ? "PLAYERS WIN" : "PLAYERS LOSE")}");
                     OnBattleComplete?.Invoke(result);
+                    OnAnyBattleComplete?.Invoke(result);
                     _battleRunning = false;
                     yield break;
                 }
@@ -497,6 +505,7 @@ namespace MagicSchool.Battle
                 var res = new BattleResult { Won = won, TicksElapsed = finalTicks, TimedOut = false };
                 Debug.Log($"[AutoBattle] END — {(won ? "PLAYERS WIN" : "PLAYERS LOSE")} in {finalTicks} ticks");
                 OnBattleComplete?.Invoke(res);
+                OnAnyBattleComplete?.Invoke(res);
                 _battleRunning = false;
             }
         }
