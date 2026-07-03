@@ -33,6 +33,8 @@ namespace MagicSchool.Battle
 
         private HexGrid _grid;
         private bool    _battleStarted;
+        private int     _maxSquadSize        = int.MaxValue; // unlimited in standalone; set by BeginPlacement() in production
+        private bool    _placementPhaseActive;               // true once BeginPlacement() fires; prevents double-call
         private Dictionary<string, ChampionData> _championDataLookup = new Dictionary<string, ChampionData>();
 
         // ── Dragging state ───────────────────────────────────────────────────
@@ -68,12 +70,6 @@ namespace MagicSchool.Battle
             if (_championRoster != null)
                 _championDataLookup = _championRoster.GetChampionLookup();
 
-            var snapshots = _resolver.GetCombatantSnapshots();
-            var students  = snapshots.Where(s => s.IsStudent).ToList();
-
-            foreach (var s in students)
-                _studentSnapshots[s.Id] = s;
-
             _resolver.OnCombatantMoved    += HandleMoved;
             _resolver.OnCombatantActed    += HandleActed;
             _resolver.OnCombatantDefeated += HandleDefeated;
@@ -83,15 +79,28 @@ namespace MagicSchool.Battle
             _resolver.OnCastStateChanged  += HandleCastStateChanged;
 
             SetupBenchScrollView();
-            BuildBench(students);
 
             _startBattleButton.interactable = false;
             _startBattleButton.onClick.AddListener(OnStartBattle);
             _outcomePanel.SetActive(false);
 
+            if (RunManager.Instance == null)
+            {
+                // Standalone (BattleTest.unity, no RunManager): auto-start Placement Phase immediately.
+                // Reads GetCombatantSnapshots() — lazy-init fallback in AutoBattleResolver supplies
+                // ChampionRoster data in this context (per AutoBattleResolver.md). Uncapped squad size.
+                _maxSquadSize = int.MaxValue;
+                var snapshots = _resolver.GetCombatantSnapshots();
+                var students  = snapshots.Where(s => s.IsStudent).ToList();
+                foreach (var s in students)
+                    _studentSnapshots[s.Id] = s;
+                BuildBench(students);
 #if UNITY_EDITOR
-            if (_debugAutoStart) TestAutoPlace();
+                if (_debugAutoStart) TestAutoPlace();
 #endif
+            }
+            // Production (Battle.unity with RunManager): Placement Phase begins when
+            // RunManager calls BeginPlacement() after AutoBattleResolver.SetCombatants().
         }
 
         private void SetupBenchScrollView()
@@ -184,6 +193,33 @@ namespace MagicSchool.Battle
             _resolver.OnSkillCast         -= HandleSkillCast;
             _resolver.OnManaChanged       -= HandleManaChanged;
             _resolver.OnCastStateChanged  -= HandleCastStateChanged;
+        }
+
+        /// <summary>
+        /// Called by RunManager after AutoBattleResolver.SetCombatants() to begin the
+        /// Placement Phase with real roster data. Only valid in the production context
+        /// (Battle.unity with RunManager present). No-ops with an error if called twice.
+        /// </summary>
+        public void BeginPlacement(List<StudentCombatData> students, List<EnemyCombatData> enemies, int maxSquadSize)
+        {
+            if (_placementPhaseActive)
+            {
+                Debug.LogError("[BattleBoardManager] BeginPlacement called while Placement Phase is already active.");
+                return;
+            }
+            _placementPhaseActive = true;
+            _maxSquadSize = maxSquadSize;
+
+            // RunManager already called AutoBattleResolver.SetCombatants() with the real roster.
+            // Reading GetCombatantSnapshots() here is now guaranteed to return student data, not stale
+            // ChampionRoster fallback data — that fallback is only reachable when _combatants is empty.
+            var snapshots    = _resolver.GetCombatantSnapshots();
+            var studentSnaps = snapshots.Where(s => s.IsStudent).ToList();
+            foreach (var s in studentSnaps)
+                _studentSnapshots[s.Id] = s;
+
+            BuildBench(studentSnaps);
+            Debug.Log($"[BattleBoardManager] BeginPlacement: {studentSnaps.Count} students on bench, maxSquadSize={maxSquadSize}");
         }
 
         // ── Board construction ───────────────────────────────────────────────
@@ -323,12 +359,19 @@ namespace MagicSchool.Battle
             _draggingStudentId = studentId;
             _hoveredTile = null;
 
-            // Highlight valid player tiles (exclude this student's own current tile)
-            foreach (var kv in _tiles)
+            // Highlight valid player tiles — skip entirely when squad cap is full for a new student.
+            // A student being re-placed (already in _pendingPlacements) is always allowed to move.
+            bool isReplacing = _pendingPlacements.ContainsKey(studentId);
+            bool squadFull   = !isReplacing && _pendingPlacements.Count >= _maxSquadSize;
+
+            if (!squadFull)
             {
-                bool isOwnTile = _pendingPlacements.TryGetValue(studentId, out var own) && kv.Key == own;
-                if (kv.Key.Row < HexGrid.PlayerRowCount && (!_grid.IsOccupied(kv.Key) || isOwnTile))
-                    kv.Value.SetHighlight(true);
+                foreach (var kv in _tiles)
+                {
+                    bool isOwnTile = _pendingPlacements.TryGetValue(studentId, out var own) && kv.Key == own;
+                    if (kv.Key.Row < HexGrid.PlayerRowCount && (!_grid.IsOccupied(kv.Key) || isOwnTile))
+                        kv.Value.SetHighlight(true);
+                }
             }
 
             // Create a ghost — get sprite from the dragged card's SpriteRenderer if present;
@@ -425,13 +468,18 @@ namespace MagicSchool.Battle
                 var img = card.GetComponent<Image>();
                 if (img != null) img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
             }
-            _startBattleButton.interactable = _pendingPlacements.Count > 0;
+            _startBattleButton.interactable = _pendingPlacements.Count >= 1 && _pendingPlacements.Count <= _maxSquadSize;
         }
 
         private void PlaceStudent(string studentId, HexCoord coord)
         {
             if (!_studentSnapshots.TryGetValue(studentId, out var snap)) return;
             if (_grid.IsOccupied(coord)) return;
+
+            // Squad cap: reject placement of a new (currently unplaced) student when cap is reached.
+            // Re-placing an already-placed student (moving it to a different tile) is always allowed.
+            bool isReplacing = _pendingPlacements.ContainsKey(studentId);
+            if (!isReplacing && _pendingPlacements.Count >= _maxSquadSize) return;
 
             // Remove existing placement if re-placing — restore card alpha first
             if (_pendingPlacements.TryGetValue(studentId, out var oldCoord))
@@ -478,7 +526,7 @@ namespace MagicSchool.Battle
                 if (img != null) img.color = new Color(img.color.r, img.color.g, img.color.b, 0.4f);
             }
 
-            _startBattleButton.interactable = _pendingPlacements.Count > 0;
+            _startBattleButton.interactable = _pendingPlacements.Count >= 1 && _pendingPlacements.Count <= _maxSquadSize;
         }
 
         // ── Test helper (editor/QA only) ─────────────────────────────────────
@@ -512,10 +560,9 @@ namespace MagicSchool.Battle
             _startBattleButton.gameObject.SetActive(false);
             _benchPanel.gameObject.SetActive(false);
 
-            // Tell resolver player positions
-            _resolver.SetUnitPositions(_pendingPlacements);
-
-            // Apply trait bonuses before battle starts
+            // Apply trait bonuses registered via TraitTracker during Placement Phase.
+            // In production, student IDs are GUIDs so _championDataLookup lookup misses; this is
+            // effectively a no-op until the trait system is wired for production GUID-based students.
             if (_traitTracker != null && _championRoster != null)
                 TraitEffectApplier.Apply(
                     _traitTracker.GetActiveBreakpoints(),
@@ -523,7 +570,8 @@ namespace MagicSchool.Battle
                     _pendingPlacements,
                     _resolver);
 
-            // Auto-spawn enemy units from snapshots — no direct stub dependency
+            // Snapshot enemy data BEFORE RunManager may re-call SetCombatants with the filtered squad.
+            // Both paths spawn enemy GOs here (visual layer — BattleBoardManager's job).
             var enemyPlacements = _resolver.GetAutoEnemyPlacements();
             var enemySnapshots  = _resolver.GetCombatantSnapshots().Where(s => !s.IsStudent).ToList();
             foreach (var e in enemySnapshots)
@@ -543,10 +591,23 @@ namespace MagicSchool.Battle
                 _units[e.Id] = unit;
             }
 
+            if (RunManager.Instance != null)
+            {
+                // Production: hand off fielded IDs + positions to RunManager, which filters combatants
+                // to only the placed subset and calls resolver.BeginBattle(). SetUnitPositions and
+                // BeginBattle responsibility moves to RunManager.ConfirmSquadPlacement().
+                var fieldedStudentIds = _pendingPlacements.Keys.ToList();
+                RunManager.Instance.ConfirmSquadPlacement(fieldedStudentIds, _pendingPlacements);
+            }
+            else
+            {
+                // Standalone (BattleTest.unity): call resolver directly, unchanged from original.
+                _resolver.SetUnitPositions(_pendingPlacements);
 #if UNITY_EDITOR
-            if (_debugPlayerStartHpPct < 1f) _resolver.DebugSetAllPlayerHp(_debugPlayerStartHpPct);
+                if (_debugPlayerStartHpPct < 1f) _resolver.DebugSetAllPlayerHp(_debugPlayerStartHpPct);
 #endif
-            _resolver.BeginBattle();
+                _resolver.BeginBattle();
+            }
         }
 
         // ── Event handlers ───────────────────────────────────────────────────

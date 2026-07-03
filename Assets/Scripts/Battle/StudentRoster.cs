@@ -49,6 +49,10 @@ namespace MagicSchool.Battle
         [SerializeField] private StudentConfig _config;
         private readonly List<StudentData> _students = new List<StudentData>();
 
+        /// <summary>Max students the player may field per battle. Sourced from StudentConfig so RunManager
+        /// can read it without a direct StudentConfig reference.</summary>
+        public int MaxSquadSize => _config != null ? _config.MaxSquadSize : 3;
+
         public event Action OnRosterChanged;
         public event Action<StudentData> OnStudentStatChanged;
 

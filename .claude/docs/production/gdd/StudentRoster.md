@@ -1,7 +1,7 @@
 # StudentRoster
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
+> **Last Updated**: 2026-07-03
 > **Implements Pillar**: Strategic — the randomly drawn student roster each semester is the primary source of roguelite variance; players adapt their training strategy to whoever shows up
 
 ## Summary
@@ -15,6 +15,8 @@ StudentRoster manages the active list of students for the current semester. It g
 ## Overview
 
 StudentRoster is a MonoBehaviour in the School scene, alive for the duration of one run. When RunManager fires `OnPhaseChanged(Recruit)`, StudentRoster calls `GenerateStudents()` to populate the active roster with N randomly generated `StudentData` objects, each assigned random base stats and 1–2 traits from the available trait pool (sourced from a `StudentConfig` ScriptableObject). TrainingSystem writes stat bonuses directly into `StudentData`. PromotionSystem calls `RemoveStudent(id)` for each student it processes. At run end, `Clear()` removes any remaining students. StudentRoster never persists beyond the current run.
+
+The full roster is the **selection pool**, not the fielded squad — not every recruited student fights every battle. `GetStudentsForBattle()` converts the entire pool to `StudentCombatData` for `RunManager` to hand to `AutoBattleResolver.SetCombatants()`; the player then chooses up to `MaxSquadSize` of them to actually place on the board during `BattleBoardManager`'s Placement Phase (see `BattleBoardManager.md`, `RunManager.md`). StudentRoster itself has no concept of "fielded" vs "benched" — that distinction lives entirely in the Placement Phase hand-off.
 
 ## Player Fantasy
 
@@ -73,6 +75,7 @@ All stat values are **integers** — no floats. This eliminates floating-point d
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `RecruitCountPerSemester` | int | 5 | How many students are generated each Recruit phase |
+| `MaxSquadSize` | int | 3 | Max students the player may field in a single battle (of the `RecruitCountPerSemester` pool) — enforced by `BattleBoardManager` during Placement Phase, not by StudentRoster itself |
 | `BaseHPRange` | Vector2Int | (40, 80) | Min/max base HP on generation |
 | `BaseATKRange` | Vector2Int | (5, 15) | Min/max base physical attack on generation |
 | `BaseDEFRange` | Vector2Int | (0, 10) | Min/max base armor on generation |
@@ -123,6 +126,11 @@ void RemoveStudent(string studentId)
 
 // Called by RunManager at run end (after PromotionSystem completes)
 void Clear()
+
+// Called by RunManager when entering the Battle phase — converts the full
+// roster (the selection pool) to combat-ready data. NOT the fielded squad;
+// see MaxSquadSize / BattleBoardManager Placement Phase.
+List<StudentCombatData> GetStudentsForBattle()
 ```
 
 ### Interactions with Other Systems
@@ -202,6 +210,7 @@ All knobs are on `StudentConfig.asset` (ScriptableObject) — no hardcoded value
 | Parameter | Default | Safe Range | Effect of Increase | Effect of Decrease |
 |---|---|---|---|---|
 | `RecruitCountPerSemester` | 5 | 3–8 | Larger team; more trait synergy options; harder to fully train all | Smaller team; easier to train deeply; fewer trait combos |
+| `MaxSquadSize` | 3 | 2–5 | More trait breakpoints reachable at once; less benching tension | Sharper squad-selection decisions; more recruits sit out each battle |
 | `BaseHPRange` | (40, 80) | (10, 200) | Students survive longer; battles last more ticks | Squishier; high ATK one-shots more often |
 | `BaseATKRange` | (5, 15) | (1, 50) | Higher physical damage output | Lower physical damage; battles last longer |
 | `BaseDEFRange` | (0, 10) | (0, 50) | Students tank more physical hits at base | Students are fragile before DEF training |
@@ -308,7 +317,7 @@ All knobs are on `StudentConfig.asset` (ScriptableObject) — no hardcoded value
 
 | Question | Owner | Deadline | Resolution |
 |---|---|---|---|
-| How many students are on the roster vs. how many fight in battle? (Are all recruited students fielded, or is there a bench?) | Designer | Before code-system | Pending — recommend all recruited students fight (no bench) to keep it simple in v1 |
+| How many students are on the roster vs. how many fight in battle? (Are all recruited students fielded, or is there a bench?) | Designer | Before code-system | **Resolved (2026-07-03)** — real bench: up to `MaxSquadSize` (default 3) of the `RecruitCountPerSemester` (default 5) roster fight each battle; the rest sit out. Selected via `BattleBoardManager`'s Placement Phase. |
 | Should the player see the incoming students before confirming the Recruit phase, or are they revealed all at once? | Designer | Before code-system | Pending |
 | Should the name pool be hard-coded in `StudentConfig`, or loaded from a separate text file for easier editing? | Engineer | Before code-system | Pending — recommend hard-coded list for v1 |
 | Can a student have 0 traits if `TraitsPerStudent.x = 0`? (Recommend: minimum 1 always.) | Designer | Before code-system | Pending — recommend minimum 1 trait always |

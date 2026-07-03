@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: StudentConfig
   m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.StudentConfig
   RecruitCountPerSemester: 5
+  MaxSquadSize: 3
   BaseHPRange: {x: 40, y: 80}
   BaseATKRange: {x: 5, y: 15}
   BaseDEFRange: {x: 0, y: 10}

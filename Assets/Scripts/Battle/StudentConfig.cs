@@ -7,6 +7,7 @@ namespace MagicSchool.Battle
     public class StudentConfig : ScriptableObject
     {
         public int RecruitCountPerSemester = 5;
+        public int MaxSquadSize = 3;
         public Vector2Int BaseHPRange = new Vector2Int(40, 80);
         public Vector2Int BaseATKRange = new Vector2Int(5, 15);
         public Vector2Int BaseDEFRange = new Vector2Int(0, 10);

@@ -1,7 +1,7 @@
 # BattleBoardManager
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
+> **Last Updated**: 2026-07-03
 > **Implements Pillar**: Empowering — the hex board is the visual stage for the battle payoff; spatial positioning makes every training decision tangible
 
 ## Summary
@@ -16,7 +16,11 @@ BattleBoardManager owns the hex grid visual layer in the Battle scene. It render
 
 The full board is 8 rows × 7 columns of hexagonal tiles. Rows 0–3 are the player's side; rows 4–7 are the enemy's side (mirrored). Columns are 0–6 (A–G in the reference). Row 0 of the player side is the Front Line (closest to enemies); row 3 is the Back Line.
 
-Before battle starts, BattleBoardManager enters **Placement Phase**: it shows a bench panel listing unplaced students. The player drags student cards onto player-side tiles. When the player confirms, BattleBoardManager calls `AutoBattleResolver.SetUnitPositions()` and signals readiness.
+Before battle starts, BattleBoardManager enters **Placement Phase**: it shows a bench panel listing unplaced students. The player drags student cards onto player-side tiles. When the player confirms, BattleBoardManager hands off to `RunManager` (see Core Rule 2) rather than starting the battle itself.
+
+**Two entry contexts** for Placement Phase, since this system serves both a standalone dev scene and the production game:
+- **Prototype / standalone (`BattleTest.unity`, no `RunManager` present)**: Placement Phase auto-starts in `Start()`, reading `AutoBattleResolver.GetCombatantSnapshots()` immediately (its lazy-init fallback supplies dummy `ChampionRoster` data — see `AutoBattleResolver.md`). Unaffected by this change.
+- **Production (`Battle.unity`, driven by `RunManager`)**: Placement Phase does **not** auto-start. `RunManager` calls `BeginPlacement(students, enemies, maxSquadSize)` explicitly, only after it has already called `AutoBattleResolver.SetCombatants()` with the real roster (see `RunManager.md`'s Battle-phase sequence). This ordering guarantee is why `BeginPlacement()` exists as a separate entry point instead of relying on `Start()` — it removes the race where `GetCombatantSnapshots()` could be read before real data exists.
 
 During battle, BattleBoardManager subscribes to `AutoBattleResolver` events and updates `BattleUnit` GameObjects in response — moving them along the grid, playing attack animations, and destroying defeated units.
 
@@ -55,13 +59,13 @@ Enemy positions mirror these: enemy "Front Line" is row 7 (closest to player sid
 
 1. BattleBoardManager instantiates all 56 `HexTileView` objects (8×7) on `Awake()` from `HexTile` prefab. Player tiles (rows 0–3) use one color; enemy tiles (rows 4–7) use another.
 2. **Placement Phase** (before battle):
-   - Reads `AutoBattleResolver.GetCombatantSnapshots()` to populate the bench panel.
+   - Entry: either auto-started in `Start()` (Prototype/standalone) or via `BeginPlacement(students, enemies, maxSquadSize)` (Production — see Overview). Either way, once entered it reads `AutoBattleResolver.GetCombatantSnapshots()` to populate the bench panel.
    - Player drags a student card using `IBeginDragHandler` / `IDragHandler` / `IEndDragHandler`.
    - On drag-enter to a player-side tile: highlight the tile (valid drop zone).
-   - On drop: instantiate a `BattleUnit` at that tile's position; record placement in `_pendingPlacements`.
+   - On drop: if `_pendingPlacements.Count >= maxSquadSize`, reject the drop (tile flashes red, same as an occupied-tile rejection) — the squad cap is enforced here, not just tile occupancy. Otherwise instantiate a `BattleUnit` at that tile's position; record placement in `_pendingPlacements`.
    - On drag back to bench (drop outside any tile): remove unit and clear tile.
-   - "Start Battle" button becomes interactable when ≥1 student is placed.
-   - On confirm: call `AutoBattleResolver.SetUnitPositions(_pendingPlacements)` then invoke `AutoBattleResolver.BeginBattle()` (or equivalent RunManager call).
+   - "Start Battle" button becomes interactable when `1 <= _pendingPlacements.Count <= maxSquadSize` (in Production, `maxSquadSize` comes from `BeginPlacement()`'s parameter, sourced from `StudentConfig.MaxSquadSize`; in Prototype/standalone with no config passed, it defaults to unlimited/tile-capacity as before).
+   - On confirm: call `AutoBattleResolver.SetUnitPositions(_pendingPlacements)`, then hand off — **Production**: call `RunManager.Instance.ConfirmSquadPlacement(fieldedStudentIds, _pendingPlacements)`, which itself finalizes combatants and starts the fight (see `RunManager.md`). **Prototype/standalone** (no `RunManager.Instance`): call `AutoBattleResolver.BeginBattle()` directly, as before.
 3. **Battle Phase** (event-driven):
    - `OnCombatantMoved(id, from, to)` → start `BattleUnit.MoveTo(to)` coroutine; update `HexGrid` occupancy.
    - `OnCombatantActed(actorId, targetId, ...)` → call `BattleUnit.PlayAttackAnim(targetTileWorldPos)`.
@@ -73,7 +77,7 @@ Enemy positions mirror these: enemy "Front Line" is row 7 (closest to player sid
 
 | State | Entry | Exit | Behavior |
 |---|---|---|---|
-| `Initializing` | Scene load | Snapshots loaded | Building tile grid; bench panel populating |
+| `Initializing` | Scene load | Snapshots loaded | Building tile grid (`Awake()`, always immediate); bench panel stays empty until Placement Phase is entered |
 | `Placement` | Snapshots loaded | Player confirms | Drag-drop active; board highlights valid tiles |
 | `Battle` | `OnCombatantMoved` or `OnCombatantActed` first fires | `OnBattleComplete` | Animating units; no drag-drop |
 | `Outcome` | `OnBattleComplete` | Scene unloads | Board frozen; outcome overlay visible |
@@ -126,6 +130,8 @@ y = row * HEX_HEIGHT
 |---|---|
 | Player clicks "Start Battle" with 0 students placed | Button is non-interactable; no battle starts |
 | Player drags a student to an already-occupied tile | Highlight turns red; drop is rejected |
+| Player drags a student when `_pendingPlacements.Count == maxSquadSize` | Highlight turns red; drop is rejected (squad is full) |
+| `BeginPlacement()` called a second time before confirm | Log error, no-op — Placement Phase already active |
 | `OnCombatantMoved` fires for an unknown unit ID | Log warning, no-op |
 | Two `MoveTo` coroutines start on the same unit | Cancel the previous coroutine before starting the new one |
 | `OnBattleComplete` fires while a `MoveTo` animation is in progress | Stop all unit coroutines immediately; freeze board |
@@ -140,6 +146,7 @@ y = row * HEX_HEIGHT
 | `HexGrid` | This depends on it | Grid adjacency, distance, BFS pathing |
 | `ChampionRoster` | This depends on it | Reads `ChampionData` for trait bookkeeping only (see Core Rule 5) — not for any UI display |
 | `TraitTracker` | This depends on it | Registers/unregisters placements so trait breakpoints stay current |
+| `RunManager` | It depends on this (Production only) | State trigger — calls `BeginPlacement(students, enemies, maxSquadSize)` to start Placement Phase; receives `ConfirmSquadPlacement(fieldedStudentIds, positions)` callback on confirm. Not present in the Prototype/standalone context. |
 
 ---
 
@@ -174,6 +181,8 @@ y = row * HEX_HEIGHT
 - [ ] Player-side tiles highlight on drag-over; enemy-side tiles do not respond to drops
 - [ ] Placed student units appear at the correct tile position
 - [ ] `SetUnitPositions()` is called before `Resolve()` starts
+- [ ] In Production, placements beyond `maxSquadSize` are rejected at drop time; "Start Battle" stays non-interactable above the cap or below 1 placement
+- [ ] In Production, `GetCombatantSnapshots()` is never read before `RunManager` has called `AutoBattleResolver.SetCombatants()` with real data — `BeginPlacement()` is only called after that
 - [ ] `OnCombatantMoved` drives unit lerp animation to correct world position
 - [ ] `OnCombatantDefeated` removes unit from scene
 - [ ] No `FindObjectOfType` anywhere in `BattleBoardManager.cs`
@@ -188,3 +197,5 @@ y = row * HEX_HEIGHT
 | `AutoBattleResolver.SetUnitPositions()` | `AutoBattleResolver.md` | Pre-battle injection method |
 | `OnCombatantMoved` event | `AutoBattleResolver.md` | Movement event signature |
 | `HexCoord`, `HexGrid` | (implemented in `HexCoord.cs`, `HexGrid.cs`) | Grid data types |
+| `BeginPlacement()` / `ConfirmSquadPlacement()` hand-off | `RunManager.md` | Battle-phase Placement sub-step | Rule dependency |
+| `MaxSquadSize` | `StudentRoster.md` | `StudentConfig.MaxSquadSize` tuning knob | Data dependency |

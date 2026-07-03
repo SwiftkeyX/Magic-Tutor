@@ -1,7 +1,7 @@
 # RunManager
 
 > **Status**: Draft
-> **Last Updated**: 2026-07-02
+> **Last Updated**: 2026-07-03
 > **Implements Pillar**: Challenging — the 3-year permadeath arc and the ordered phase sequence define the game's core tension
 
 ## Summary
@@ -14,7 +14,9 @@ RunManager drives the semester loop: Recruit → Train → Battle → YearEnd, r
 
 ## Overview
 
-RunManager is instantiated when `GameManager.StartNewRun()` is called and lives for the duration of one run. It does not persist between runs — a new RunManager is created for each run. It maintains `CurrentYear` (1–3) and `CurrentPhase` (RunPhase enum). Each phase transition fires `OnPhaseChanged`, and each year increment fires `OnYearChanged`. RunManager calls `SceneLoader.Instance.LoadScene()` at phase boundaries to switch scenes, then directly calls `TraitSystem.ResolveBattleBuffs()` and `AutoBattleResolver.Resolve()` at the start of the Battle phase. It subscribes to `AutoBattleResolver.OnBattleComplete` to receive the win/lose result, then either advances to YearEnd or calls `GameManager.Instance.EndRun(false, CurrentYear)`.
+RunManager is instantiated when `GameManager.StartNewRun()` is called and lives for the duration of one run. It does not persist between runs — a new RunManager is created for each run. It maintains `CurrentYear` (1–3) and `CurrentPhase` (RunPhase enum). Each phase transition fires `OnPhaseChanged`, and each year increment fires `OnYearChanged`. RunManager calls `SceneLoader.Instance.LoadScene()` at phase boundaries to switch scenes. At the start of the Battle phase it first hands off to a **Placement sub-step** (below) before combat begins; once the player confirms their squad, RunManager calls `TraitSystem.ResolveBattleBuffs()` and `AutoBattleResolver.Resolve()`. It subscribes to `AutoBattleResolver.OnBattleComplete` to receive the win/lose result, then either advances to YearEnd or calls `GameManager.Instance.EndRun(false, CurrentYear)`.
+
+**Placement sub-step (Battle phase, before combat)**: this is an internal sub-state of `RunPhase.Battle` — it does **not** add a new `RunPhase` enum value, so `OnPhaseChanged` still only fires once for Battle (no extra event for other systems like `AudioSystem`'s phase→music map to react to). On entering the Battle scene, RunManager calls `AutoBattleResolver.SetCombatants(StudentRoster.Instance.GetStudentsForBattle(), enemies)` with the full recruited roster (the selection pool — see `StudentRoster.md`), then calls `BattleBoardManager.Instance.BeginPlacement(students, enemies, maxSquadSize)`. The player drags up to `StudentConfig.MaxSquadSize` students onto the hex board (see `BattleBoardManager.md`) and confirms, which calls back `RunManager.ConfirmSquadPlacement(fieldedStudentIds, positions)` — RunManager filters combatants down to only the fielded subset before proceeding to `ResolveBattleBuffs()` / `Resolve()`. This ordering — `SetCombatants()` before `BeginPlacement()` — is a hard invariant: it's what guarantees `BattleBoardManager` never reads stale/placeholder data via `AutoBattleResolver.GetCombatantSnapshots()` (see `BattleBoardManager.md`, `AutoBattleResolver.md`).
 
 ## Player Fantasy
 
@@ -58,6 +60,10 @@ enum RunPhase {
    [Train]     ← OnPhaseChanged(Train) [same scene, no load]
         ↓  CompleteTrainPhase()
    [Battle]    ← OnPhaseChanged(Battle) + LoadScene(Battle)
+        ↓  AutoBattleResolver.SetCombatants(fullRoster, enemies)
+        ↓  BattleBoardManager.BeginPlacement(students, enemies, maxSquadSize)
+        ↓  player places ≤ MaxSquadSize students; confirms
+        ↓  ConfirmSquadPlacement(fieldedStudentIds, positions)   [player-triggered — see Public API]
         ↓  TraitSystem.ResolveBattleBuffs()
         ↓  AutoBattleResolver.Resolve()
         ↓  ← OnBattleComplete(result)   [RunManager stores result, does NOT advance yet]
@@ -77,7 +83,7 @@ enum RunPhase {
 |---|---|---|---|---|
 | `Recruit` | Run start, or previous YearEnd complete (year < 3) | `CompleteRecruitPhase()` called | School | StudentRoster draws new random students |
 | `Train` | `CompleteRecruitPhase()` | `CompleteTrainPhase()` | School (no reload) | Player allocates training actions; TrainingSystem is active |
-| `Battle` | `CompleteTrainPhase()` | `CompleteBattlePhase()` called | Battle | TraitSystem resolves buffs, AutoBattleResolver simulates; no player input during simulation. `OnBattleComplete` fires and stores the pending result, but RunManager does NOT advance until `CompleteBattlePhase()` is called — BattleHUD shows the outcome overlay and calls it when the player clicks "Continue" |
+| `Battle` | `CompleteTrainPhase()` | `CompleteBattlePhase()` called | Battle | Sub-step: RunManager seeds `AutoBattleResolver` with the full roster, then `BattleBoardManager` runs Placement Phase until the player confirms a squad of ≤ `MaxSquadSize` (`ConfirmSquadPlacement()`). Only then do TraitSystem buffs resolve and AutoBattleResolver simulate; no player input during simulation itself. `OnBattleComplete` fires and stores the pending result, but RunManager does NOT advance until `CompleteBattlePhase()` is called — BattleHUD shows the outcome overlay and calls it when the player clicks "Continue" |
 | `YearEnd` | Battle won | `OnPromotionComplete` received | YearEnd | PromotionSystem presents promotion choices; player selects teachers |
 
 ### Public API
@@ -91,6 +97,13 @@ void CompleteRecruitPhase()
 
 // Called by SchoolHUD / Train UI when player confirms all training is done
 void CompleteTrainPhase()
+
+// Called by BattleBoardManager when the player confirms their Placement Phase
+// squad selection (≤ StudentConfig.MaxSquadSize students placed on the board).
+// Filters combatants down to only the fielded subset, then proceeds to
+// TraitSystem.ResolveBattleBuffs() → AutoBattleResolver.Resolve(). No-op with
+// a logged error if called outside the Battle phase's Placement sub-step.
+void ConfirmSquadPlacement(List<string> fieldedStudentIds, Dictionary<string, HexCoord> positions)
 
 // Called by BattleHUD's "Continue" button after the player has seen the outcome overlay.
 // RunManager received OnBattleComplete earlier and stored the pending result, but does
@@ -119,6 +132,7 @@ RunManager exposes `PauseRun()` / `ResumeRun()`. When paused:
 | `TraitSystem` | RunManager calls `TraitSystem.ResolveBattleBuffs()` directly before AutoBattleResolver runs |
 | `AutoBattleResolver` | RunManager calls `AutoBattleResolver.Resolve()` to start simulation; subscribes to `OnBattleComplete` (stores result, does not advance) |
 | `BattleHUD` | Calls `RunManager.Instance.CompleteBattlePhase()` when the player clicks "Continue" on the outcome overlay — the trigger for RunManager to actually advance |
+| `BattleBoardManager` | RunManager calls `BeginPlacement(students, enemies, maxSquadSize)` to start the Battle phase's Placement sub-step (after `SetCombatants()`); `BattleBoardManager` calls back `ConfirmSquadPlacement(fieldedStudentIds, positions)` when the player confirms |
 | `PromotionSystem` | RunManager subscribes to `PromotionSystem.OnPromotionComplete` to advance to the next year or end the run |
 | `EnemyDatabase` | Subscribes to `OnYearChanged` to scale enemy stats for the new year |
 | `InputHandler` | Subscribes to `OnCancelPressed` to open pause/quit prompt during Train phase |
@@ -150,6 +164,8 @@ isRunComplete = (CurrentYear == MaxYears) AND (yearEndComplete == true)
 | `CompleteTrainPhase()` called before `CompleteRecruitPhase()` | Log error, no-op | Same |
 | `OnBattleComplete` fires twice | Only the first is processed; RunManager unsubscribes after the first result | AutoBattleResolver must not fire the event twice, but guard against it |
 | `CompleteBattlePhase()` called with no pending result | Log error, no-op | Guards against BattleHUD calling Continue before `OnBattleComplete` has actually fired, or calling it twice |
+| `ConfirmSquadPlacement()` called with 0 or > `MaxSquadSize` fielded students | Log error, no-op | `BattleBoardManager` should already block this at the UI level (Start Battle non-interactable); this is a defense-in-depth guard |
+| `ConfirmSquadPlacement()` called outside the Battle phase's Placement sub-step (e.g. twice, or before `BeginPlacement()`) | Log error, no-op | Ordering violation |
 | `OnPromotionComplete` fires before entering `YearEnd` phase | Log warning, discard | Ordering violation; PromotionSystem should only fire during `YearEnd` |
 | `StartRun()` called while a run is already active | Log error, no-op | GameManager should guard against this |
 | Application quit during Train phase | `OnApplicationQuit` on GameManager triggers `EndRun(false, CurrentYear)`; TeacherRoster saves any teachers earned in prior years | Mid-run quit = run loss |
@@ -254,6 +270,8 @@ Not applicable to RunManager directly — scene transitions are SceneLoader's co
 | TraitSystem must resolve before AutoBattleResolver | `TraitSystem.md`, `AutoBattleResolver.md` | `ResolveBattleBuffs()` ordering | Rule dependency |
 | Best-practices ordering invariant | `best-practices.md` | "TraitSystem resolves before AutoBattleResolver" rule | Rule dependency |
 | SceneLoader scene names | `SceneLoader.md` | `SceneName` enum values (School, Battle, YearEnd) | Data dependency |
+| Placement Phase hand-off (`BeginPlacement()` / `ConfirmSquadPlacement()`) | `BattleBoardManager.md` | Battle-phase Placement sub-step | Rule dependency |
+| `MaxSquadSize` | `StudentRoster.md` | `StudentConfig.MaxSquadSize` tuning knob | Data dependency |
 | RunConfig tuning knobs | `EnemyDatabase.md` | `MaxYears`, `TrainingActionsPerSemester` | Data dependency |
 
 ---
@@ -265,6 +283,8 @@ Not applicable to RunManager directly — scene transitions are SceneLoader's co
 - [ ] `OnPhaseChanged` fires exactly once per phase transition with the correct new phase
 - [ ] `OnYearChanged` fires exactly once per year increment with the correct year number
 - [ ] `TraitSystem.ResolveBattleBuffs()` is always called before `AutoBattleResolver.Resolve()` — verified by unit test
+- [ ] `AutoBattleResolver.SetCombatants()` is always called before `BattleBoardManager.BeginPlacement()` on Battle phase entry
+- [ ] `ConfirmSquadPlacement()` only proceeds to `ResolveBattleBuffs()`/`Resolve()` with a fielded count between 1 and `StudentConfig.MaxSquadSize` inclusive
 - [ ] No system other than RunManager writes `CurrentPhase`
 - [ ] `MaxYears` and `TrainingActionsPerSemester` are read from a `RunConfig` ScriptableObject — no hardcoded values
 - [ ] Pausing during Train phase prevents `CompleteTrainPhase()` from advancing

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MagicSchool.Battle
@@ -216,15 +217,37 @@ namespace MagicSchool.Battle
                 {
                     resolver.OnBattleComplete += HandleBattleComplete;
 
-                    var students = StudentRoster.Instance != null 
-                        ? StudentRoster.Instance.GetStudentsForBattle() 
+                    var students = StudentRoster.Instance != null
+                        ? StudentRoster.Instance.GetStudentsForBattle()
                         : new List<StudentCombatData>();
 
-                    var enemies = _enemyDatabase != null 
-                        ? _enemyDatabase.GetEnemiesCombatDataForYear(CurrentYear) 
+                    var enemies = _enemyDatabase != null
+                        ? _enemyDatabase.GetEnemiesCombatDataForYear(CurrentYear)
                         : new List<EnemyCombatData>();
 
+                    // Store for ConfirmSquadPlacement (which re-calls SetCombatants with filtered subset)
+                    _pendingStudents = students;
+                    _pendingEnemies  = enemies;
+
+                    // Seed resolver with the full selection pool — guarantees GetCombatantSnapshots()
+                    // returns real student data when BattleBoardManager.BeginPlacement() reads it.
+                    // This is the hard ordering invariant: SetCombatants BEFORE BeginPlacement.
                     resolver.SetCombatants(students, enemies);
+
+                    // Begin Placement Phase — player selects up to MaxSquadSize students to field.
+                    var board = FindObjectOfType<BattleBoardManager>();
+                    if (board != null)
+                    {
+                        int maxSquadSize = StudentRoster.Instance != null
+                            ? StudentRoster.Instance.MaxSquadSize
+                            : 3;
+                        _awaitingSquadConfirmation = true;
+                        board.BeginPlacement(students, enemies, maxSquadSize);
+                    }
+                    else
+                    {
+                        Debug.LogError("[RunManager] BattleBoardManager not found in Battle scene.");
+                    }
                 }
                 else
                 {
@@ -248,6 +271,11 @@ namespace MagicSchool.Battle
 
         private BattleResult? _pendingBattleResult;
 
+        // ── Placement sub-step state (internal to RunPhase.Battle) ───────────
+        private bool                    _awaitingSquadConfirmation;
+        private List<StudentCombatData> _pendingStudents = new List<StudentCombatData>();
+        private List<EnemyCombatData>   _pendingEnemies  = new List<EnemyCombatData>();
+
         private void HandleBattleComplete(BattleResult result)
         {
             var resolver = FindObjectOfType<AutoBattleResolver>();
@@ -259,6 +287,59 @@ namespace MagicSchool.Battle
             // Do not advance yet — BattleHUD shows the outcome overlay and calls
             // CompleteBattlePhase() when the player clicks "Continue".
             _pendingBattleResult = result;
+        }
+
+        /// <summary>
+        /// Called by BattleBoardManager when the player confirms their Placement Phase squad selection.
+        /// Filters the full selection pool down to only the fielded students, re-establishes combatants
+        /// on AutoBattleResolver with just that subset, then begins the battle simulation.
+        /// Guards: must be called during Battle phase's Placement sub-step; count must be 1–MaxSquadSize.
+        /// </summary>
+        public void ConfirmSquadPlacement(List<string> fieldedStudentIds, Dictionary<string, HexCoord> positions)
+        {
+            if (CurrentPhase != RunPhase.Battle)
+            {
+                Debug.LogError($"[RunManager] ConfirmSquadPlacement called outside Battle phase (current: {CurrentPhase}).");
+                return;
+            }
+            if (!_awaitingSquadConfirmation)
+            {
+                Debug.LogError("[RunManager] ConfirmSquadPlacement called before BeginPlacement() or called a second time.");
+                return;
+            }
+
+            int maxSquadSize = StudentRoster.Instance != null ? StudentRoster.Instance.MaxSquadSize : 3;
+
+            if (fieldedStudentIds == null || fieldedStudentIds.Count == 0 || fieldedStudentIds.Count > maxSquadSize)
+            {
+                Debug.LogError($"[RunManager] ConfirmSquadPlacement: invalid fielded count {fieldedStudentIds?.Count ?? 0}. Must be 1–{maxSquadSize}.");
+                return;
+            }
+
+            _awaitingSquadConfirmation = false;
+
+            var resolver = FindObjectOfType<AutoBattleResolver>();
+            if (resolver == null)
+            {
+                Debug.LogError("[RunManager] AutoBattleResolver not found during ConfirmSquadPlacement.");
+                return;
+            }
+
+            // Filter the full selection pool down to only the students the player placed on the board
+            var filteredStudents = _pendingStudents
+                .Where(s => fieldedStudentIds.Contains(s.Id))
+                .ToList();
+
+            Debug.Log($"[RunManager] ConfirmSquadPlacement: {filteredStudents.Count} fielded students, {_pendingEnemies.Count} enemies.");
+
+            // Re-establish resolver with only the fielded subset (clears the full-pool data set earlier).
+            // Ordering invariant: SetCombatants → SetUnitPositions → BeginBattle.
+            resolver.SetCombatants(filteredStudents, _pendingEnemies);
+            resolver.SetUnitPositions(positions);
+
+            // TraitSystem.ResolveBattleBuffs() — wire here when TraitSystem is implemented.
+
+            resolver.BeginBattle();
         }
 
         /// <summary>
