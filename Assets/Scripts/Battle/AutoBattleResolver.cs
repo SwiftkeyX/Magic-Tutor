@@ -9,6 +9,12 @@ namespace MagicSchool.Battle
     public class AutoBattleResolver : MonoBehaviour
     {
         // ── Events ──────────────────────────────────────────────────────────
+        // Setup event — fires at the end of SetCombatants(); subscribers call
+        // GetCombatantSnapshots() themselves to get data (no payload per GDD).
+        // May fire more than once before BeginBattle() if RunManager narrows the
+        // roster (full roster first, then fielded squad after ConfirmSquadPlacement).
+        public event Action                                     OnCombatantsSet;
+
         public event Action<string, string, int, List<string>> OnCombatantActed;
         public event Action<string, HexCoord, HexCoord>        OnCombatantMoved;
         public event Action<string>                             OnCombatantDefeated;
@@ -152,6 +158,12 @@ namespace MagicSchool.Battle
                     Flags       = e.Flags ?? new List<BattleBehaviorFlag>(),
                     Skill       = e.Skill ?? new SkillDefinition(),
                 });
+
+            // Signal subscribers (e.g. BattleHUD) that GetCombatantSnapshots() now
+            // reflects real data. No payload — callers pull snapshots themselves.
+            Debug.Log($"[AutoBattleResolver] SetCombatants complete ({_combatants.Count(c => c.IsPlayer)} students, " +
+                      $"{_combatants.Count(c => !c.IsPlayer)} enemies) — firing OnCombatantsSet.");
+            OnCombatantsSet?.Invoke();
         }
 
         public void SetUnitPositions(Dictionary<string, HexCoord> placements)

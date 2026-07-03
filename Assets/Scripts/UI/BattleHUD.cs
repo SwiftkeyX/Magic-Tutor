@@ -102,6 +102,7 @@ namespace MagicSchool.Battle
                 return;
             }
 
+            _resolver.OnCombatantsSet     += HandleCombatantsSet;
             _resolver.OnCombatantActed    += HandleCombatantActed;
             _resolver.OnCombatantDefeated += HandleCombatantDefeated;
             _resolver.OnBattleComplete    += HandleBattleComplete;
@@ -117,6 +118,7 @@ namespace MagicSchool.Battle
         {
             if (_resolver != null)
             {
+                _resolver.OnCombatantsSet     -= HandleCombatantsSet;
                 _resolver.OnCombatantActed    -= HandleCombatantActed;
                 _resolver.OnCombatantDefeated -= HandleCombatantDefeated;
                 _resolver.OnBattleComplete    -= HandleBattleComplete;
@@ -127,20 +129,6 @@ namespace MagicSchool.Battle
                 InputHandler.Instance.OnSpeedUpStarted   -= HandleSpeedUpStarted;
                 InputHandler.Instance.OnSpeedUpCancelled -= HandleSpeedUpCancelled;
             }
-        }
-
-        private void Start()
-        {
-            // Wait two frames so RunManager's scene-setup coroutine (which yields null
-            // once) has called SetCombatants() before we read GetCombatantSnapshots().
-            StartCoroutine(BuildCardsDelayed());
-        }
-
-        private IEnumerator BuildCardsDelayed()
-        {
-            yield return null;
-            yield return null;
-            BuildCombatantCards();
         }
 
         // ── Card building ──────────────────────────────────────────────────────
@@ -253,6 +241,16 @@ namespace MagicSchool.Battle
         }
 
         // ── Event handlers ────────────────────────────────────────────────────
+
+        // Called every time AutoBattleResolver.SetCombatants() completes (may fire
+        // more than once before battle starts — e.g. full roster, then fielded squad).
+        // BuildCombatantCards() clears all tracking dictionaries first, so it is safe
+        // to call repeatedly without leaking old UI elements or duplicate entries.
+        private void HandleCombatantsSet()
+        {
+            Debug.Log("[BattleHUD] OnCombatantsSet received — rebuilding combatant cards.");
+            BuildCombatantCards();
+        }
 
         private void HandleCombatantActed(string actorId, string targetId, int damage, List<string> tags)
         {

@@ -1,7 +1,7 @@
 # AutoBattleResolver
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-30
+> **Last Updated**: 2026-07-03
 > **Implements Pillar**: Empowering — the payoff moment; the player watches the team they built and trained dismantle the enemy
 
 ## Summary
@@ -229,6 +229,14 @@ When RunManager calls `Pause()`, AutoBattleResolver sets `_paused = true`. The c
 
 `List<CombatantSnapshot> GetCombatantSnapshots()` — returns a read-only list of all combatants as lightweight snapshots. Each `CombatantSnapshot` carries: `id`, `displayName`, `isStudent`, `maxHP`, `currentHP`. Called by `BattleBoardManager` during Placement Phase to populate the bench panel without reading `StudentRoster` or `EnemyDatabase` directly. Before `Resolve()` is called the list reflects the full pre-battle roster; once the simulation is running it reflects live battle state (HP updates as combatants take damage). `CombatantSnapshot` is defined in `BattleData.cs`.
 
+### Setup Event (fires once, not per-tick)
+
+```
+event Action OnCombatantsSet
+```
+
+Fires at the end of `SetCombatants()` — signals that `GetCombatantSnapshots()` now reflects real combatant data (not the lazy-init fallback). `BattleHUD` subscribes to this instead of guessing how many frames to wait after scene load; see `BattleHUD.md` Core Rule 3. Fires every time `SetCombatants()` is called — including the second call `RunManager.ConfirmSquadPlacement()` makes to narrow the roster down to the fielded squad (see `RunManager.md`), so subscribers must tolerate being notified more than once per battle setup.
+
 ### Per-Tick Events (for BattleHUD and BattleBoardManager)
 
 ```
@@ -366,7 +374,7 @@ else → Won = false
 | `StudentRoster` | This depends on it | Data dependency — reads student stats at simulation start (read-only) |
 | `RunManager` | It depends on this | State trigger — calls `Resolve()`; subscribes to `OnBattleComplete` |
 | `InputHandler` | It depends on this | Rule dependency — fires speed-up events that AutoBattleResolver acts on |
-| `BattleHUD` | It depends on this | State trigger — subscribes to per-tick events for animation |
+| `BattleHUD` | It depends on this | State trigger — subscribes to `OnCombatantsSet` to know when to build combatant cards, plus per-tick events for animation |
 
 ---
 

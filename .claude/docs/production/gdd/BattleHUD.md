@@ -1,7 +1,7 @@
 # BattleHUD
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
+> **Last Updated**: 2026-07-03
 > **Implements Pillar**: Empowering — the battle screen is the payoff; the player watches their trained team fight and feels the direct consequence of every training decision
 
 ## Summary
@@ -31,7 +31,7 @@ Watching the battle should feel like watching an exciting sports match — the p
    - `AutoBattleResolver.OnCombatantDefeated` → collapse unit card
    - `AutoBattleResolver.OnBattleComplete` → show outcome screen
 2. **BattleHUD never writes game state.** It is a pure visual consumer of AutoBattleResolver events.
-3. **Combatant card initialization**: on `Start()`, BattleHUD calls a read-only snapshot method on AutoBattleResolver (e.g., `GetCombatantSnapshots()`) to build the initial card layout before the first tick fires. Cards are not rebuilt during battle — they are updated in-place via event callbacks.
+3. **Combatant card initialization**: BattleHUD subscribes to `AutoBattleResolver.OnCombatantsSet` in `OnEnable` (alongside its other event subscriptions — see Core Rule 1). When it fires, BattleHUD calls `GetCombatantSnapshots()` to read the now-current data and (re)builds the card layout. `OnCombatantsSet` may fire more than once before battle starts (once for the full roster, once more if `RunManager.ConfirmSquadPlacement()` narrows it to the fielded squad — see `RunManager.md`), so the build routine must be safe to call repeatedly (clear-and-rebuild, not append). This replaces any `Start()`-time frame-count guess — do not reintroduce a hardcoded delay. Once the first battle tick fires, cards stop rebuilding and are only updated in-place via event callbacks.
 4. Student cards are displayed on the left side of the screen; enemy cards on the right.
 5. Each combatant card shows: DisplayName, current HP bar, max HP, active BattleBehaviorFlags as icons.
 6. Damage numbers float above the target on each `OnCombatantActed`. The number color distinguishes physical (white) from magic (purple) and crit (yellow/gold).
@@ -47,7 +47,7 @@ Watching the battle should feel like watching an exciting sports match — the p
 
 | State | Entry Condition | Exit Condition | Behavior |
 |---|---|---|---|
-| `Initializing` | Scene loads | `GetCombatantSnapshots()` returns | Building card layout; no events yet |
+| `Initializing` | Scene loads | `OnCombatantsSet` fires (may recur before battle starts) | Building/rebuilding card layout; no per-tick events yet |
 | `WatchingBattle` | Battle starts (first tick fires) | `OnBattleComplete` received | Animating events in real time |
 | `ShowingOutcome` | `OnBattleComplete` received | Player clicks "Continue" | Outcome overlay visible; "Continue" button active |
 
@@ -91,7 +91,7 @@ A right-docked panel that shows a single selected hero's stats, skill, and trait
 
 | System | Interaction |
 |---|---|
-| `AutoBattleResolver` | Subscribes to `OnCombatantActed`, `OnCombatantDefeated`, `OnBattleComplete`; calls `GetCombatantSnapshots()` on init |
+| `AutoBattleResolver` | Subscribes to `OnCombatantsSet` (rebuilds cards when it fires), `OnCombatantActed`, `OnCombatantDefeated`, `OnBattleComplete`; calls `GetCombatantSnapshots()` when `OnCombatantsSet` fires to get the data to build from |
 | `BattleBoardManager` | BattleHUD overlays HP bars and damage numbers over the hex board; BattleHUD does NOT own the board — it is a peer that shares `AutoBattleResolver` events |
 | `InputHandler` | Subscribes to `OnSpeedUpStarted` / `OnSpeedUpCancelled` to toggle the speed indicator UI |
 | `RunManager` | "Continue" button on outcome screen calls `RunManager` to advance phase (read-only access to confirm battle is done) |
@@ -120,6 +120,7 @@ hpBarFill = currentHP / maxHP   (clamped 0–1, computed in UI Toolkit binding)
 | `OnBattleComplete` fires before all defeat animations finish | Outcome overlay waits for active animations to complete (max 0.5s grace period) | Clean visual ordering |
 | Speed-up held during outcome screen | Speed indicator visible; "Continue" button still clickable | Speed-up only affects tick delay in AutoBattleResolver; no HUD impact |
 | Battle ends in timeout | `TimedOut = true` in result; outcome overlay shows "(Time Limit)" note | Inform player of edge case |
+| `OnCombatantsSet` never fires (e.g. `RunManager` errors before calling `SetCombatants()`) | Cards never build; BattleHUD stays empty | Acceptable failure mode — matches the project's "log and no-op on upstream failure" pattern elsewhere; no defensive workaround needed here |
 
 ---
 
@@ -127,7 +128,7 @@ hpBarFill = currentHP / maxHP   (clamped 0–1, computed in UI Toolkit binding)
 
 | System | Direction | Nature |
 |---|---|---|
-| `AutoBattleResolver` | This depends on it | State trigger — subscribes to per-tick and outcome events; reads initial snapshot |
+| `AutoBattleResolver` | This depends on it | State trigger — subscribes to `OnCombatantsSet` (card build/rebuild trigger), per-tick, and outcome events; reads snapshot data via `GetCombatantSnapshots()` when `OnCombatantsSet` fires |
 | `BattleBoardManager` | Peer (shared events) | Both subscribe to `AutoBattleResolver`; BattleHUD renders UI overlays over the board |
 | `InputHandler` | This depends on it | State trigger — subscribes to speed-up events for indicator |
 | `RunManager` | This depends on it (outcome only) | Rule dependency — "Continue" button on outcome triggers phase advance |
@@ -229,6 +230,7 @@ hpBarFill = currentHP / maxHP   (clamped 0–1, computed in UI Toolkit binding)
 
 | This Doc References | Target Doc | Element Referenced | Nature |
 |---|---|---|---|
+| `AutoBattleResolver.OnCombatantsSet` | `AutoBattleResolver.md` | Setup event signature | State trigger |
 | `AutoBattleResolver.OnCombatantActed` | `AutoBattleResolver.md` | Event signature | State trigger |
 | `AutoBattleResolver.OnCombatantDefeated` | `AutoBattleResolver.md` | Event signature | State trigger |
 | `AutoBattleResolver.OnBattleComplete` | `AutoBattleResolver.md` | `BattleResult` struct | State trigger |
@@ -242,7 +244,8 @@ hpBarFill = currentHP / maxHP   (clamped 0–1, computed in UI Toolkit binding)
 
 ## Acceptance Criteria
 
-- [ ] Combatant cards are built correctly from `GetCombatantSnapshots()` before the first tick
+- [ ] Combatant cards are built correctly from `GetCombatantSnapshots()`, triggered by `OnCombatantsSet`, before the first tick — never by a hardcoded frame/time delay
+- [ ] If `OnCombatantsSet` fires more than once before battle starts (roster narrowed to fielded squad), cards rebuild cleanly with no duplicates or stale entries
 - [ ] HP bar and label update correctly on every `OnCombatantActed` event targeting that unit
 - [ ] Damage number color is white for physical, purple for magic, gold for crits
 - [ ] `OnCombatantDefeated` removes the unit card (or collapses it) within 1 frame + animation duration

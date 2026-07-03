@@ -1,6 +1,6 @@
 # Project Snapshot Index
 
-Generated: 2026-07-02 (manually maintained — `GenerateProjectSnapshot.Execute()` referenced by rule-read-write-unity.md does not exist in this project; AudioSystem added 2026-07-02; TrainingSystem added 2026-07-02; SchoolHUD added 2026-07-02; BattleHUD added 2026-07-02)
+Generated: 2026-07-03 (manually maintained — `GenerateProjectSnapshot.Execute()` referenced by rule-read-write-unity.md does not exist in this project; AudioSystem added 2026-07-02; TrainingSystem added 2026-07-02; SchoolHUD added 2026-07-02; BattleHUD added 2026-07-02; AutoBattleResolver.OnCombatantsSet event + BattleHUD event-driven card build added 2026-07-03)
 
 ## Scripts
 
