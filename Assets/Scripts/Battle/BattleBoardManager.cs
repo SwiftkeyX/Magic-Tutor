@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace MagicSchool.Battle
 {
@@ -13,13 +12,16 @@ namespace MagicSchool.Battle
         [SerializeField] AutoBattleResolver   _resolver;
         [SerializeField] GameObject           _hexTilePrefab;
         [SerializeField] GameObject           _battleUnitPrefab;
-        [SerializeField] RectTransform        _benchPanel;
-        [SerializeField] Button               _startBattleButton;
-        [SerializeField] GameObject           _outcomePanel;
-        [SerializeField] Text                 _outcomeText;
-        [SerializeField] private Text         _placementCountText;
+        [SerializeField] private UnityEngine.UIElements.UIDocument _uiDocument;
         [SerializeField] private TraitTracker   _traitTracker;
         [SerializeField] private ChampionRoster _championRoster;
+
+        private UnityEngine.UIElements.VisualElement _root;
+        private UnityEngine.UIElements.Button        _startBattleButton;
+        private UnityEngine.UIElements.Label         _placementCountText;
+        private ScrollView _benchScrollView;
+        private UnityEngine.UIElements.VisualElement _benchContainer;
+        private readonly Dictionary<string, UnityEngine.UIElements.VisualElement> _benchCardsById = new();
 
         // ── Hex constants ────────────────────────────────────────────────────
         private const float HexWidth  = 1.1f;
@@ -62,25 +64,29 @@ namespace MagicSchool.Battle
 
         private void Start()
         {
-            if (_resolver == null)          { Debug.LogError("[BattleBoardManager] AutoBattleResolver missing", this); enabled = false; return; }
-            if (_startBattleButton == null) { Debug.LogError("[BattleBoardManager] StartBattleButton missing", this); enabled = false; return; }
-            if (_outcomePanel == null)      { Debug.LogError("[BattleBoardManager] OutcomePanel missing", this); enabled = false; return; }
+            if (_resolver == null)    { Debug.LogError("[BattleBoardManager] AutoBattleResolver missing", this); enabled = false; return; }
+            if (_uiDocument == null)  { Debug.LogError("[BattleBoardManager] UIDocument missing", this); enabled = false; return; }
+
+            _uiDocument.sortingOrder = BattleUISortOrder.BoardBenchHUD;
+            _root = _uiDocument.rootVisualElement;
+            _startBattleButton  = _root.Q<UnityEngine.UIElements.Button>("start-battle-button");
+            _placementCountText = _root.Q<UnityEngine.UIElements.Label>("placement-count-label");
+            _benchScrollView = _root.Q<ScrollView>("bench-scroll");
+            _benchContainer = _benchScrollView.contentContainer;
+
+            if (_startBattleButton == null) { Debug.LogError("[BattleBoardManager] start-battle-button not found in UXML", this); enabled = false; return; }
 
             BuildBoard();
 
             _resolver.OnCombatantMoved    += HandleMoved;
             _resolver.OnCombatantActed    += HandleActed;
             _resolver.OnCombatantDefeated += HandleDefeated;
-            _resolver.OnBattleComplete    += HandleComplete;
             _resolver.OnSkillCast         += HandleSkillCast;
             _resolver.OnManaChanged       += HandleManaChanged;
             _resolver.OnCastStateChanged  += HandleCastStateChanged;
 
-            SetupBenchScrollView();
-
-            _startBattleButton.interactable = false;
-            _startBattleButton.onClick.AddListener(OnStartBattle);
-            _outcomePanel.SetActive(false);
+            _startBattleButton.SetEnabled(false);
+            _startBattleButton.clicked += OnStartBattle;
 
             if (RunManager.Instance == null)
             {
@@ -106,93 +112,12 @@ namespace MagicSchool.Battle
             // RunManager calls BeginPlacement() after AutoBattleResolver.SetCombatants().
         }
 
-        private void SetupBenchScrollView()
-        {
-            if (_benchPanel == null) return;
-
-            // 1. Get original parent and RectTransform properties
-            var parent = _benchPanel.parent;
-            var originalRT = _benchPanel;
-
-            // 2. Create the ScrollView container at the same position/size
-            var scrollViewGO = new GameObject("BenchScrollView", typeof(RectTransform));
-            scrollViewGO.transform.SetParent(parent, false);
-            var scrollRT = scrollViewGO.GetComponent<RectTransform>();
-            
-            // Copy RectTransform layout properties from _benchPanel
-            scrollRT.anchorMin = originalRT.anchorMin;
-            scrollRT.anchorMax = originalRT.anchorMax;
-            scrollRT.anchoredPosition = originalRT.anchoredPosition;
-            scrollRT.sizeDelta = originalRT.sizeDelta;
-            scrollRT.pivot = originalRT.pivot;
-
-            // Move the dark background Image from _benchPanel to scroll view
-            var originalImage = _benchPanel.GetComponent<Image>();
-            if (originalImage != null)
-            {
-                var scrollImage = scrollViewGO.AddComponent<Image>();
-                scrollImage.color = originalImage.color;
-                scrollImage.sprite = originalImage.sprite;
-                scrollImage.material = originalImage.material;
-                scrollImage.type = originalImage.type;
-                Destroy(originalImage);
-            }
-
-            // 3. Create Viewport under ScrollView for masking
-            var viewportGO = new GameObject("Viewport", typeof(RectTransform));
-            viewportGO.transform.SetParent(scrollViewGO.transform, false);
-            var viewRT = viewportGO.GetComponent<RectTransform>();
-            viewRT.anchorMin = Vector2.zero;
-            viewRT.anchorMax = Vector2.one;
-            viewRT.offsetMin = Vector2.zero;
-            viewRT.offsetMax = Vector2.zero;
-            viewportGO.AddComponent<RectMask2D>();
-
-            // 4. Reparent _benchPanel to Viewport
-            _benchPanel.SetParent(viewportGO.transform, false);
-            
-            // Left-align the bench panel inside the viewport
-            _benchPanel.anchorMin = new Vector2(0, 0.5f);
-            _benchPanel.anchorMax = new Vector2(0, 0.5f);
-            _benchPanel.pivot = new Vector2(0, 0.5f);
-            _benchPanel.anchoredPosition = Vector2.zero;
-            _benchPanel.sizeDelta = new Vector2(0, originalRT.sizeDelta.y); // dynamic width, fixed height
-
-            // 5. Configure layout group and fitter on _benchPanel
-            var layout = _benchPanel.GetComponent<HorizontalLayoutGroup>();
-            if (layout != null)
-            {
-                layout.childForceExpandWidth = false;
-                layout.childForceExpandHeight = false;
-                layout.childControlWidth = false;
-                layout.childControlHeight = false;
-                layout.padding = new RectOffset(10, 10, 10, 10);
-            }
-
-            var fitter = _benchPanel.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            // 6. Setup ScrollRect on BenchScrollView
-            var scrollRect = scrollViewGO.AddComponent<ScrollRect>();
-            scrollRect.content = _benchPanel;
-            scrollRect.viewport = viewRT;
-            scrollRect.horizontal = true;
-            scrollRect.vertical = false;
-            scrollRect.horizontalScrollbar = null;
-            scrollRect.verticalScrollbar = null;
-            scrollRect.movementType = ScrollRect.MovementType.Clamped;
-            scrollRect.inertia = true;
-            scrollRect.decelerationRate = 0.135f;
-            scrollRect.scrollSensitivity = 25f;
-        }
-
         private void OnDestroy()
         {
             if (_resolver == null) return;
             _resolver.OnCombatantMoved    -= HandleMoved;
             _resolver.OnCombatantActed    -= HandleActed;
             _resolver.OnCombatantDefeated -= HandleDefeated;
-            _resolver.OnBattleComplete    -= HandleComplete;
             _resolver.OnSkillCast         -= HandleSkillCast;
             _resolver.OnManaChanged       -= HandleManaChanged;
             _resolver.OnCastStateChanged  -= HandleCastStateChanged;
@@ -332,31 +257,24 @@ namespace MagicSchool.Battle
 
         private void BuildBench(List<CombatantSnapshot> students)
         {
+            _benchContainer.Clear();
+            _benchCardsById.Clear();
+
             foreach (var s in students)
             {
-                var card = new GameObject($"Card_{s.Id}");
-                card.transform.SetParent(_benchPanel, false);
+                var card = new VisualElement();
+                card.name = $"Card_{s.Id}";
+                card.AddToClassList("bench-card");
+                card.style.backgroundColor = new StyleColor(StudentColor(s.Id));
 
-                var img   = card.AddComponent<Image>();
-                img.color = StudentColor(s.Id);
-                var rt    = card.GetComponent<RectTransform>();
-                rt.sizeDelta = new Vector2(80, 100);
+                var label = new Label(s.DisplayName);
+                label.AddToClassList("bench-card-label");
+                card.Add(label);
 
-                var label    = new GameObject("Label");
-                label.transform.SetParent(card.transform, false);
-                var txt      = label.AddComponent<Text>();
-                txt.text     = s.DisplayName;
-                txt.font     = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                txt.fontSize = 14;
-                txt.alignment = TextAnchor.MiddleCenter;
-                txt.color    = Color.white;
-                var lrt      = label.GetComponent<RectTransform>();
-                lrt.anchorMin = Vector2.zero; lrt.anchorMax = Vector2.one;
-                lrt.offsetMin = lrt.offsetMax = Vector2.zero;
+                card.AddManipulator(new BenchCardDragManipulator(this, s.Id));
 
-                // Wire drag events
-                var drag = card.AddComponent<BenchCardDrag>();
-                drag.Init(s.Id, this);
+                _benchContainer.Add(card);
+                _benchCardsById[s.Id] = card;
             }
         }
 
@@ -367,8 +285,8 @@ namespace MagicSchool.Battle
             HeroSelection.Select(championId);
         }
 
-        // ── Dragging (called by BenchCardDrag) ───────────────────────────────
-        public void OnCardDragStart(string studentId, GameObject card)
+        // ── Dragging (called by BenchCardDragManipulator) ────────────────────
+        public void OnCardDragStart(string studentId)
         {
             if (_battleStarted) return;
             _draggingStudentId = studentId;
@@ -389,13 +307,12 @@ namespace MagicSchool.Battle
                 }
             }
 
-            // Create a ghost — get sprite from the dragged card's SpriteRenderer if present;
-            // card is a UI Image (no SpriteRenderer) so fall back to the procedural white sprite.
+            // Create a ghost — a world-space SpriteRenderer, independent of the bench
+            // card's UI framework (the bench card has no sprite of its own to reuse).
             _dragGhost = new GameObject("DragGhost");
             _dragGhost.transform.SetParent(transform, false);
             var sr     = _dragGhost.AddComponent<SpriteRenderer>();
-            var cardSr = card.GetComponent<SpriteRenderer>();
-            sr.sprite       = cardSr != null ? cardSr.sprite : GetFallbackSprite();
+            sr.sprite       = GetFallbackSprite();
             sr.color        = new Color(StudentColor(studentId).r, StudentColor(studentId).g, StudentColor(studentId).b, 0.6f);
             sr.sortingOrder = 10;
             _dragGhost.transform.localScale = Vector3.one * 0.4f;
@@ -477,13 +394,10 @@ namespace MagicSchool.Battle
                 Destroy(unit.gameObject);
                 _units.Remove(studentId);
             }
-            var card = _benchPanel.Find($"Card_{studentId}");
-            if (card != null)
-            {
-                var img = card.GetComponent<Image>();
-                if (img != null) img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
-            }
-            _startBattleButton.interactable = _pendingPlacements.Count >= 1 && _pendingPlacements.Count <= _maxSquadSize;
+            if (_benchCardsById.TryGetValue(studentId, out var card))
+                card.style.opacity = 1f;
+
+            _startBattleButton.SetEnabled(_pendingPlacements.Count >= 1 && _pendingPlacements.Count <= _maxSquadSize);
             UpdatePlacementCountText();
         }
 
@@ -512,13 +426,8 @@ namespace MagicSchool.Battle
                     Destroy(oldUnit.gameObject);
                     _units.Remove(studentId);
                 }
-                var existingCard = _benchPanel.Find($"Card_{studentId}");
-                if (existingCard != null)
-                {
-                    var existingImg = existingCard.GetComponent<Image>();
-                    if (existingImg != null)
-                        existingImg.color = new Color(existingImg.color.r, existingImg.color.g, existingImg.color.b, 1f);
-                }
+                if (_benchCardsById.TryGetValue(studentId, out var existingCard))
+                    existingCard.style.opacity = 1f;
             }
 
             _pendingPlacements[studentId] = coord;
@@ -541,15 +450,11 @@ namespace MagicSchool.Battle
             }
             _units[studentId] = unit;
 
-            // Dim bench card to show it's placed (kept active so it can be re-dragged)
-            var card = _benchPanel.Find($"Card_{studentId}");
-            if (card != null)
-            {
-                var img = card.GetComponent<Image>();
-                if (img != null) img.color = new Color(img.color.r, img.color.g, img.color.b, 0.4f);
-            }
+            // Dim bench card to show it's placed (kept in the bench so it can be re-dragged)
+            if (_benchCardsById.TryGetValue(studentId, out var card))
+                card.style.opacity = 0.4f;
 
-            _startBattleButton.interactable = _pendingPlacements.Count >= 1 && _pendingPlacements.Count <= _maxSquadSize;
+            _startBattleButton.SetEnabled(_pendingPlacements.Count >= 1 && _pendingPlacements.Count <= _maxSquadSize);
             UpdatePlacementCountText();
         }
 
@@ -581,8 +486,8 @@ namespace MagicSchool.Battle
         {
             if (_battleStarted || _pendingPlacements.Count == 0) return;
             _battleStarted = true;
-            _startBattleButton.gameObject.SetActive(false);
-            _benchPanel.gameObject.SetActive(false);
+            _startBattleButton.style.display = UnityEngine.UIElements.DisplayStyle.None;
+            _benchScrollView.style.display = UnityEngine.UIElements.DisplayStyle.None;
 
             // Apply trait bonuses registered via TraitTracker during Placement Phase.
             // _championDataLookup is keyed by each placed unit's own ID (StudentId GUID in
@@ -684,14 +589,6 @@ namespace MagicSchool.Battle
                 unit.SetCastingVisual(state == CastState.Casting || state == CastState.Channeling);
         }
 
-        private void HandleComplete(BattleResult result)
-        {
-            _outcomePanel.SetActive(true);
-            _outcomeText.text = result.Won
-                ? $"VICTORY!\n{result.TicksElapsed} ticks"
-                : $"DEFEAT\n{result.TicksElapsed} ticks";
-        }
-
         // ── Helpers ──────────────────────────────────────────────────────────
         private Vector3 CoordToWorld(HexCoord c) =>
             new Vector3(c.Col * HexWidth + (c.Row % 2 == 1 ? HexOffset : 0f),
@@ -722,24 +619,5 @@ namespace MagicSchool.Battle
             "sniper" => new Color(1.0f, 0.9f, 0.1f),
             _        => Color.gray,
         };
-    }
-
-    // ── Drag helper component ─────────────────────────────────────────────────
-    [RequireComponent(typeof(Image))]
-    internal class BenchCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
-    {
-        private string             _studentId;
-        private BattleBoardManager _board;
-
-        public void Init(string studentId, BattleBoardManager board)
-        {
-            _studentId = studentId;
-            _board     = board;
-        }
-
-        public void OnBeginDrag(PointerEventData e) => _board.OnCardDragStart(_studentId, gameObject);
-        public void OnDrag(PointerEventData e)      => _board.OnCardDrag(e.position);
-        public void OnEndDrag(PointerEventData e)   => _board.OnCardDragEnd(e.position);
-        public void OnPointerClick(PointerEventData e) => _board.OnCardClicked(_studentId);
     }
 }

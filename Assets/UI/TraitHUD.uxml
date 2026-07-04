@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="TraitHUD.uss" />
+
+    <ui:VisualElement name="trait-hud-root" class="trait-hud-root" picking-mode="Ignore" />
+</ui:UXML>

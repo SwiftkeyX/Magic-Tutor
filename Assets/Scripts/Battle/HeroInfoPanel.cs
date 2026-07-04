@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace MagicSchool.Battle
 {
     // Right-docked hero inspector. Never referenced by BattleBoardManager and never
     // references it back — resolves its own data via ChampionRoster/TraitTracker and
     // listens for selections via the decoupled HeroSelection static event.
+    [RequireComponent(typeof(UIDocument))]
     public class HeroInfoPanel : MonoBehaviour
     {
-        [SerializeField] private RectTransform     _root;
         [SerializeField] private ChampionRoster    _championRoster;
         [SerializeField] private EnemyDatabaseStub _enemyDatabase;
 
@@ -25,14 +25,25 @@ namespace MagicSchool.Battle
                 { BattleBehaviorFlag.ShadowSurge,        "Gains a burst effect under specific conditions" },
             };
 
-        private Text _headerText;
-        private Text _statsText;
-        private Text _skillText;
-        private Text _traitsText;
+        private UIDocument    _document;
+        private VisualElement _root;
+        private Label _headerText;
+        private Label _statsText;
+        private Label _skillText;
+        private Label _traitsText;
 
         private void Awake()
         {
-            BuildLayout();
+            _document = GetComponent<UIDocument>();
+            _document.sortingOrder = BattleUISortOrder.HeroInfoPanel;
+            _root = _document.rootVisualElement;
+
+            // Cache element references — never call Q<> outside Awake
+            _headerText = _root.Q<Label>("header");
+            _statsText  = _root.Q<Label>("stats");
+            _skillText  = _root.Q<Label>("skill");
+            _traitsText = _root.Q<Label>("traits");
+
             ShowPlaceholder();
         }
 
@@ -52,41 +63,6 @@ namespace MagicSchool.Battle
             // stale content on screen (see BattleHUD.md, Hero Info Panel section).
             Debug.LogWarning($"[HeroInfoPanel] No champion or enemy found for id '{championId}'.");
             ShowPlaceholder();
-        }
-
-        private void BuildLayout()
-        {
-            if (_root == null) return;
-
-            var lg = _root.GetComponent<VerticalLayoutGroup>();
-            if (lg == null)
-            {
-                lg = _root.gameObject.AddComponent<VerticalLayoutGroup>();
-                lg.spacing                = 6f;
-                lg.childAlignment         = TextAnchor.UpperLeft;
-                lg.childForceExpandWidth  = true;
-                lg.childForceExpandHeight = false;
-                lg.padding                = new RectOffset(8, 8, 8, 8);
-            }
-
-            _headerText = CreateText("Header", 16, FontStyle.Bold);
-            _statsText  = CreateText("Stats", 13, FontStyle.Normal);
-            _skillText  = CreateText("Skill", 13, FontStyle.Normal);
-            _traitsText = CreateText("Traits", 13, FontStyle.Normal);
-        }
-
-        private Text CreateText(string name, int fontSize, FontStyle style)
-        {
-            var go = new GameObject(name);
-            go.transform.SetParent(_root, false);
-            var txt       = go.AddComponent<Text>();
-            txt.font      = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            txt.fontSize  = fontSize;
-            txt.fontStyle = style;
-            txt.color     = Color.white;
-            var csf = go.AddComponent<ContentSizeFitter>();
-            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            return txt;
         }
 
         private void ShowPlaceholder()

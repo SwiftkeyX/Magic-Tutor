@@ -48,6 +48,7 @@ namespace MagicSchool.Battle
                 return;
             }
 
+            _document.sortingOrder = BattleUISortOrder.BattleHUD;
             _root = _document.rootVisualElement;
 
             // Cache element references — never call Q<> outside Awake
