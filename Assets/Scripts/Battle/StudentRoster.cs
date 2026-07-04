@@ -208,6 +208,7 @@ namespace MagicSchool.Battle
                 var combatData = new StudentCombatData
                 {
                     Id = s.StudentId,
+                    ChampionId = s.ChampionId,
                     DisplayName = $"{s.Name} ({champion.DisplayName})",
                     MaxHP = s.TotalHP,
                     ATK = s.TotalATK,

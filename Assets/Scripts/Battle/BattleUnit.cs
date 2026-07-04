@@ -6,6 +6,7 @@ namespace MagicSchool.Battle
     public class BattleUnit : MonoBehaviour
     {
         public string CombatantId { get; private set; }
+        public string HeroSelectionId { get; private set; }
         public HexCoord CurrentCell { get; private set; }
 
         private Coroutine _activeCoroutine;
@@ -47,11 +48,12 @@ namespace MagicSchool.Battle
             }
         }
 
-        private void OnMouseDown() => HeroSelection.Select(CombatantId);
+        private void OnMouseDown() => HeroSelection.Select(HeroSelectionId);
 
-        public void Init(string combatantId, HexCoord startCell)
+        public void Init(string combatantId, HexCoord startCell, string heroSelectionId = null)
         {
             CombatantId = combatantId;
+            HeroSelectionId = heroSelectionId ?? combatantId;
             CurrentCell = startCell;
         }
 

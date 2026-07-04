@@ -17,6 +17,7 @@ namespace MagicSchool.Battle
         [SerializeField] Button               _startBattleButton;
         [SerializeField] GameObject           _outcomePanel;
         [SerializeField] Text                 _outcomeText;
+        [SerializeField] private Text         _placementCountText;
         [SerializeField] private TraitTracker   _traitTracker;
         [SerializeField] private ChampionRoster _championRoster;
 
@@ -67,9 +68,6 @@ namespace MagicSchool.Battle
 
             BuildBoard();
 
-            if (_championRoster != null)
-                _championDataLookup = _championRoster.GetChampionLookup();
-
             _resolver.OnCombatantMoved    += HandleMoved;
             _resolver.OnCombatantActed    += HandleActed;
             _resolver.OnCombatantDefeated += HandleDefeated;
@@ -93,8 +91,13 @@ namespace MagicSchool.Battle
                 var snapshots = _resolver.GetCombatantSnapshots();
                 var students  = snapshots.Where(s => s.IsStudent).ToList();
                 foreach (var s in students)
+                {
                     _studentSnapshots[s.Id] = s;
+                    var champ = _championRoster != null ? _championRoster.GetChampionById(s.ChampionId) : null;
+                    if (champ != null) _championDataLookup[s.Id] = champ;
+                }
                 BuildBench(students);
+                UpdatePlacementCountText();
 #if UNITY_EDITOR
                 if (_debugAutoStart) TestAutoPlace();
 #endif
@@ -216,9 +219,14 @@ namespace MagicSchool.Battle
             var snapshots    = _resolver.GetCombatantSnapshots();
             var studentSnaps = snapshots.Where(s => s.IsStudent).ToList();
             foreach (var s in studentSnaps)
+            {
                 _studentSnapshots[s.Id] = s;
+                var champ = _championRoster != null ? _championRoster.GetChampionById(s.ChampionId) : null;
+                if (champ != null) _championDataLookup[s.Id] = champ;
+            }
 
             BuildBench(studentSnaps);
+            UpdatePlacementCountText();
             Debug.Log($"[BattleBoardManager] BeginPlacement: {studentSnaps.Count} students on bench, maxSquadSize={maxSquadSize}");
         }
 
@@ -352,6 +360,13 @@ namespace MagicSchool.Battle
             }
         }
 
+        // ── Hero selection (called by BenchCardDrag on click) ────────────────
+        public void OnCardClicked(string studentId)
+        {
+            var championId = _championDataLookup.TryGetValue(studentId, out var champ) ? champ.Id : studentId;
+            HeroSelection.Select(championId);
+        }
+
         // ── Dragging (called by BenchCardDrag) ───────────────────────────────
         public void OnCardDragStart(string studentId, GameObject card)
         {
@@ -469,6 +484,13 @@ namespace MagicSchool.Battle
                 if (img != null) img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
             }
             _startBattleButton.interactable = _pendingPlacements.Count >= 1 && _pendingPlacements.Count <= _maxSquadSize;
+            UpdatePlacementCountText();
+        }
+
+        private void UpdatePlacementCountText()
+        {
+            if (_placementCountText != null)
+                _placementCountText.text = $"{_pendingPlacements.Count}/{_maxSquadSize} heroes placed";
         }
 
         private void PlaceStudent(string studentId, HexCoord coord)
@@ -500,14 +522,15 @@ namespace MagicSchool.Battle
             }
 
             _pendingPlacements[studentId] = coord;
-            if (_traitTracker != null && _championDataLookup.TryGetValue(studentId, out var champData))
+            _championDataLookup.TryGetValue(studentId, out var champData);
+            if (_traitTracker != null && champData != null)
                 _traitTracker.RegisterPlacement(studentId, coord, champData);
             _grid.SetOccupant(coord, studentId);
 
             // Spawn unit — MaxHP sourced from snapshot (B3)
             var go   = Instantiate(_battleUnitPrefab, CoordToWorld(coord), Quaternion.identity);
             var unit = go.GetComponent<BattleUnit>();
-            unit.Init(studentId, coord);
+            unit.Init(studentId, coord, champData?.Id);
             unit.InitHealthBar(snap.MaxHP, snap.MaxHP);
             unit.InitManaBar(snap.Mana, snap.MaxMana);
             var sr = go.GetComponent<SpriteRenderer>();
@@ -527,6 +550,7 @@ namespace MagicSchool.Battle
             }
 
             _startBattleButton.interactable = _pendingPlacements.Count >= 1 && _pendingPlacements.Count <= _maxSquadSize;
+            UpdatePlacementCountText();
         }
 
         // ── Test helper (editor/QA only) ─────────────────────────────────────
@@ -561,8 +585,8 @@ namespace MagicSchool.Battle
             _benchPanel.gameObject.SetActive(false);
 
             // Apply trait bonuses registered via TraitTracker during Placement Phase.
-            // In production, student IDs are GUIDs so _championDataLookup lookup misses; this is
-            // effectively a no-op until the trait system is wired for production GUID-based students.
+            // _championDataLookup is keyed by each placed unit's own ID (StudentId GUID in
+            // production, champion slug in standalone) — see Core Rule 5 in BattleBoardManager.md.
             if (_traitTracker != null && _championRoster != null)
                 TraitEffectApplier.Apply(
                     _traitTracker.GetActiveBreakpoints(),
@@ -579,7 +603,7 @@ namespace MagicSchool.Battle
                 if (!enemyPlacements.TryGetValue(e.Id, out var coord)) continue;
                 var go   = Instantiate(_battleUnitPrefab, CoordToWorld(coord), Quaternion.identity);
                 var unit = go.GetComponent<BattleUnit>();
-                unit.Init(e.Id, coord);
+                unit.Init(e.Id, coord, e.Id);
                 unit.InitHealthBar(e.MaxHP, e.MaxHP);
                 unit.InitManaBar(e.Mana, e.MaxMana);
                 var sr = go.GetComponent<SpriteRenderer>();
@@ -716,6 +740,6 @@ namespace MagicSchool.Battle
         public void OnBeginDrag(PointerEventData e) => _board.OnCardDragStart(_studentId, gameObject);
         public void OnDrag(PointerEventData e)      => _board.OnCardDrag(e.position);
         public void OnEndDrag(PointerEventData e)   => _board.OnCardDragEnd(e.position);
-        public void OnPointerClick(PointerEventData e) => HeroSelection.Select(_studentId);
+        public void OnPointerClick(PointerEventData e) => _board.OnCardClicked(_studentId);
     }
 }

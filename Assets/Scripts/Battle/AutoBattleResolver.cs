@@ -59,6 +59,7 @@ namespace MagicSchool.Battle
         internal class Combatant
         {
             public string   Id;
+            public string   ChampionId;     // Players only — bridge to ChampionData.Id
             public string   DisplayName;
             public bool     IsPlayer;
             public int      MaxHP;
@@ -123,6 +124,7 @@ namespace MagicSchool.Battle
                 _combatants.Add(new Combatant
                 {
                     Id          = s.Id,
+                    ChampionId  = s.ChampionId,
                     DisplayName = s.DisplayName,
                     IsPlayer    = true,
                     MaxHP       = s.MaxHP,
@@ -208,6 +210,7 @@ namespace MagicSchool.Battle
             return _combatants.Select(c => new CombatantSnapshot
             {
                 Id          = c.Id,
+                ChampionId  = c.ChampionId,
                 DisplayName = c.DisplayName,
                 IsStudent   = c.IsPlayer,
                 MaxHP       = c.MaxHP,
