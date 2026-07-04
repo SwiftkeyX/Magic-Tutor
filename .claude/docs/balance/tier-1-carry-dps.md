@@ -1,6 +1,6 @@
 # TFT Set 9 Tier 1 Carry DPS Analysis
 
-This document provides a dedicated mathematical breakdown of base auto-attack (Normal) DPS and Spell DPS for all 1-Gold carry champions in Teamfight Tactics (Set 9). 
+This document provides a dedicated mathematical breakdown of base auto-attack (Normal) DPS and Spell DPS for all 1-Gold carry champions in Teamfight Tactics (Set 9), excluding passive scaling units. 
 
 The goal is to understand how physical (AD-based) and magical (AP-based) carries scale their damage across star upgrades (1, 2, and 3-Star), providing a template for balancing our custom auto-battler.
 
@@ -22,13 +22,12 @@ We divide a champion's damage output into two categories:
 
 ## 📊 Master DPS Summary Table
 
-Here is the consolidated DPS comparison across all 7 Tier-1 carry champions:
+Here is the consolidated DPS comparison across all 6 Tier-1 carry champions:
 
 | Champion | Role / Caster Type | Star | Base AD | AS | Normal DPS | Spell DPS | Total DPS | Spell % of Total |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Cassiopeia** | AP Caster (Wounded) | 1★<br>2★<br>3★ | 40<br>72<br>130 | 0.70 | 28.0<br>50.4<br>90.7 | 48.5<br>72.8<br>109.2 | **76.5**<br>**123.2**<br>**199.9** | 63.4%<br>59.1%<br>54.6% |
 | **Jhin** | Physical Line Caster | 1★<br>2★<br>3★ | 54<br>97<br>175 | 0.70 | 37.8<br>68.0<br>122.5 | 24.6<br>43.4<br>76.7 | **59.2**<br>**105.6**<br>**188.7** | 41.5%<br>41.1%<br>40.6% |
-| **Kayle** | Passive Ascent (Lvl 1-5)<br>Passive Ascent (Lvl 6-8)<br>Passive Ascent (Lvl 9) | 1★<br>2★<br>3★ | 30<br>54<br>97 | 0.75 | 22.5<br>40.5<br>72.9 | 22.5<br>33.8<br>52.5<br>30.0<br>43.8<br>67.5<br>45.0<br>63.8<br>97.5 | **45.0**<br>**74.3**<br>**125.4**<br>**52.5**<br>**84.3**<br>**140.4**<br>**67.5**<br>**104.3**<br>**170.4** | 50.0%<br>45.5%<br>41.9%<br>57.1%<br>52.0%<br>48.1%<br>66.7%<br>61.2%<br>57.2% |
 | **Malzahar** | AP AoE Portal Caster | 1★<br>2★<br>3★ | 40<br>72<br>130 | 0.70 | 28.0<br>50.4<br>90.7 | 30.8<br>46.2<br>70.0 | **58.8**<br>**96.6**<br>**160.7** | 52.4%<br>47.8%<br>43.6% |
 | **Samira** | AD Shred Caster | 1★<br>2★<br>3★ | 45<br>81<br>146 | 0.70 | 31.5<br>56.7<br>102.1 | 20.0<br>35.9<br>68.0 | **51.5**<br>**92.6**<br>**170.1** | 38.8%<br>38.8%<br>40.0% |
 | **Tristana** | AD AS-Steroid | 1★<br>2★<br>3★ | 45<br>81<br>146 | 0.70 | 31.5<br>56.7<br>102.1 | 9.1<br>16.4<br>29.4 | **40.6**<br>**73.1**<br>**131.5** | 22.4%<br>22.4%<br>22.4% |
@@ -64,17 +63,7 @@ Here is the consolidated DPS comparison across all 7 Tier-1 carry champions:
     *   **3 Targets** (adds 63.4% spell damage): Cycle Damage = \(648 + 754.6 = 1402.6\) \(\rightarrow\) **Total DPS: 74.8** (Normal: 34.6, Spell: 40.2)
     *   **4 Targets** (adds 71.9% spell damage): Cycle Damage = \(648 + 793.8 = 1441.8\) \(\rightarrow\) **Total DPS: 76.9** (Normal: 34.6, Spell: 42.3)
 
-### 3. Kayle (Divine Ascent)
-*   **Mechanic**: Pure passive carry. Has 0 mana and does not cast active spells. Instead, her attacks scale as player level increases:
-    *   **Level 1-5**: Base attacks + flat bonus magic damage (\(30 / 45 / 70\)).
-    *   **Level 6-8**: Every 3rd attack fires a wave dealing magic damage (\(30 / 40 / 60\)) and shreds target MR.
-    *   **Level 9**: Every attack launches a wave.
-*   **1★ Calculations (Level 6-8)**:
-    *   Normal DPS: \(30 \times 0.75 = 22.5\)
-    *   Spell DPS (Bonus + Wave/3): \((30 \times 0.75) + \frac{30 \times 0.75}{3} = 22.5 + 7.5 = 30.0\)
-    *   Total: \(22.5 + 30.0 = 52.5\)
-
-### 4. Malzahar (Call of the Void)
+### 3. Malzahar (Call of the Void)
 *   **Mechanic**: Standard AP carry. Spawns two portals dealing magic damage.
 *   **1★ Calculations (with Multi-Target AoE)**:
     *   Normal DPS: \(40 \times 0.70 = 28.0\)
@@ -83,7 +72,7 @@ Here is the consolidated DPS comparison across all 7 Tier-1 carry champions:
     *   Spell DPS (3 Targets): \(\frac{660 \times 0.70}{5} = 92.4\) \(\rightarrow\) **Total DPS: 120.4**
 *   **Combat Role & Nuance**: In addition to dealing magic damage in a wide rectangular AoE (hitting multiple frontliners), Malzahar's portals instantly **destroy 50% of active shields** on all hit targets. This makes him a vital utility counter to defensive comps utilizing Bastion/Warden shields.
 
-### 5. Samira (Flair)
+### 4. Samira (Flair)
 *   **Mechanic**: Physical caster. Attacks deal physical damage and shred target Armor by a flat value for the rest of combat.
 *   **1★ Calculations (with Armor Shred Mitigation Math)**:
     *   Normal DPS: \(45 \times 0.70 = 31.5\)
@@ -98,7 +87,7 @@ Here is the consolidated DPS comparison across all 7 Tier-1 carry champions:
         *   *After 1st cast (-10 Armor \(\rightarrow\) 40 Armor, Multiplier = 0.714)*: Mitigated DPS = \(51.5 \times 0.714 = 36.8\) (a +7.0% damage increase)
         *   *After 2nd cast (-20 Armor \(\rightarrow\) 30 Armor, Multiplier = 0.769)*: Mitigated DPS = \(51.5 \times 0.769 = 39.6\) (a +15.1% damage increase over baseline)
 
-### 6. Tristana (Rapid Fire)
+### 5. Tristana (Rapid Fire)
 *   **Mechanic**: AD steroid carry. Activates a 4-second buff granting +70% AS. During the buff, her attacks deal 60% of AD as bonus splash physical damage to adjacent hexes. She cannot gain mana while the buff is active.
 *   **Spell Cycle Math**:
     *   Charging phase: 4 attacks to gain 40 mana (takes \(4 / 0.70 = 5.71\) seconds).
@@ -113,7 +102,7 @@ Here is the consolidated DPS comparison across all 7 Tier-1 carry champions:
         *   **3 Splash Targets** (\(K=3\)): **80.3 DPS** (adds +8.568 AD per cycle \(\rightarrow\) 780 total damage)
     *   *Note: In clustered fights, Tristana's splash damage effectively doubles her total combat DPS output.*
 
-### 7. Viego (Blade of the Ruined King)
+### 6. Viego (Blade of the Ruined King)
 *   **Mechanic**: AP melee carry. Active deals magic damage, and permanently grants Viego's attacks bonus stacking magic damage on-hit for the rest of combat.
 *   **1★ Calculations (at 1 Stack)**:
     *   Normal DPS: \(45 \times 0.75 = 33.8\)
