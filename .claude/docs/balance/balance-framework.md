@@ -8,12 +8,13 @@
 
 ## Overview
 
-Three-layer process for balancing champions:
-1. **Layer 1 — Accumulator & Mana**: float accumulator replaces integer timer; universal mana system
-2. **Layer 2 — Stat Budget Score**: spreadsheet math to set per-tier targets
-3. **Layer 3 — Simulation**: `BalanceValidator.cs` runs 200 battles per matchup and reports win rates
+How do we make sure our game champions are balanced (neither too weak nor too strong)? We use a **three-step process** to design, calculate, and test their power:
 
-No champion stats should change without running Layer 2 first, and Layer 3 after.
+1. **Step 1: Under the Hood (Mechanics)**: We configure how champions attack and gain energy (mana) to cast spells. We use a smooth "accumulator" system so attack speed bonuses feel responsive and fair.
+2. **Step 2: On Paper (Math & Budgeting)**: We use a mathematical formula (the **Stat Budget Score**) to calculate a power rating for each champion based on their attack, speed, and health. Each champion's gold-cost tier has a target rating they must hit to ensure high-cost units are appropriately stronger than low-cost ones.
+3. **Step 3: In Action (Simulations)**: We run simulated battles (200 fights per matchup) inside Unity to check who actually wins. This confirms that the math translates to actual balanced gameplay.
+
+**Rule of Thumb**: Before changing any champion stats, we must first run the math (Step 2) to check if they are in range, and then run simulations (Step 3) to verify they behave correctly in combat.
 
 ---
 
@@ -38,7 +39,6 @@ When `ActionProgress >= 1.0f`, the unit acts and we subtract 1.0 (overflow carri
 ActionProgress -= 1.0f
 ```
 
-This eliminates the dead-zones and breakpoints of the old integer `ActionInterval` system. A +5% AS buff now always results in exactly +5% more attacks over time — no rounding cliff.
 
 ### Trait Speed Bonuses
 

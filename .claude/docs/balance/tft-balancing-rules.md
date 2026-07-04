@@ -21,9 +21,12 @@ Tanks consistently possess **$50\%$ to $65\%$ more base EHP** than carries of th
 | :--- | :---: | :---: | :--- |
 | **1-Gold** | 910 - 980 | 570 - 600 | Baseline starting durability (e.g. Cho'Gath vs Cassiopeia) |
 | **2-Gold** | 1,200 | 720 | 20% - 30% jump from Tier 1 (e.g. Sett vs Jinx) |
-| **3-Gold** | 1,200 | 875 | Taric gains shields, Karma AP carry scales |
+| **3-Gold** | 1,200 | 875 | Taric gains shields, Sona support/AP carry scales |
 | **4-Gold** | 1,600 | 937 - 975 | Hyper-carries and primary frontlines (e.g. Sejuani vs Zeri) |
 | **5-Gold** | 1,600 | 1,190 | Ahri carry gains 25% EHP; tanks gain revives/knock-aways |
+
+> [!NOTE]
+> For a comparison table of these real champion EHP values across star levels, see [Real TFT Champion Durability (EHP) Examples](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-analysis.md#real-tft-champion-durability-ehp-examples) in the analysis document.
 
 ---
 
@@ -53,16 +56,4 @@ AD is kept flat between **$40\text{ and }80\text{ AD}$** across all tiers (at 1-
 | **Spam Carries** | 40 - 50 | 0 | Casts every 4-5 attacks. Fast cycle. |
 | **Utility / CC Tanks** | 90 - 160 | 30 - 70 | Casts once early, difficult to cycle a second time. |
 
----
 
-## 4. Star-Level Scaling Multipliers
-
-When a unit is upgraded to 2-star and 3-star, only a few stats scale:
-
-| Stat Type | 1-Star | 2-Star | 3-Star | Scaling Rule |
-| :--- | :---: | :---: | :---: | :--- |
-| **Health (HP)** | 1.0x | 1.8x | 3.24x | Compounding 1.8x multiplier |
-| **Attack Damage (AD)** | 1.0x | 1.8x | 3.24x | Compounding 1.8x multiplier |
-| **Armor & MR** | Flat | Flat | Flat | Does NOT scale with star level |
-| **Attack Speed (AS)** | Flat | Flat | Flat | Does NOT scale with star level |
-| **Range** | Flat | Flat | Flat | Does NOT scale with star level |
