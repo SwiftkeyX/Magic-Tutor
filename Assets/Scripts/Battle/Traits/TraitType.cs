@@ -13,7 +13,7 @@ namespace MagicSchool.Battle
     {
         Vanguard, Striker, Elementalist, Ranger,
         Kinetic, Dreadknight, Warden, Trickster,
-        // New traits (Batch 1 — champion data only; trait effects not yet wired in TraitTracker/TraitEffectApplier)
+        // New traits (Batch 1 — counting/breakpoints wired in TraitTracker; combat effects not yet wired in TraitEffectApplier)
         Astral, Wild, Shadow, Oracle, Guardian, Tech, Void,
     }
 

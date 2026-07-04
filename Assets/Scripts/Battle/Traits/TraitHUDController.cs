@@ -20,6 +20,13 @@ namespace MagicSchool.Battle
             { TraitType.Dreadknight,  new[] { 2, 4       } },
             { TraitType.Warden,       new[] { 2, 3, 4    } },
             { TraitType.Trickster,    new[] { 2, 4       } },
+            { TraitType.Astral,       new[] { 2, 4, 6    } },
+            { TraitType.Wild,         new[] { 2, 4, 6    } },
+            { TraitType.Shadow,       new[] { 2, 4, 6    } },
+            { TraitType.Oracle,       new[] { 2, 3       } },
+            { TraitType.Guardian,     new[] { 2, 4       } },
+            { TraitType.Tech,         new[] { 2, 4       } },
+            { TraitType.Void,         new[] { 2, 4       } },
         };
 
         private readonly Dictionary<TraitType, Text> _labels = new Dictionary<TraitType, Text>();
@@ -52,6 +59,7 @@ namespace MagicSchool.Battle
                 txt.text      = FormatLabel(t, 0, 0);
                 var csf = go.AddComponent<ContentSizeFitter>();
                 csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                go.SetActive(false); // hidden until this trait has at least one placed unit
                 _labels[t] = txt;
             }
         }
@@ -65,6 +73,7 @@ namespace MagicSchool.Battle
                 var t = kv.Key;
                 counts.TryGetValue(t, out int count);
                 breakpoints.TryGetValue(t, out int bp);
+                kv.Value.gameObject.SetActive(count > 0);
                 kv.Value.text  = FormatLabel(t, count, bp);
                 kv.Value.color = bp > 0
                     ? new Color(1f, 0.85f, 0.2f)

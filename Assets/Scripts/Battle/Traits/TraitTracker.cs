@@ -16,6 +16,13 @@ namespace MagicSchool.Battle
             { TraitType.Dreadknight,  new[] { 2, 4       } },
             { TraitType.Warden,       new[] { 2, 3, 4    } },
             { TraitType.Trickster,    new[] { 2, 4       } },
+            { TraitType.Astral,       new[] { 2, 4, 6    } },
+            { TraitType.Wild,         new[] { 2, 4, 6    } },
+            { TraitType.Shadow,       new[] { 2, 4, 6    } },
+            { TraitType.Oracle,       new[] { 2, 3       } },
+            { TraitType.Guardian,     new[] { 2, 4       } },
+            { TraitType.Tech,         new[] { 2, 4       } },
+            { TraitType.Void,         new[] { 2, 4       } },
         };
 
         private readonly Dictionary<string, ChampionData> _placed           = new Dictionary<string, ChampionData>();
@@ -82,6 +89,9 @@ namespace MagicSchool.Battle
                 case VerticalTrait.Striker:      return TraitType.Striker;
                 case VerticalTrait.Elementalist: return TraitType.Elementalist;
                 case VerticalTrait.Ranger:       return TraitType.Ranger;
+                case VerticalTrait.Astral:       return TraitType.Astral;
+                case VerticalTrait.Wild:         return TraitType.Wild;
+                case VerticalTrait.Shadow:       return TraitType.Shadow;
                 default: throw new ArgumentOutOfRangeException(nameof(v));
             }
         }
@@ -94,6 +104,10 @@ namespace MagicSchool.Battle
                 case HorizontalTrait.Dreadknight: return TraitType.Dreadknight;
                 case HorizontalTrait.Warden:      return TraitType.Warden;
                 case HorizontalTrait.Trickster:   return TraitType.Trickster;
+                case HorizontalTrait.Oracle:      return TraitType.Oracle;
+                case HorizontalTrait.Guardian:    return TraitType.Guardian;
+                case HorizontalTrait.Tech:        return TraitType.Tech;
+                case HorizontalTrait.Void:        return TraitType.Void;
                 default: throw new ArgumentOutOfRangeException(nameof(h));
             }
         }

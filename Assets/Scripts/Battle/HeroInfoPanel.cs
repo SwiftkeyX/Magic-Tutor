@@ -13,7 +13,6 @@ namespace MagicSchool.Battle
     {
         [SerializeField] private RectTransform     _root;
         [SerializeField] private ChampionRoster    _championRoster;
-        [SerializeField] private TraitTracker      _traitTracker;
         [SerializeField] private EnemyDatabaseStub _enemyDatabase;
 
         private static readonly Dictionary<BattleBehaviorFlag, string> FlagDescriptions =
@@ -47,7 +46,12 @@ namespace MagicSchool.Battle
 
             var enemy = _enemyDatabase != null ? _enemyDatabase.GetEnemyById(championId) : null;
             if (enemy != null) { ShowEnemy(enemy); return; }
-            // Neither a player champion nor a known enemy — leave panel as-is.
+
+            // Neither a player champion nor a known enemy — a genuine miss, not a normal
+            // empty state. Restore the placeholder and log loudly rather than leaving
+            // stale content on screen (see BattleHUD.md, Hero Info Panel section).
+            Debug.LogWarning($"[HeroInfoPanel] No champion or enemy found for id '{championId}'.");
+            ShowPlaceholder();
         }
 
         private void BuildLayout()
@@ -214,25 +218,17 @@ namespace MagicSchool.Battle
 
         private string FormatTraits(ChampionData data)
         {
-            var counts     = _traitTracker != null ? _traitTracker.GetTraitCounts()       : null;
-            var breakpoints = _traitTracker != null ? _traitTracker.GetActiveBreakpoints() : null;
-
             var parts = new List<string>();
-            AppendTrait(parts, data.VerticalTrait   != VerticalTrait.None   ? (TraitType?)ToTraitType(data.VerticalTrait)   : null, counts, breakpoints);
-            AppendTrait(parts, data.HorizontalTrait != HorizontalTrait.None ? (TraitType?)ToTraitType(data.HorizontalTrait) : null, counts, breakpoints);
+            AppendTrait(parts, data.VerticalTrait   != VerticalTrait.None   ? (TraitType?)ToTraitType(data.VerticalTrait)   : null);
+            AppendTrait(parts, data.HorizontalTrait != HorizontalTrait.None ? (TraitType?)ToTraitType(data.HorizontalTrait) : null);
 
             return parts.Count == 0 ? "None" : string.Join(", ", parts);
         }
 
-        private static void AppendTrait(
-            List<string> parts, TraitType? trait,
-            IReadOnlyDictionary<TraitType, int> counts,
-            IReadOnlyDictionary<TraitType, int> breakpoints)
+        private static void AppendTrait(List<string> parts, TraitType? trait)
         {
             if (trait == null) return;
-            int count = counts != null && counts.TryGetValue(trait.Value, out var c) ? c : 0;
-            string active = breakpoints != null && breakpoints.TryGetValue(trait.Value, out var bp) ? bp.ToString() : "-";
-            parts.Add($"{trait} {count}/{active}");
+            parts.Add(trait.Value.ToString());
         }
 
         private static TraitType ToTraitType(VerticalTrait v) => v switch
@@ -241,6 +237,9 @@ namespace MagicSchool.Battle
             VerticalTrait.Striker      => TraitType.Striker,
             VerticalTrait.Elementalist => TraitType.Elementalist,
             VerticalTrait.Ranger       => TraitType.Ranger,
+            VerticalTrait.Astral       => TraitType.Astral,
+            VerticalTrait.Wild         => TraitType.Wild,
+            VerticalTrait.Shadow       => TraitType.Shadow,
             _ => default,
         };
 
@@ -250,6 +249,10 @@ namespace MagicSchool.Battle
             HorizontalTrait.Dreadknight => TraitType.Dreadknight,
             HorizontalTrait.Warden      => TraitType.Warden,
             HorizontalTrait.Trickster   => TraitType.Trickster,
+            HorizontalTrait.Oracle      => TraitType.Oracle,
+            HorizontalTrait.Guardian    => TraitType.Guardian,
+            HorizontalTrait.Tech        => TraitType.Tech,
+            HorizontalTrait.Void        => TraitType.Void,
             _ => default,
         };
     }
