@@ -31,7 +31,14 @@ The player looks at each new class of students and immediately starts theorycraf
 ```csharp
 [Serializable]
 public class StudentData {
-    public string StudentId;        // GUID assigned at generation
+    public string StudentId;        // GUID assigned at generation — the student's own combat/board identity
+    public string ChampionId;       // Bridge field: links this student back to the ChampionData template
+                                     // it was rolled from (ChampionRoster's fixed archetype slug, e.g. "ironclad").
+                                     // StudentId and ChampionId are deliberately different ID spaces — StudentId
+                                     // is per-recruit and unique, ChampionId is shared by every student rolled
+                                     // from the same template. Anything that needs to resolve a student's
+                                     // ChampionData (trait bookkeeping, Hero Info Panel) must go through
+                                     // ChampionId, never assume StudentId doubles as a champion slug.
     public string Name;             // drawn from name pool
     public List<TraitType> Traits;  // 1–2 traits assigned at generation
 
@@ -90,7 +97,7 @@ All stat values are **integers** — no floats. This eliminates floating-point d
 ### Core Rules
 
 1. `GenerateStudents()` is called exactly once per Recruit phase, triggered by `OnPhaseChanged(Recruit)`.
-2. Each generated student receives a unique GUID `StudentId`.
+2. Each generated student receives a unique GUID `StudentId`, and its `ChampionId` is set to the `ChampionData.Id` slug of the template it was rolled from — this is the only place `ChampionId` is assigned.
 3. Base stats are drawn uniformly at random within their configured ranges (`StudentConfig`).
 4. Traits are drawn without replacement within a single student: one student cannot hold two copies of the same trait. Across students, duplicates are allowed.
 5. Names are drawn with replacement from the name pool (duplicates possible in a run — acceptable).
@@ -129,7 +136,10 @@ void Clear()
 
 // Called by RunManager when entering the Battle phase — converts the full
 // roster (the selection pool) to combat-ready data. NOT the fielded squad;
-// see MaxSquadSize / BattleBoardManager Placement Phase.
+// see MaxSquadSize / BattleBoardManager Placement Phase. Each returned
+// StudentCombatData.Id is the student's StudentId (GUID); StudentCombatData.ChampionId
+// carries the bridge field through so BattleBoardManager/TraitTracker/HeroInfoPanel
+// can resolve the corresponding ChampionData without ever reading StudentRoster directly.
 List<StudentCombatData> GetStudentsForBattle()
 ```
 

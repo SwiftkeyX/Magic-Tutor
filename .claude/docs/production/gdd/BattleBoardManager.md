@@ -73,6 +73,10 @@ Enemy positions mirror these: enemy "Front Line" is row 7 (closest to player sid
 4. BattleBoardManager **never calls `Resolve()`** — that is RunManager's responsibility.
 5. BattleBoardManager may read `ChampionData` via `ChampionRoster` for trait bookkeeping only — registering/unregistering placements with `TraitTracker` (`RegisterPlacement`/`UnregisterPlacement`) and applying trait bonuses via `TraitEffectApplier` before battle start. It must still **never read `StudentRoster` or `EnemyDatabase` directly**, and it does not itself own or render any stat-display UI — that's `HeroInfoPanel`'s job (see `BattleHUD.md`), which resolves `ChampionData` independently and is never referenced by BattleBoardManager.
 
+   **`_championDataLookup` keying (critical — this was a real bug):** `_championDataLookup` is a `Dictionary<string, ChampionData>` built **once per Placement Phase entry** (both the standalone `Start()` path and the production `BeginPlacement()` path), keyed by **each placed unit's own ID** (`CombatantSnapshot.Id` — a `StudentId` GUID in production, a champion slug in standalone) — **not** by the champion slug itself. It is built by resolving `ChampionRoster.GetChampionById(snapshot.ChampionId)` for every student snapshot and storing the result under `snapshot.Id`. This is what lets `RegisterPlacement`, `TraitEffectApplier.Apply`, and hero-selection (below) all do a plain `_championDataLookup.TryGetValue(placedUnitId, ...)` and succeed regardless of whether the ID space is GUIDs (production) or slugs (standalone, where `Id == ChampionId` so the distinction is moot). Keying this dictionary by the slug itself (via `ChampionRoster.GetChampionLookup()`) was the bug — every placement lookup in production missed silently, breaking trait-count updates, battle-start trait bonuses, and hero selection simultaneously.
+
+6. **Hero selection on click**: `BenchCardDrag.OnPointerClick` and a placed `BattleUnit`'s click do not call `HeroSelection.Select()` with the raw placed-unit ID directly. Instead, `BattleBoardManager.OnCardClicked(string studentId)` resolves the champion slug via `_championDataLookup` (falling back to the raw ID if unresolved) and calls `HeroSelection.Select(championId)` with that — this is what lets `HeroInfoPanel`'s `ChampionRoster.GetChampionById()` lookup succeed for a placed/benched player unit. Enemy units pass their own ID unchanged (enemy IDs already match `EnemyDatabaseStub`'s keys, no bridge needed).
+
 ### States
 
 | State | Entry | Exit | Behavior |
@@ -145,7 +149,8 @@ y = row * HEX_HEIGHT
 | `AutoBattleResolver` | This depends on it | Reads snapshots; subscribes to movement/action/defeat/complete events; calls `SetUnitPositions()` |
 | `HexGrid` | This depends on it | Grid adjacency, distance, BFS pathing |
 | `ChampionRoster` | This depends on it | Reads `ChampionData` for trait bookkeeping only (see Core Rule 5) — not for any UI display |
-| `TraitTracker` | This depends on it | Registers/unregisters placements so trait breakpoints stay current |
+| `TraitTracker` | This depends on it | Registers/unregisters placements so trait breakpoints stay current — keyed via `_championDataLookup`, see Core Rule 5 |
+| `HeroSelection` (static event) | This depends on it | `OnCardClicked()` resolves the champion slug via `_championDataLookup` and calls `HeroSelection.Select()` — see Core Rule 6 |
 | `RunManager` | It depends on this (Production only) | State trigger — calls `BeginPlacement(students, enemies, maxSquadSize)` to start Placement Phase; receives `ConfirmSquadPlacement(fieldedStudentIds, positions)` callback on confirm. Not present in the Prototype/standalone context. |
 
 ---
@@ -172,6 +177,9 @@ y = row * HEX_HEIGHT
 | `OnCombatantMoved` | Unit lerp-slides to new tile | MVP |
 | `OnCombatantActed` | Unit lunges toward target, snaps back | MVP |
 | `OnCombatantDefeated` | Unit fades out | MVP |
+| Placement Phase active | `_placementCountText` shows "`{placed}/{maxSquadSize} heroes placed`" | MVP |
+
+`_placementCountText` (`[SerializeField] Text`) is updated at the same points `_startBattleButton.interactable` is recalculated (`PlaceStudent`, `UnplaceStudent`), plus an initial set when Placement Phase begins (`BeginPlacement()` / standalone `Start()`), so the player always has a live read on squad-cap progress without needing to count bench cards manually.
 
 ---
 
@@ -187,6 +195,8 @@ y = row * HEX_HEIGHT
 - [ ] `OnCombatantDefeated` removes unit from scene
 - [ ] No `FindObjectOfType` anywhere in `BattleBoardManager.cs`
 - [ ] No direct reads from `StudentRoster` or `EnemyDatabase`
+- [ ] `_championDataLookup` resolves correctly for both production (`StudentId`-GUID-keyed) and standalone (champion-slug-keyed) placement flows — `RegisterPlacement`, `TraitEffectApplier.Apply`, and hero-selection all succeed in both contexts
+- [ ] `_placementCountText` updates on every placement/unplacement to show current/max
 
 ---
 
