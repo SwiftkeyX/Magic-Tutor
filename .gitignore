@@ -1,6 +1,9 @@
 .DS_Store
 Thumbs.db
 
+# Personal editor state (Obsidian vault config)
+.obsidian/
+
 # GitHub App bot secrets — never commit
 .env
 *.pem
