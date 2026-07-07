@@ -16,6 +16,8 @@ MonoBehaviour:
   - ironclad
   - bloodhound
   - pyromancer
+  - pyromancer
+  - pyromancer
   EnemyChampionIds:
   - phalanx
   - shadowblade
