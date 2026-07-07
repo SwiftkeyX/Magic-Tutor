@@ -8,13 +8,25 @@
   "tft-set9": {
     "key": "1xj6em5XlvIN1gWHTKOPDsssmkgnS3jIsaLnAMjYyPUA",
     "role": "reference",
-    "writable": false,
-    "description": "TFT Set 9 Champions reference sheet (external, read-only)."
+    "writable": true,
+    "description": "TFT Set 9 Champions reference sheet (external)."
+  },
+  "tft-set9-analysis": {
+    "key": "1pnbDKR55HxXFUExIXKyksJqaUSrNuw53IfnvBEt9zNY",
+    "role": "reference-analysis",
+    "writable": true,
+    "description": "TFT Set 9 Carry and Combat Efficiency Analysis sheet (separated)."
   },
   "tft-set10": {
     "key": "1Eutkil9U8RJ4Lqo3l6wk9pbUeVVH80M4JmcRyMEqa2E",
     "role": "reference",
-    "writable": false,
-    "description": "TFT Set 10 Champions reference sheet (external, read-only)."
+    "writable": true,
+    "description": "TFT Set 10 Champions reference sheet (external)."
+  },
+  "tft-set11": {
+    "key": "1BCFZRFebGd2O41ZvbJcNZ7LdVBWH3ssBliTQGMVN3cI",
+    "role": "reference",
+    "writable": true,
+    "description": "TFT Set 11 Champions reference sheet (external)."
   }
 }
