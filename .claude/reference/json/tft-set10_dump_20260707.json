@@ -2,7 +2,7 @@
   "_meta": {
     "sheet": "tft-set10",
     "key": "1Eutkil9U8RJ4Lqo3l6wk9pbUeVVH80M4JmcRyMEqa2E",
-    "dumped_at": "2026-07-02T14:08:50"
+    "dumped_at": "2026-07-07T14:49:29"
   },
   "TFT Set 10 Champions - Master Roster Layout": [
     [
@@ -1470,6 +1470,160 @@
       "145.80"
     ]
   ],
+  "Meta Comps": [
+    [
+      "Composition Name",
+      "Tier",
+      "Core Carries",
+      "Roster (Units)",
+      "Active Traits & Breakpoints",
+      "Total Board Trait Value (CE/ECE)"
+    ],
+    [
+      "1. K/DA Ahri & Akali",
+      "S",
+      "Ahri / Akali",
+      "Ahri, Akali, Neeko, Lillia, Kennen, Seraphine, Kai'Sa, Evelynn",
+      "7 K/DA, 3 Superfan, 2 Guardian, 1 Breakout",
+      "68.50"
+    ],
+    [
+      "2. Pentakill Karthus & Viego",
+      "S",
+      "Karthus / Viego",
+      "Karthus, Viego, Mordekaiser, Kayle, Gnar, Olaf, Yorick, Akali",
+      "7 Pentakill, 2 Executioner, 2 Mosher, 1 Breakout",
+      "62.00"
+    ],
+    [
+      "3. Disco Dazzler TF",
+      "S",
+      "Twisted Fate / Blitzcrank",
+      "Twisted Fate, Blitzcrank, Nami, Taric, Gragas, Bard, Ziggs, Illaoi",
+      "5 Disco, 4 Dazzler, 2 Bruiser, 1 Hyperpop, 1 ILLBEATS",
+      "58.40"
+    ],
+    [
+      "4. Heartsteel Ezreal & Kayn",
+      "S",
+      "Ezreal / Kayn",
+      "Ezreal, Kayn, Yone, Sett, Aphelios, K'Sante, Zed, Zac",
+      "6 Heartsteel, 2 Crowd Diver, 2 Bruiser, 2 EDM, 1 Wildcard",
+      "48.00"
+    ],
+    [
+      "5. Country Samira & Urgot Reroll",
+      "S",
+      "Samira / Urgot",
+      "Samira, Urgot, Tahm Kench, Katarina, Thresh, Sett, Amumu",
+      "5 Country, 2 Mosher, 2 Bruiser, 2 Guardian",
+      "45.00"
+    ],
+    [
+      "6. Jazz Superfan Reroll",
+      "S",
+      "Miss Fortune / Bard",
+      "Miss Fortune, Bard, Kennen, Lillia, Neeko, Ekko, Kai'Sa, Lucian",
+      "3 Jazz, 3 Superfan, 3 K/DA, 2 Big Shot, 2 True Damage, 2 Guardian, 2 Sentinel",
+      "59.80"
+    ],
+    [
+      "7. 8-bit Riven Edgelord",
+      "S",
+      "Riven / Yone",
+      "Riven, Yone, Corki, Caitlyn, Yasuo, Kayn, Mordekaiser, Garen",
+      "4 8-bit, 4 Edgelord, 2 Sentinel, 1 Wildcard",
+      "46.50"
+    ],
+    [
+      "8. EDM Jax Mosher",
+      "A",
+      "Jax / Lux",
+      "Jax, Lux, Zac, Zed, Gnar, Poppy, Sett, Yorick",
+      "5 Mosher, 4 EDM, 2 Bruiser",
+      "51.00"
+    ],
+    [
+      "9. Punk Jinx Guardian",
+      "S",
+      "Jinx / Pantheon",
+      "Jinx, Pantheon, Twitch, Vi, Kennen, Lillia, Neeko, Amumu",
+      "4 Punk, 4 Guardian, 3 Superfan",
+      "55.40"
+    ],
+    [
+      "10. Emo Annie Reroll",
+      "S",
+      "Annie",
+      "Annie, Ahri, Neeko, Ekko, Amumu, Kennen, Lillia, Poppy",
+      "3 Emo, 3 Spellweaver, 3 K/DA, 3 Superfan, 3 Guardian, 2 True Damage, 2 Sentinel",
+      "N/A"
+    ],
+    [
+      "11. Crowd Diver Katarina & Zed",
+      "S",
+      "Katarina / Zed",
+      "Katarina, Zed, Yone, Qiyana, Evelynn, Neeko, Lillia, Kennen",
+      "5 Crowd Diver, 3 K/DA, 3 Superfan, 2 True Damage, 2 Guardian",
+      "N/A"
+    ],
+    [
+      "12. Vexecutioners",
+      "A",
+      "Vex / Samira",
+      "Pantheon, Twitch, Amumu, Vex, Samira, Akali, Karthus, Thresh",
+      "5 Executioner, 3 Guardian, 2 Punk, 2 Emo, 1 Breakout",
+      "N/A"
+    ],
+    [
+      "13. Kayle Reroll (Pentakill)",
+      "A",
+      "Kayle",
+      "Kayle, Olaf, Gnar, Mordekaiser, Karthus, Viego, Illaoi, Yorick",
+      "7 Pentakill, 2 Bruiser, 2 Mosher, 1 ILLBEATS",
+      "N/A"
+    ],
+    [
+      "14. Yasuo Reroll (True Damage)",
+      "A",
+      "Yasuo",
+      "Yasuo, Ekko, Akali, Qiyana, Viego, Mordekaiser, Senna, Kayle",
+      "5 True Damage, 3 Edgelord, 3 Pentakill, 2 Sentinel, 1 Breakout",
+      "N/A"
+    ],
+    [
+      "15. Garen Reroll (Sentinel)",
+      "S",
+      "Garen",
+      "Garen, Ahri, Blitzcrank, Corki, Caitlyn, Thresh, Yorick, Vi",
+      "3 8-bit, 2 Sentinel, 2 Guardian, 2 Mosher",
+      "N/A"
+    ],
+    [
+      "16. Rapidfire/8-Bit Caitlyn Flex",
+      "A",
+      "Caitlyn",
+      "Caitlyn, Pantheon, Lucian, Thresh, Neeko, Yorick, Kennen, Amumu",
+      "6 Guardian, 2 Rapidfire",
+      "N/A"
+    ],
+    [
+      "17. Crowd Diver Yone & Zed",
+      "S",
+      "Yone / Zed",
+      "Yone, Zed, Viego, Mordekaiser, Qiyana, Evelynn, Katarina, Kayle",
+      "5 Crowd Diver, 3 Edgelord, 3 Pentakill",
+      "N/A"
+    ],
+    [
+      "18. Bruiser Olaf Reroll",
+      "A",
+      "Olaf",
+      "Olaf, Gnar, Gragas, Sett, Karthus, Zac, Illaoi, Vi",
+      "5 Bruiser, 3 Pentakill, 3 Mosher, 1 ILLBEATS",
+      "N/A"
+    ]
+  ],
   "TFT Balancing Rules": [
     [
       "TFT Set 9 Balancing Rules & Reference Guidelines",
@@ -1945,85 +2099,6 @@
       "10.00",
       "0.00",
       "Exponential"
-    ]
-  ],
-  "Meta Comps": [
-    [
-      "Composition Name",
-      "Core Carries",
-      "Roster (Units)",
-      "Active Traits & Breakpoints",
-      "Total Board Trait Value (CE/ECE)"
-    ],
-    [
-      "1. K/DA Ahri & Akali",
-      "Ahri / Akali",
-      "Ahri, Akali, Neeko, Lillia, Kennen, Seraphine, Kai'Sa, Evelynn",
-      "7 K/DA, 3 Superfan, 2 Guardian, 2 Sentinel",
-      "68.50"
-    ],
-    [
-      "2. Pentakill Karthus & Viego",
-      "Karthus / Viego",
-      "Karthus, Viego, Mordekaiser, Kayle, Gnar, Olaf, Yorick, Akali",
-      "7 Pentakill, 3 Superfan, 2 Guardian, 2 Edgelord",
-      "62.00"
-    ],
-    [
-      "3. Disco Dazzler TF",
-      "Twisted Fate / Blitzcrank",
-      "Twisted Fate, Blitzcrank, Nami, Taric, Gragas, Bard, Ziggs, Illaoi",
-      "5 Disco, 4 Dazzler, 2 Sentinel, 2 Bruiser",
-      "58.40"
-    ],
-    [
-      "4. Heartsteel Ezreal & Kayn",
-      "Ezreal / Kayn",
-      "Ezreal, Kayn, Yone, Sett, Aphelios, K'Sante, Zed, Zac",
-      "5 Heartsteel, 2 Crowd Diver, 2 Bruiser",
-      "48.00"
-    ],
-    [
-      "5. True Damage Senna Reroll",
-      "Senna / Ekko",
-      "Senna, Ekko, Kennen, Lillia, Akali, Yasuo, Qiyana",
-      "6 True Damage, 3 Superfan, 2 Sentinel, 2 Guardian",
-      "54.00"
-    ],
-    [
-      "6. Country Samira & Urgot Reroll",
-      "Samira / Urgot",
-      "Samira, Urgot, Tahm Kench, Katarina, Thresh, Sett, Amumu",
-      "5 Country, 2 Mosher, 2 Bruiser, 2 Guardian",
-      "45.00"
-    ],
-    [
-      "7. Jazz Superfan Reroll",
-      "Miss Fortune / Bard",
-      "Miss Fortune, Bard, Kennen, Lillia, Neeko, Ekko, Kai'Sa, Lucian",
-      "3 Jazz, 3 Superfan, 2 Sentinel, 2 Guardian, 2 Big Shot",
-      "59.80"
-    ],
-    [
-      "8. 8-bit Riven Edgelord",
-      "Riven / Yone",
-      "Riven, Yone, Corki, Caitlyn, Yasuo, Kayn, Mordekaiser, Garen",
-      "4 8-bit, 4 Edgelord, 2 Sentinel",
-      "46.50"
-    ],
-    [
-      "9. EDM Jax Mosher",
-      "Jax / Lux",
-      "Jax, Lux, Zac, Zed, Gnar, Poppy, Sett, Yorick",
-      "4 EDM, 4 Mosher, 2 Bruiser",
-      "51.00"
-    ],
-    [
-      "10. Punk Jinx Guardian",
-      "Jinx / Pantheon",
-      "Jinx, Pantheon, Twitch, Vi, Kennen, Lillia, Neeko, Amumu",
-      "4 Punk, 2 Rapidfire, 4 Guardian, 3 Superfan",
-      "55.40"
     ]
   ],
   "Origins": [
