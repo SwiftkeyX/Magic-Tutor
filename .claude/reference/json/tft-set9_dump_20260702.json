@@ -2,14 +2,15 @@
   "_meta": {
     "sheet": "tft-set9",
     "key": "1xj6em5XlvIN1gWHTKOPDsssmkgnS3jIsaLnAMjYyPUA",
-    "dumped_at": "2026-07-04T11:36:24"
+    "dumped_at": "2026-07-06T13:32:36"
   },
-  "TFT Set 9 Champions - Master Roster Layout": [
+  "Champions": [
     [
       "",
       "Champion Name",
       "Cost",
       "Design Role",
+      "Skill Description",
       "Origin 1",
       "Origin 2",
       "Class 1",
@@ -27,14 +28,14 @@
       "2-Star Health",
       "3-Star Health",
       "2-Star AD",
-      "3-Star AD",
-      "Skill Description"
+      "3-Star AD"
     ],
     [
       "",
       "Cassiopeia",
       "1 Gold",
       "Carry",
+      "Deal 160/240/360 magic damage to the current target and Wound them for 5 seconds. If they are already Wounded, deal [Value] bonus magic damage.Wound: Reduce healing received by 33%",
       "Noxus",
       "Shurima",
       "Invoker",
@@ -52,14 +53,14 @@
       "900",
       "1620",
       "72",
-      "129.6",
-      "Deal 160/240/360 (%i:scaleAP%) magic damage to the current target and Wound them for 5 seconds. If they are already Wounded, deal @BonusDamage@ (%i:scaleAP%) bonus magic damage.Wound: Reduce healing received by 33%"
+      "129.6"
     ],
     [
       "",
       "Cho'Gath",
       "1 Gold",
       "Tank",
+      "Deal [Value] magic damage to the lowest Health enemy in range. If this kills them, devour them and permanently gain 35 maximum Health (doubled in Hyper Roll). (Current Bonus: +[Value] Health)",
       "Void",
       "",
       "Bruiser",
@@ -77,14 +78,14 @@
       "1260",
       "2268",
       "117",
-      "210.6",
-      "Deal @TotalDamage@ (%i:scaleHealth%%i:scaleAP%) magic damage to the lowest Health enemy in range. If this kills them, devour them and permanently gain 35 maximum Health (doubled in Hyper Roll). (Current Bonus: +@TFTUnitProperty.:TFT9_ChoGathBonusHealth@ Health)"
+      "210.6"
     ],
     [
       "",
       "Irelia",
       "1 Gold",
       "Tank",
+      "Enter a defensive stance and gain 3 Shield that rapidly decays over 3 seconds. When it expires, deal [Value] magic damage + 0% of the damage absorbed to enemies around and in front of Irelia.Ionia Bonus: +25 Armor and Magic Resist",
       "Ionia",
       "",
       "Bastion",
@@ -102,14 +103,14 @@
       "1260",
       "2268",
       "90",
-      "162",
-      "Enter a defensive stance and gain 3 (%i:scaleAP%) Shield that rapidly decays over 3 seconds. When it expires, deal @ModifiedBaseStrikeDamage@ (%i:scaleAP%) magic damage + 0% of the damage absorbed to enemies around and in front of Irelia.Ionia Bonus: +25 Armor and Magic Resist"
+      "162"
     ],
     [
       "",
       "Jhin",
       "1 Gold",
       "Carry",
+      "Take aim at the current target and deal 60/90/135 physical damage to enemies in a line; each hit reduces this damage by 100%.Ionia Bonus: +25% Attack Damage",
       "Ionia",
       "",
       "Deadeye",
@@ -127,14 +128,14 @@
       "907.2",
       "1632.96",
       "97.2",
-      "174.96",
-      "Take aim at the current target and deal 60/90/135 (%i:scaleAD%%i:scaleAP%) physical damage to enemies in a line; each hit reduces this damage by 100%.Ionia Bonus: +25% Attack Damage"
+      "174.96"
     ],
     [
       "",
       "Kayle",
       "1 Gold",
       "Carry",
+      "Passive: Gains new Passive effects as your Tactician levels up.Level 1: Attacks deal 30/45/70 bonus magic damage.Level 6: Every 3rd attack launches a wave that deals 30/45/70 magic damage and 20% Shreds enemies for 3 seconds.Level 9: Every attack launches a wave and they travel farther.Shred: Reduce Magic Resist",
       "Demacia",
       "",
       "Slayer",
@@ -152,14 +153,14 @@
       "900",
       "1620",
       "54",
-      "97.2",
-      "Passive: Gains new Passive effects as your Tactician levels up.Level 1: Attacks deal 30/45/70 (%i:scaleAP%) bonus magic damage.Level 6: Every 3rd attack launches a wave that deals 30/45/70 (%i:scaleAP%) magic damage and 20% Shreds enemies for 3 seconds.Level 9: Every attack launches a wave and they travel farther.Shred: Reduce Magic Resist"
+      "97.2"
     ],
     [
       "",
       "Malzahar",
       "1 Gold",
       "Carry",
+      "Open two portals near the current target. Destroy 50% of Shields and deal 220/330/500 magic damage to all enemies caught between the portals.",
       "Void",
       "",
       "Sorcerer",
@@ -177,14 +178,14 @@
       "900",
       "1620",
       "72",
-      "129.6",
-      "Open two portals near the current target. Destroy 0% of Shields and deal 220/330/500 (%i:scaleAP%) magic damage to all enemies caught between the portals."
+      "129.6"
     ],
     [
       "",
       "Orianna",
       "1 Gold",
       "Support",
+      "Grant the lowest Health ally [Value] Shield for 4 seconds and empowers Orianna's next attack to deal 290/435/650 bonus magic damage.",
       "Piltover",
       "",
       "Sorcerer",
@@ -202,14 +203,14 @@
       "900",
       "1620",
       "63",
-      "113.4",
-      "Grant the lowest Health ally @ModifiedShielding@ (%i:scaleAP%) Shield for 4 seconds and empowers Orianna's next attack to deal 290/435/650 (%i:scaleAP%) bonus magic damage."
+      "113.4"
     ],
     [
       "",
       "Poppy",
       "1 Gold",
       "Tank",
+      "Gain 250/325/400 Shield for 4 seconds. Deal 160/240/360 magic damage to the current target.",
       "Demacia",
       "Yordle",
       "Bastion",
@@ -227,14 +228,14 @@
       "1260",
       "2268",
       "99",
-      "178.2",
-      "Gain 250/325/400 (%i:scaleAP%) Shield for 4 seconds. Deal 160/240/360 (%i:scaleAP%) magic damage to the current target."
+      "178.2"
     ],
     [
       "",
       "Renekton",
       "1 Gold",
       "Tank",
+      "Deal 180/270/400 magic damage to adjacent enemies. Heal 220/270/320 for the first enemy hit and another 30 for each additional one.",
       "Shurima",
       "",
       "Bruiser",
@@ -252,14 +253,14 @@
       "1170",
       "2106",
       "90",
-      "162",
-      "Deal 180/270/400 (%i:scaleAP%) magic damage to adjacent enemies. Heal 220/270/320 (%i:scaleAP%) for the first enemy hit and another 30 (%i:scaleAP%) for each additional one."
+      "162"
     ],
     [
       "",
       "Samira",
       "1 Gold",
       "Carry",
+      "Shoot at the current target and deal [Value] to the first enemy hit. Reduce their Armor by 10/15/20 for the rest of combat.",
       "Noxus",
       "",
       "Challenger",
@@ -277,14 +278,14 @@
       "900",
       "1620",
       "81",
-      "145.8",
-      "Shoot at the current target and deal @TotalDamage@ (%i:scaleAD%) to the first enemy hit. Reduce their Armor by 10/15/20 (%i:scaleAP%) for the rest of combat."
+      "145.8"
     ],
     [
       "",
       "Tristana",
       "1 Gold",
       "Carry",
+      "Gain 1 Attack Speed for 4 seconds. For the duration, attacks explode on impact and deal [Value] physical damage to enemies within 1 hex.4-Star Upgrade: Every 10th attack deals [Value] bonus physical damage and ricochets to the largest clump of enemies, dealing [Value] physical damage to enemies within 1 hex.",
       "Yordle",
       "",
       "Gunner",
@@ -302,14 +303,14 @@
       "720",
       "1296",
       "81",
-      "145.8",
-      "Gain 1 (%i:scaleAP%) Attack Speed for 4 seconds. For the duration, attacks explode on impact and deal @BonusDamage@ (%i:scaleAD%) physical damage to enemies within 1 hex.4-Star Upgrade: Every 10th attack deals @4StarShotDamage@ (%i:scaleAD%) bonus physical damage and ricochets to the largest clump of enemies, dealing @ExplosionDamage@ (%i:scaleAD%) physical damage to enemies within 1 hex."
+      "145.8"
     ],
     [
       "",
       "Viego",
       "1 Gold",
       "Carry",
+      "Deal 110/165/250 magic damage to the current target. For the rest of combat, Viego's attacks deal 20/30/45 bonus stacking magic damage.(Current Bonus: +[Value] magic damage)",
       "Shadow Isles",
       "",
       "Rogue",
@@ -327,14 +328,14 @@
       "1080",
       "1944",
       "81",
-      "145.8",
-      "Deal 110/165/250 (%i:scaleAP%) magic damage to the current target. For the rest of combat, Viego's attacks deal 20/30/45 (%i:scaleAP%) bonus stacking magic damage.(Current Bonus: +@TFTUnitProperty.:TFT9_ViegoBonusDamage@ magic damage)"
+      "145.8"
     ],
     [
       "",
       "Ashe",
       "2 Gold",
       "Support",
+      "Fire 8 arrows in a cone, each dealing [Value] physical damage to the first enemy hit and Chilling them for 2 seconds.Chill: Reduce Attack Speed by 30%",
       "Freljord",
       "",
       "Deadeye",
@@ -352,14 +353,14 @@
       "1080",
       "1944",
       "99",
-      "178.2",
-      "Fire 8 arrows in a cone, each dealing @ArrowDamage@ (%i:scaleAD%) physical damage to the first enemy hit and Chilling them for 2 (%i:scaleAP%) seconds.Chill: Reduce Attack Speed by 30%"
+      "178.2"
     ],
     [
       "",
       "Galio",
       "2 Gold",
       "Tank",
+      "Reduce damage taken by 0/0/0% and heal for 300/350/400 over 2 seconds. After, deal 0/0/0 magic damage to adjacent enemies.",
       "Demacia",
       "",
       "Invoker",
@@ -377,14 +378,14 @@
       "1440",
       "2592",
       "126",
-      "226.8",
-      "Reduce damage taken by 0/0/0% and heal for 300/350/400 (%i:scaleAP%) over 2 seconds. After, deal 0/0/0 (%i:scaleAP%) magic damage to adjacent enemies."
+      "226.8"
     ],
     [
       "",
       "Jinx",
       "2 Gold",
       "Carry",
+      "Fire 5 rockets at random enemies within 2 hexes of the current target. Each rocket deals [Value] physical damage.",
       "Zaun",
       "",
       "Gunner",
@@ -402,14 +403,14 @@
       "1080",
       "1944",
       "90",
-      "162",
-      "Fire 5 rockets at random enemies within 2 hexes of the current target. Each rocket deals @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage."
+      "162"
     ],
     [
       "",
       "Kassadin",
       "2 Gold",
       "Tank",
+      "Gain 250/300/400 Shield for 4 seconds. Deal 160/240/360 magic damage to enemies in a cone and Disarm them for 2/2/2 seconds.Disarm: Cannot move or attack, but CAN cast spells",
       "Void",
       "",
       "Bastion",
@@ -427,14 +428,14 @@
       "1440",
       "2592",
       "90",
-      "162",
-      "Gain 250/300/400 (%i:scaleAP%) Shield for 4 seconds. Deal 160/240/360 (%i:scaleAP%) magic damage to enemies in a cone and Disarm them for 2/2/2 seconds.Disarm: Cannot move or attack, but CAN cast spells"
+      "162"
     ],
     [
       "",
       "Kled",
       "2 Gold",
       "Tank",
+      "Passive: Start combat with 0 Shield. When it expires, dismount and gain 1/1/1 stacking Attack Speed for the rest of combat.Active: Remount and gain 0 Shield.4-Star Upgrade: Execute enemies under 25% Health.",
       "Noxus",
       "Yordle",
       "Slayer",
@@ -452,14 +453,14 @@
       "990",
       "1782",
       "104.4",
-      "187.92",
-      "Passive: Start combat with 0 (%i:scaleHealth%) Shield. When it expires, dismount and gain 1/1/1 (%i:scaleAP%) stacking Attack Speed for the rest of combat.Active: Remount and gain 0 (%i:scaleHealth%) Shield.4-Star Upgrade: Execute enemies under 25% Health."
+      "187.92"
     ],
     [
       "",
       "Sett",
       "2 Gold",
       "Tank",
+      "Grab an enemy from either side and slam them together, knocking them up. Deals 180/270/420 magic damage and Stuns them for 1/2/2 seconds. If only one enemy is grabbed, the damage and Stun duration are increased by 0%.Ionia Bonus: +180 max Health",
       "Ionia",
       "",
       "Juggernaut",
@@ -477,14 +478,14 @@
       "1440",
       "2592",
       "108",
-      "194.4",
-      "Grab an enemy from either side and slam them together, knocking them up. Deals 180/270/420 (%i:scaleAP%) magic damage and Stuns them for 1/2/2 seconds. If only one enemy is grabbed, the damage and Stun duration are increased by 0%.Ionia Bonus: +180 max Health"
+      "194.4"
     ],
     [
       "",
       "Soraka",
       "2 Gold",
       "Support",
+      "Heal the lowest health ally for 140/160/180. If the ally is below 140/160/180% Health, heal them for an additional 140/160/180. Over the next 5 seconds, 5 stars hit the enemy closest to them. Each deals 120/180/280 magic damage.",
       "Targon",
       "",
       "Invoker",
@@ -502,14 +503,14 @@
       "1260",
       "2268",
       "99",
-      "178.2",
-      "Heal the lowest health ally for 140/160/180 (%i:scaleAP%). If the ally is below 140/160/180% Health, heal them for an additional 140/160/180 (%i:scaleAP%). Over the next 5 seconds, 5 stars hit the enemy closest to them. Each deals 120/180/280 (%i:scaleAP%) magic damage."
+      "178.2"
     ],
     [
       "",
       "Swain",
       "2 Gold",
       "Tank",
+      "Transform and gain [Value] max Health. While transformed, deal 25/40/60 magic damage to enemies within 2 hexes every second.If already transformed, gain an additional [Value] max Health and deal 100/160/300 magic damage to enemies within.",
       "Noxus",
       "",
       "Strategist",
@@ -527,14 +528,14 @@
       "1440",
       "2592",
       "81",
-      "145.8",
-      "Transform and gain @ModifiedBonusHealth@ (%i:scaleAP%) max Health. While transformed, deal 25/40/60 (%i:scaleAP%) magic damage to enemies within 2 hexes every second.If already transformed, gain an additional @ModifiedSecondaryBonusHealth@ (%i:scaleAP%) max Health and deal 100/160/300 (%i:scaleAP%) magic damage to enemies within."
+      "145.8"
     ],
     [
       "",
       "Teemo",
       "2 Gold",
       "Carry",
+      "Hurl an explosive heat-seeking mushroom at the current target. When it detonates, enemies within 1 hex are Wounded and dealt 260/390/585 magic damage over 3 seconds.4-Star Upgrade: Increase the explosion radius by 1 hex.Wound: Reduce healing received by 33%",
       "Yordle",
       "",
       "Strategist",
@@ -552,14 +553,14 @@
       "900",
       "1620",
       "72",
-      "129.6",
-      "Hurl an explosive heat-seeking mushroom at the current target. When it detonates, enemies within 1 hex are Wounded and dealt 260/390/585 (%i:scaleAP%) magic damage over 3 seconds.4-Star Upgrade: Increase the explosion radius by 1 hex.Wound: Reduce healing received by 33%"
+      "129.6"
     ],
     [
       "",
       "Taliyah",
       "2 Gold",
       "Carry",
+      "Passive: Whenever an enemy is knocked up or back by anything, throw a boulder towards them. It deals 120/180/270 magic damage to the first enemy hit.Active: Deal 220/330/495 magic damage to the current target and knock them up, Stunning them for 2 seconds.",
       "Shurima",
       "",
       "Multicaster",
@@ -577,14 +578,14 @@
       "990",
       "1782",
       "72",
-      "129.6",
-      "Passive: Whenever an enemy is knocked up or back by anything, throw a boulder towards them. It deals 120/180/270 (%i:scaleAP%) magic damage to the first enemy hit.Active: Deal 220/330/495 (%i:scaleAP%) magic damage to the current target and knock them up, Stunning them for 2 seconds."
+      "129.6"
     ],
     [
       "",
       "Vi",
       "2 Gold",
       "Tank",
+      "Gain 350/400/450 Shield for 4 seconds. Deal [Value] physical damage to enemies within 1 hex of the current target and 0% Sunder them for 4 seconds.Sunder: Reduce Armor",
       "Piltover",
       "",
       "Bruiser",
@@ -602,14 +603,14 @@
       "1440",
       "2592",
       "108",
-      "194.4",
-      "Gain 350/400/450 (%i:scaleAP%) Shield for 4 seconds. Deal @TotalDamage@ (%i:scaleAD%) physical damage to enemies within 1 hex of the current target and 0% Sunder them for 4 seconds.Sunder: Reduce Armor"
+      "194.4"
     ],
     [
       "",
       "Warwick",
       "2 Gold",
       "Tank",
+      "Passive: Attacks heal for 30/35/40.Active: Gain 100% Attack Speed for 2 seconds. Then, Stun adjacent enemies for 2 seconds.",
       "Zaun",
       "",
       "Juggernaut",
@@ -627,14 +628,14 @@
       "1440",
       "2592",
       "72",
-      "129.6",
-      "Passive: Attacks heal for 30/35/40 (%i:scaleAP%).Active: Gain 100% Attack Speed for 2 seconds. Then, Stun adjacent enemies for 2 seconds."
+      "129.6"
     ],
     [
       "",
       "Zed",
       "2 Gold",
       "Carry",
+      "Create a shadow at the furthest enemy within [Value] hexes. Zed and his shadow slash adjacent enemies, dealing [Value] physical damage. Ionia Bonus: +15% Critical Strike Chance and Critical Strike Damage",
       "Ionia",
       "",
       "Rogue",
@@ -652,14 +653,14 @@
       "1080",
       "1944",
       "99",
-      "178.2",
-      "Create a shadow at the furthest enemy within @SpellRangeTooltip@ (%i:scaleRange%) hexes. Zed and his shadow slash adjacent enemies, dealing @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage. Ionia Bonus: +15% Critical Strike Chance and Critical Strike Damage"
+      "178.2"
     ],
     [
       "",
       "Akshan",
       "3 Gold",
       "Carry",
+      "Lock on to the farthest enemy and unleash a hail of 6 shots toward them. Each deals[Value] physical damage to the first enemy hit.",
       "Shurima",
       "",
       "Deadeye",
@@ -677,14 +678,14 @@
       "1260",
       "2268",
       "108",
-      "194.4",
-      "Lock on to the farthest enemy and unleash a hail of 6 shots toward them. Each deals@TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage to the first enemy hit."
+      "194.4"
     ],
     [
       "",
       "Darius",
       "3 Gold",
       "Carry",
+      "Deal [Value] physical damage to the current target. If they die, immediately cast this again with 1/1/1% damage.",
       "Noxus",
       "",
       "Juggernaut",
@@ -702,14 +703,14 @@
       "1350",
       "2430",
       "117",
-      "210.6",
-      "Deal @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage to the current target. If they die, immediately cast this again with 1/1/1% damage."
+      "210.6"
     ],
     [
       "",
       "Ekko",
       "3 Gold",
       "Carry",
+      "Heal 0% of damage taken in the last 4 seconds and deal 255/380/570 magic damage to the current target.",
       "Zaun",
       "Piltover",
       "Rogue",
@@ -727,14 +728,14 @@
       "1440",
       "2592",
       "90",
-      "162",
-      "Heal 0% of damage taken in the last 4 seconds and deal 255/380/570 (%i:scaleAP%) magic damage to the current target."
+      "162"
     ],
     [
       "",
       "Garen",
       "3 Gold",
       "Carry",
+      "Spin 3 times every second for the next 4 seconds. Each spin deals [Value] physical damage to adjacent enemies.",
       "Demacia",
       "",
       "Juggernaut",
@@ -752,14 +753,14 @@
       "1530",
       "2754",
       "126",
-      "226.8",
-      "Spin 3 (%i:scaleAS%) times every second for the next 4 (%i:scaleAP%) seconds. Each spin deals @TotalDamage@ (%i:scaleAD%) physical damage to adjacent enemies."
+      "226.8"
     ],
     [
       "",
       "Jayce",
       "3 Gold",
       "Support",
+      "Grant [Value] Attack Speed to Jayce and 0 to the allies on his left and right for 3 seconds. Fire a blast at the current target that explodes on the first enemy hit. It deals [Value] physical damage to enemies near the blast.",
       "Piltover",
       "",
       "Gunner",
@@ -777,14 +778,14 @@
       "1260",
       "2268",
       "108",
-      "194.4",
-      "Grant @ModifiedEnhancedAttackSpeed@ (%i:scaleAP%) Attack Speed to Jayce and 0 (%i:scaleAP%) to the allies on his left and right for 3 seconds. Fire a blast at the current target that explodes on the first enemy hit. It deals @TotalDamage@ (%i:scaleAD%) physical damage to enemies near the blast."
+      "194.4"
     ],
     [
       "",
       "Kalista",
       "3 Gold",
       "Carry",
+      "Passive: Attacks impale a spear in the target, which deals 18/27/45 true damage when removed. Kalista rips the spears out if it would kill the target.Active: Impale 6 spears in the current target.",
       "Shadow Isles",
       "",
       "Challenger",
@@ -802,14 +803,14 @@
       "1170",
       "2106",
       "81",
-      "145.8",
-      "Passive: Attacks impale a spear in the target, which deals 18/27/45 (%i:scaleAP%) true damage when removed. Kalista rips the spears out if it would kill the target.Active: Impale 6 spears in the current target."
+      "145.8"
     ],
     [
       "",
       "Karma",
       "3 Gold",
       "Carry",
+      "Fire a burst of energy that explodes upon impact, dealing 200/300/470 magic damage to adjacent enemies. Every third cast launches 3 bursts.Ionia Bonus: +25 Ability Power",
       "Ionia",
       "",
       "Invoker",
@@ -827,14 +828,14 @@
       "1260",
       "2268",
       "81",
-      "145.8",
-      "Fire a burst of energy that explodes upon impact, dealing 200/300/470 (%i:scaleAP%) magic damage to adjacent enemies. Every third cast launches 3 bursts.Ionia Bonus: +25 Ability Power"
+      "145.8"
     ],
     [
       "",
       "Katarina",
       "3 Gold",
       "Carry",
+      "Throw three daggers that land next to enemies within 1 hexes. Then, teleport to each and deal 145/220/350 magic damage to adjacent enemies and Wound them for 6 seconds.Wound: Reduce healing received by 0%",
       "Noxus",
       "",
       "Rogue",
@@ -852,14 +853,14 @@
       "1440",
       "2592",
       "90",
-      "162",
-      "Throw three daggers that land next to enemies within 1 (%i:scaleRange%) hexes. Then, teleport to each and deal 145/220/350 (%i:scaleAP%) magic damage to adjacent enemies and Wound them for 6 seconds.Wound: Reduce healing received by 0%"
+      "162"
     ],
     [
       "",
       "Lissandra",
       "3 Gold",
       "Support",
+      "Stun the current target for 2 seconds and deal 160/240/400 magic damage to enemies within 2 hexes of them. They take 160/240/400% more damage for the next 4 seconds.",
       "Freljord",
       "",
       "Invoker",
@@ -877,14 +878,14 @@
       "1440",
       "2592",
       "90",
-      "162",
-      "Stun the current target for 2 seconds and deal 160/240/400 (%i:scaleAP%) magic damage to enemies within 2 hexes of them. They take 160/240/400% more damage for the next 4 seconds."
+      "162"
     ],
     [
       "",
       "Rek'Sai",
       "3 Gold",
       "Carry",
+      "Deal [Value] physical damage to the current target and mark them. If they are below 100% max Health, deal true damage instead. If the target is marked, deal [Value] bonus true damage.If this kills the target, rip through them 1 hex and heal for [Value].",
       "Void",
       "",
       "Bruiser",
@@ -902,14 +903,14 @@
       "1440",
       "2592",
       "108",
-      "194.4",
-      "Deal @TotalDamage@ (%i:scaleAD%) physical damage to the current target and mark them. If they are below 100% max Health, deal true damage instead. If the target is marked, deal @MarkDamage@ (%i:scaleAD%) bonus true damage.If this kills the target, rip through them 1 hex and heal for @HealAmount@ (%i:scaleAP%%i:scaleHealth%)."
+      "194.4"
     ],
     [
       "",
       "Sona",
       "3 Gold",
       "Support",
+      "Send a wave of sound at the largest clump of enemies and deal 170/255/420 magic damage to enemies hit; each hit reduces this damage by 0%. Allies hit by the wave gain 20/25/35% Attack Speed for the rest of combat.",
       "Demacia",
       "",
       "Multicaster",
@@ -927,14 +928,14 @@
       "1260",
       "2268",
       "81",
-      "145.8",
-      "Send a wave of sound at the largest clump of enemies and deal 170/255/420 (%i:scaleAP%) magic damage to enemies hit; each hit reduces this damage by 0%. Allies hit by the wave gain 20/25/35% Attack Speed for the rest of combat."
+      "145.8"
     ],
     [
       "",
       "Taric",
       "3 Gold",
       "Tank",
+      "Gain 500/580/680 Shield for 4 seconds. It redirects 0% of the damage received by adjacent allies.",
       "Targon",
       "",
       "Bastion",
@@ -952,14 +953,14 @@
       "1440",
       "2592",
       "108",
-      "194.4",
-      "Gain 500/580/680 (%i:scaleAP%) Shield for 4 seconds. It redirects 0% of the damage received by adjacent allies."
+      "194.4"
     ],
     [
       "",
       "Vel'Koz",
       "3 Gold",
       "Carry",
+      "Fire a plasma bolt towards the current target that deals 220/330/550 magic damage to the first enemy hit. It then splits in two, dealing 0% less damage whenever it passes through an enemy.",
       "Void",
       "",
       "Sorcerer",
@@ -977,14 +978,14 @@
       "1260",
       "2268",
       "72",
-      "129.6",
-      "Fire a plasma bolt towards the current target that deals 220/330/550 (%i:scaleAP%) magic damage to the first enemy hit. It then splits in two, dealing 0% less damage whenever it passes through an enemy."
+      "129.6"
     ],
     [
       "",
       "Aphelios",
       "4 Gold",
       "Carry",
+      "Fire a moon blast at the largest group of enemies that deals [Value] physical damage to enemies within 2 hexes. For 7 seconds, equip 3 Chakram, plus 1 more for each enemy hit by the blast. Attacks deal [Value] bonus physical damage for each Chakram equipped. Aphelios heals for 1 of damage dealt by Chakrams.",
       "Targon",
       "",
       "Deadeye",
@@ -1002,14 +1003,14 @@
       "1350",
       "2430",
       "117",
-      "210.6",
-      "Fire a moon blast at the largest group of enemies that deals @TotalBlastDamage@ (%i:scaleAD%) physical damage to enemies within 2 hexes. For 7 seconds, equip 3 Chakram, plus 1 more for each enemy hit by the blast. Attacks deal @TotalChakramDamage@ (%i:scaleAD%) bonus physical damage for each Chakram equipped. Aphelios heals for 1 (%i:scaleAP%) of damage dealt by Chakrams."
+      "210.6"
     ],
     [
       "",
       "Azir",
       "4 Gold",
       "Carry",
+      "Passive: Every third attack, a Sand Soldier deals 110/160/500 magic damage to their target.Active: Summon a Sand Soldier to attack your target. If Azir already has 3 Soldiers, they all immediately deal [Value] magic damage instead.",
       "Shurima",
       "",
       "Strategist",
@@ -1027,14 +1028,14 @@
       "1350",
       "2430",
       "54",
-      "97.2",
-      "Passive: Every third attack, a Sand Soldier deals 110/160/500 (%i:scaleAP%) magic damage to their target.Active: Summon a Sand Soldier to attack your target. If Azir already has 3 Soldiers, they all immediately deal @MaxSoldierStrike@ (%i:scaleAP%) magic damage instead."
+      "97.2"
     ],
     [
       "",
       "Gwen",
       "4 Gold",
       "Carry",
+      "Dash around the current target and snip 3 times in a cone, each dealing 100/150/400 magic damage to enemies hit.Every 3 casts, gain 120/120/300 Armor and Magic Resist for 3/3/5 seconds.",
       "Shadow Isles",
       "",
       "Slayer",
@@ -1052,14 +1053,14 @@
       "1800",
       "3240",
       "99",
-      "178.2",
-      "Dash around the current target and snip 3 times in a cone, each dealing 100/150/400 (%i:scaleAP%) magic damage to enemies hit.Every 3 casts, gain 120/120/300 Armor and Magic Resist for 3/3/5 seconds."
+      "178.2"
     ],
     [
       "",
       "Jarvan IV",
       "4 Gold",
       "Tank",
+      "Leap on a nearby enemy. Deal 140/210/800 magic damage to enemies within 2 hexes and Stun them for 2/2/8 seconds.",
       "Demacia",
       "",
       "Strategist",
@@ -1077,14 +1078,14 @@
       "1800",
       "3240",
       "108",
-      "194.4",
-      "Leap on a nearby enemy. Deal 140/210/800 (%i:scaleAP%) magic damage to enemies within 2 hexes and Stun them for 2/2/8 seconds."
+      "194.4"
     ],
     [
       "",
       "Kai'Sa",
       "4 Gold",
       "Carry",
+      "Dash away from all enemies, then fire 15/15/25 missiles split across the 4 nearest enemies. Each missile deals [Value] magic damage.",
       "Void",
       "",
       "Challenger",
@@ -1102,14 +1103,14 @@
       "1530",
       "2754",
       "81",
-      "145.8",
-      "Dash away from all enemies, then fire 15/15/25 missiles split across the 4 nearest enemies. Each missile deals @TotalDamage@ (%i:scaleAP%) magic damage."
+      "145.8"
     ],
     [
       "",
       "Lux",
       "4 Gold",
       "Carry",
+      "Channel a barrage of light at the current target that deals 735/1100/2750 magic damage over 3 seconds, reducing their Magic Resist by 15/15/40 every second. If they die, shift to a new target.",
       "Demacia",
       "",
       "Sorcerer",
@@ -1127,14 +1128,14 @@
       "1350",
       "2430",
       "81",
-      "145.8",
-      "Channel a barrage of light at the current target that deals 735/1100/2750 (%i:scaleAP%) magic damage over 3 seconds, reducing their Magic Resist by 15/15/40 every second. If they die, shift to a new target."
+      "145.8"
     ],
     [
       "",
       "Nasus",
       "4 Gold",
       "Tank",
+      "Steal 0/0/0% maximum Health, 0% Attack Damage, 4/4/20 Armor, and 4/4/20 Magic Resist from the nearest 4/5/7 enemies for 8 seconds.While empowered, every third attack deals 4/4/7 physical damage.",
       "Shurima",
       "",
       "Juggernaut",
@@ -1152,14 +1153,14 @@
       "1800",
       "3240",
       "108",
-      "194.4",
-      "Steal 0/0/0% maximum Health, 0% Attack Damage, 4/4/20 Armor, and 4/4/20 Magic Resist from the nearest 4/5/7 enemies for 8 (%i:scaleAP%) seconds.While empowered, every third attack deals 4/4/7 (%i:scaleAD%) physical damage."
+      "194.4"
     ],
     [
       "",
       "Sejuani",
       "4 Gold",
       "Tank",
+      "Passive: Whenever an ally attacks a Chilled enemy, they deal 160/240/1200 bonus true damage.Active: Gain 600/700/2000 Shield for 600/700/2000 seconds. Deal 160/240/1200 magic damage to nearby enemies and Chill them for 600/700/2000 seconds.Chill: Reduce Attack Speed by 30%",
       "Freljord",
       "",
       "Bruiser",
@@ -1177,14 +1178,14 @@
       "1980",
       "3564",
       "108",
-      "194.4",
-      "Passive: Whenever an ally attacks a Chilled enemy, they deal 160/240/1200 (%i:scaleHealth%) bonus true damage.Active: Gain 600/700/2000 (%i:scaleAP%) Shield for 600/700/2000 seconds. Deal 160/240/1200 (%i:scaleAP%) magic damage to nearby enemies and Chill them for 600/700/2000 seconds.Chill: Reduce Attack Speed by 30%"
+      "194.4"
     ],
     [
       "",
       "Shen",
       "4 Gold",
       "Tank",
+      "Gain 350/450/2000 Shield and grant 225/275/1500 Shield to the 2 lowest-Health allies for 4 seconds. After shielding his allies, Shen's Shield refreshes with a burst, dealing 240/360/2500 magic damage to adjacent enemies.Ionia Bonus: +8% Damage Reduction",
       "Ionia",
       "",
       "Bastion",
@@ -1202,14 +1203,14 @@
       "1800",
       "3240",
       "108",
-      "194.4",
-      "Gain 350/450/2000 (%i:scaleAP%) Shield and grant 225/275/1500 (%i:scaleAP%) Shield to the 2 lowest-Health allies for 4 seconds. After shielding his allies, Shen's Shield refreshes with a burst, dealing 240/360/2500 (%i:scaleAP%) magic damage to adjacent enemies.Ionia Bonus: +8% Damage Reduction"
+      "194.4"
     ],
     [
       "",
       "Urgot",
       "4 Gold",
       "Tank",
+      "Passive: Whenever an enemy enters Attack Range, fire a blast from the leg facing that direction that deals [Value] physical damage. Each of Urgot's 6 legs has a 4/4/1 second cooldown.Active: Gain 350/450/1200 Shield for 5 seconds and dash behind the current target. Reset all leg cooldowns.",
       "Zaun",
       "",
       "Deadeye",
@@ -1227,14 +1228,14 @@
       "1800",
       "3240",
       "135",
-      "243",
-      "Passive: Whenever an enemy enters Attack Range, fire a blast from the leg facing that direction that deals @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage. Each of Urgot's 6 legs has a 4/4/1 second cooldown.Active: Gain 350/450/1200 (%i:scaleAP%) Shield for 5 seconds and dash behind the current target. Reset all leg cooldowns."
+      "243"
     ],
     [
       "",
       "Yasuo",
       "4 Gold",
       "Carry",
+      "Send a whirlwind at the furthest enemy within [Value] hexes, knocking up and Stunning all enemies hit. Dash to and slash the original target, dealing [Value] physical damage to them. Slam them into the ground and deal [Value] physical damage to enemies within 1 hex.Ionia Bonus: +15% OmnivampOmnivamp: Heal for percentage of damage dealt",
       "Ionia",
       "",
       "Challenger",
@@ -1252,14 +1253,14 @@
       "1800",
       "3240",
       "135",
-      "243",
-      "Send a whirlwind at the furthest enemy within @SpellRangeTooltip@ hexes, knocking up and Stunning all enemies hit. Dash to and slash the original target, dealing @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage to them. Slam them into the ground and deal @ModifiedAOEDamage@ (%i:scaleAD%) physical damage to enemies within 1 hex.Ionia Bonus: +15% OmnivampOmnivamp: Heal for percentage of damage dealt"
+      "243"
     ],
     [
       "",
       "Zeri",
       "4 Gold",
       "Carry",
+      "Passive: Execute enemies below 0 Health. Active: For the next 8/8/15 seconds, attacks chain lightning to 3/3/5 additional enemies, dealing [Value] physical damage.",
       "Zaun",
       "",
       "Gunner",
@@ -1277,14 +1278,14 @@
       "1350",
       "2430",
       "117",
-      "210.6",
-      "Passive: Execute enemies below 0 (%i:scaleAP%) Health. Active: For the next 8/8/15 seconds, attacks chain lightning to 3/3/5 additional enemies, dealing @TotalChainDamage@ (%i:scaleAD%) physical damage."
+      "210.6"
     ],
     [
       "",
       "Ahri",
       "5 Gold",
       "Carry",
+      "Steal essence from enemies around the current target, dealing 105/150/1000 magic damage and 20% Mana Reaving them. Every 2/2/0 casts, unleash a wave that deals 260/390/1999 magic damage to all enemies hit. This deals 0% more damage to enemies whose essence has been stolen.Ionia Bonus: +3 Mana per secondMana Reave: Increase max Mana until the next cast",
       "Ionia",
       "",
       "Sorcerer",
@@ -1302,14 +1303,14 @@
       "1530",
       "2754",
       "90",
-      "162",
-      "Steal essence from enemies around the current target, dealing 105/150/1000 (%i:scaleAP%) magic damage and 20% Mana Reaving them. Every 2/2/0 casts, unleash a wave that deals 260/390/1999 (%i:scaleAP%) magic damage to all enemies hit. This deals 0% more damage to enemies whose essence has been stolen.Ionia Bonus: +3 Mana per secondMana Reave: Increase max Mana until the next cast"
+      "162"
     ],
     [
       "",
       "Aatrox",
       "5 Gold",
       "Carry",
+      "Transform for 12/12/30 seconds, gaining 0 Omnivamp and converting 100% of bonus Attack Speed to Attack Damage. While transformed, attacks deal [Value] physical damage in an area.Omnivamp: Heal for percentage of damage dealt",
       "Darkin",
       "",
       "Slayer",
@@ -1327,14 +1328,14 @@
       "1620",
       "2916",
       "144",
-      "259.2",
-      "Transform for 12/12/30 seconds, gaining 0 (%i:scaleAP%) Omnivamp and converting 100% of bonus Attack Speed to Attack Damage. While transformed, attacks deal @GreatswordDamage@ (%i:scaleAD%) physical damage in an area.Omnivamp: Heal for percentage of damage dealt"
+      "259.2"
     ],
     [
       "",
       "Bel'Veth",
       "5 Gold",
       "Carry",
+      "Lash out at the lowest Health enemy in range 6/6/25 times. Each lash deals [Value] physical damage and 0% of the target's max Health as true damage.",
       "Empress",
       "Void",
       "",
@@ -1352,14 +1353,14 @@
       "1980",
       "3564",
       "144",
-      "259.2",
-      "Lash out at the lowest Health enemy in range 6/6/25 (%i:scaleAS%) times. Each lash deals @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage and 0% of the target's max Health as true damage."
+      "259.2"
     ],
     [
       "",
       "Heimerdinger",
       "5 Gold",
       "Support",
+      "Hurl a grenade towards the largest group of enemies, dealing 150/225/3141 magic damage to enemies in a large area and Stunning them for 2/2/15 seconds.",
       "Technogen",
       "Yordle",
       "",
@@ -1377,14 +1378,14 @@
       "1350",
       "2430",
       "72",
-      "129.6",
-      "Hurl a grenade towards the largest group of enemies, dealing 150/225/3141 (%i:scaleAP%) magic damage to enemies in a large area and Stunning them for 2/2/15 seconds."
+      "129.6"
     ],
     [
       "",
       "K'Sante",
       "5 Gold",
       "Tank",
+      "Heal for [Value], then knock up the current target before smashing them to the edge of the battlefield. Deal 250/400/1000 magic damage and Stun them for 2/2/10 seconds. Deal 250/400/1000 magic damage to enemies the target collides with and Stun them for 2/2/10 seconds.If the target can't be pushed back any further, knock them off the battlefield. Otherwise, chase after them.",
       "Shurima",
       "",
       "Bastion",
@@ -1402,14 +1403,14 @@
       "1800",
       "3240",
       "108",
-      "194.4",
-      "Heal for @HealAmount@ (%i:scaleHealth%), then knock up the current target before smashing them to the edge of the battlefield. Deal 250/400/1000 (%i:scaleAP%) magic damage and Stun them for 2/2/10 seconds. Deal 250/400/1000 (%i:scaleAP%) magic damage to enemies the target collides with and Stun them for 2/2/10 seconds.If the target can't be pushed back any further, knock them off the battlefield. Otherwise, chase after them."
+      "194.4"
     ],
     [
       "",
       "Ryze",
       "5 Gold",
       "Support",
+      "Create 5/8/25 portals to Zaun, causing hired guns to fire at nearby enemies. Deals 125/230/2006 magic damage and Wounds, 30% Shreds, and 30% Sunders for 6 seconds. The more gold you have, the more powerful the portals become.25 Gold: +1 portal. Portals fire a rocket that deals 125/230/2006% damage in a one-hex radius.50 Gold: Double the portals. Summon 1 additional portals for every 20 Gold more.Wound: Reduce healing received by 50%Shred: Reduce Magic ResistSunder: Reduce Armor",
       "Wanderer",
       "",
       "Invoker",
@@ -1427,14 +1428,14 @@
       "1999.8",
       "3599.64",
       "90",
-      "162",
-      "Create 5/8/25 portals to Zaun, causing hired guns to fire at nearby enemies. Deals 125/230/2006 (%i:scaleAP%) magic damage and Wounds, 30% Shreds, and 30% Sunders for 6 seconds. The more gold you have, the more powerful the portals become.25 Gold: +1 portal. Portals fire a rocket that deals 125/230/2006% damage in a one-hex radius.50 Gold: Double the portals. Summon 1 additional portals for every 20 Gold more.Wound: Reduce healing received by 50%Shred: Reduce Magic ResistSunder: Reduce Armor"
+      "162"
     ],
     [
       "",
       "Sion",
       "5 Gold",
       "Tank",
+      "Passive: Upon death, reanimate with 100% Health, decaying at 0/0/0% maximum Health per second. Sion can no longer use his Ability, but is immune to crowd control and gains 2/2/10 Attack Speed.Active: Charge towards the most enemies within 3 hexes. Deal [Value] physical damage to any enemies along the way and knock them up, Stunning them for 1/2/15 seconds.",
       "Noxus",
       "",
       "Bruiser",
@@ -1452,14 +1453,14 @@
       "1620",
       "2916",
       "126",
-      "226.8",
-      "Passive: Upon death, reanimate with 100% Health, decaying at 0/0/0% maximum Health per second. Sion can no longer use his Ability, but is immune to crowd control and gains 2/2/10 (%i:scaleAP%) Attack Speed.Active: Charge towards the most enemies within 3 (%i:scaleRange%) hexes. Deal @ModifiedDamage@ (%i:scaleAD%) physical damage to any enemies along the way and knock them up, Stunning them for 1/2/15 seconds."
+      "226.8"
     ],
     [
       "",
       "Senna",
       "5 Gold",
       "Support",
+      "Fire a massive beam at the furthest enemy, dealing [Value] physical damage to all enemies hit. Any allies hit gain 200/275/4000 Shield for 4/4/15 seconds.",
       "Redeemer",
       "Shadow Isles",
       "Gunner",
@@ -1477,8 +1478,166 @@
       "1620",
       "2916",
       "117",
-      "210.6",
-      "Fire a massive beam at the furthest enemy, dealing @TotalDamage@ (%i:scaleAD%) physical damage to all enemies hit. Any allies hit gain 200/275/4000 (%i:scaleAP%) Shield for 4/4/15 seconds."
+      "210.6"
+    ]
+  ],
+  "Origins": [
+    [
+      "",
+      "Trait Name",
+      "Natural Units",
+      "Breakpoints",
+      "Exact Mathematical Effects & Stat Balances"
+    ],
+    [
+      "",
+      "Noxus",
+      "7",
+      "3 / 6 / 9",
+      "Conquer unique player boards to gain stacks (up to 5). Noxus units gain Health, AP, and AD.    • (3): 170 HP, 17 AP, 17% AD (+5% per stack)    • (6): 340 HP, 34 AP, 34% AD (+10% per stack)    • (9): 700 HP, 70 AP, 70% AD (+20% per stack)"
+    ],
+    [
+      "",
+      "Demacia",
+      "7",
+      "3 / 5 / 7 / 9",
+      "During planning, your strongest Demacians become Elites and receive a random Radiant item. Elites grant adjacent allies Armor & MR (does not stack).    • (3): 1 Elite, +5 Armor/MR    • (5): 2 Elites, +30 Armor/MR    • (7): 3 Elites, +40 Armor/MR    • (9): 5 Elites, +100 Armor/MR"
+    ],
+    [
+      "",
+      "Ionia",
+      "7",
+      "3 / 6 / 9",
+      "Every 4 seconds, strongest Ionians are enlightened to their spirit form, gaining 20 Mana. Each unit has a unique Ionian bonus that doubles in spirit form.    • (3): 100% Ionian bonus, 1 enlightened unit    • (6): 200% Ionian bonus, 2 enlightened units    • (9): 300% Ionian bonus, 3 enlightened units"
+    ],
+    [
+      "",
+      "Shurima",
+      "7",
+      "3 / 5 / 7 / 9",
+      "Every 4 seconds, Shurimans heal 7% max HP. After 8 seconds, select Shurimans Ascend, gaining 20% max HP and 50% Attack Speed.    • (3): The strongest Shuriman ascends    • (5): All Shurimans ascend    • (7): All Shurimans ascend at the start of combat instead    • (9): +50% Ascension bonus effectiveness"
+    ],
+    [
+      "",
+      "Void",
+      "7",
+      "3 / 6 / 8",
+      "Summon a placeable Void Egg that intercepts enemy positioning. It scales health and AP by 25% per total star level of your Void units.    • (3): Summon Void Remora    • (6): Summon Rift Herald    • (8): Summon Baron Nashor"
+    ],
+    [
+      "",
+      "Piltover",
+      "5",
+      "3 / 6",
+      "Gain a placeable T-Hex. Losing player combat grants Charges. Winning converts Charges to permanent Power for the T-Hex. You can sell it to cash out.    • (3): Gain the T-Hex    • (6): Each loss counts as 2 losses; winning grants bonus round-by-round loot"
+    ],
+    [
+      "",
+      "Zaun",
+      "5",
+      "2 / 4 / 6",
+      "Zaun units gain unique, attachable Chem-Mods (interactive cybernetic modifications) that modify their abilities.    • (2): Gain 1 random Chem-Mod    • (4): Gain 2 Chem-Mods    • (6): Gain 3 Chem-Mods and Overcharge them (unlocking secondary traits)"
+    ],
+    [
+      "",
+      "Freljord",
+      "3",
+      "2 / 3 / 4",
+      "After 8 seconds of combat, an ice storm strikes the board. Enemies take a percentage of their max HP as true damage and are debuffed for 15 seconds.    • (2): 5% HP damage, enemies 40% Sundered (Armor) and Shredded (MR)    • (3): 12% HP damage, enemies also 50% Mana Reaved (max mana increased)    • (4): 20% HP damage, enemies also stunned for 1.5 seconds"
+    ],
+    [
+      "",
+      "Shadow Isles",
+      "5",
+      "2 / 4 / 6",
+      "After dealing or taking damage 12 times, Shadow Isles units gain a Shield for 15 seconds and generate Mana per second for the rest of combat.    • (2): 40% HP Shield, 10 Mana/sec    • (4): 70% HP Shield, 15 Mana/sec    • (6): 100% HP Shield, 20 Mana/sec"
+    ],
+    [
+      "",
+      "Targon",
+      "3",
+      "2 / 3 / 4",
+      "Direct multipliers to restorative logic. All healing and shielding on your team is amplified.    • (2): 18% increased healing and shielding    • (3): 25% increased healing and shielding    • (4): 34% increased healing and shielding"
+    ]
+  ],
+  "Classes": [
+    [
+      "",
+      "Class Name",
+      "Breakpoints",
+      "Exact Mathematical Effects & Stat Balances"
+    ],
+    [
+      "",
+      "Bastion",
+      "2 / 4 / 6 / 8",
+      "Bastion units gain Armor and MR. This bonus is doubled for the first 10 seconds of combat.    • (2): +20 Defenses    • (4): +45 Defenses    • (6): +90 Defenses    • (8): +180 Defenses"
+    ],
+    [
+      "",
+      "Challenger",
+      "2 / 4 / 6 / 8",
+      "Challengers gain bonus Attack Speed. Upon their target's death, they dash to a new target and double this bonus for 2.5 seconds.    • (2): 30% Attack Speed    • (4): 60% Attack Speed    • (6): 95% Attack Speed    • (8): 140% Attack Speed"
+    ],
+    [
+      "",
+      "Sorcerer",
+      "2 / 4 / 6 / 8",
+      "Sorcerers gain flat AP. When an enemy dies after being damaged by a Sorcerer, they trigger a shockwave dealing a % of that enemy's max HP to adjacent targets.    • (2): +25 AP, 5% max HP explosion    • (4): +50 AP, 10% max HP explosion    • (6): +85 AP, 11% max HP explosion to 2 enemies    • (8): +125 AP, 15% max HP explosion to 2 enemies"
+    ],
+    [
+      "",
+      "Invoker",
+      "2 / 4 / 6",
+      "Every 3 seconds, your units generate Mana.    • (2): +5 Mana for Invokers    • (4): +15 Mana for Invokers, +5 Mana for the rest of the team    • (6): +20 Mana for Invokers, +15 Mana for the rest of the team"
+    ],
+    [
+      "",
+      "Bruiser",
+      "2 / 4 / 6",
+      "Your team gains 100 flat HP. Bruisers gain bonus scaling maximum Health.    • (2): +10% Maximum HP    • (4): +40% Maximum HP    • (6): +70% Maximum HP"
+    ],
+    [
+      "",
+      "Deadeye",
+      "2 / 4 / 6",
+      "Innate: Gain 1 Hex range. Every 3 seconds, Deadeyes attack the enemy with the highest health percentage, dealing bonus physical damage scaling with AD.    • (2): +20% AD Bonus Damage    • (4): +65% AD Bonus Damage    • (6): +150% AD Bonus Damage"
+    ],
+    [
+      "",
+      "Juggernaut",
+      "2 / 4 / 6",
+      "Juggernaut units take reduced damage as their current health drops.    • (2): 15% to 25% Damage Reduction    • (4): 25% to 40% Damage Reduction    • (6): 35% to 50% Damage Reduction"
+    ],
+    [
+      "",
+      "Multicaster",
+      "2 / 4",
+      "Multicasters cast their combat spell multiple times. Subsequent casts have reduced effectiveness.    • (2): 1 extra cast at 50% reduced effectiveness    • (4): 2 extra casts at 60% reduced effectiveness"
+    ],
+    [
+      "",
+      "Rogue",
+      "2 / 4",
+      "Innate: Rogue units jump to the enemy backline when dropping below 50% Health.    • (2): Attacks bleed the target for 15% of their max HP as magic damage over 2.5 seconds    • (4): Bleed damage is increased to 30% max HP"
+    ],
+    [
+      "",
+      "Slayer",
+      "2 / 4 / 6",
+      "Slayers gain 12% Omnivamp and deal bonus damage that doubles against targets below 60% Health.    • (2): +5% Damage Amp    • (4): +30% Damage Amp    • (6): +60% Damage Amp"
+    ],
+    [
+      "",
+      "Strategist",
+      "2 / 3 / 4 / 5",
+      "Combat Start: Allies in the front 2 rows gain a Shield for 15 seconds. Allies in the back 2 rows gain flat Ability Power.    • (2): 200 Shield / 20 AP    • (3): 350 Shield / 30 AP    • (4): 500 Shield / 45 AP    • (5): 700 Shield / 60 AP"
+    ],
+    [
+      "",
+      "Gunner",
+      "2 / 4 / 6",
+      "When Gunner champions attack, they gain bonus Attack Damage, up to 8 stacks.    ◼ (2): 7% AD per stack    ◼ (4): 13% AD per stack    ◼ (6): 25% AD per stack"
     ]
   ],
   "TFT Balancing Rules": [
@@ -1728,464 +1887,6 @@
       "Does NOT scale with star level"
     ]
   ],
-  "CE Analysis": [
-    [
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
-    ],
-    [
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
-    ],
-    [
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
-    ],
-    [
-      "Trait Name",
-      "Type",
-      "Breakpoint",
-      "TFT Description",
-      "Stat Modifiers",
-      "Calculated CE",
-      "Calculated ECE",
-      "Avg Value per Unit (CE)",
-      "Avg Value per Unit (ECE)",
-      "Scaling Curve"
-    ],
-    [
-      "Bastion",
-      "Vertical",
-      "2",
-      "Gains Armor & MR, doubled for first 10s",
-      "+20 Armor & MR",
-      "3.00",
-      "3.00",
-      "1.50",
-      "1.50",
-      "Exponential"
-    ],
-    [
-      "Bastion",
-      "Vertical",
-      "4",
-      "Gains Armor & MR, doubled for first 10s",
-      "+45 Armor & MR",
-      "13.50",
-      "13.50",
-      "3.38",
-      "3.38",
-      "Exponential"
-    ],
-    [
-      "Bastion",
-      "Vertical",
-      "6",
-      "Gains Armor & MR, doubled for first 10s",
-      "+90 Armor & MR",
-      "40.50",
-      "40.50",
-      "6.75",
-      "6.75",
-      "Exponential"
-    ],
-    [
-      "Bastion",
-      "Vertical",
-      "8",
-      "Gains Armor & MR, doubled for first 10s",
-      "+180 Armor & MR",
-      "108.00",
-      "108.00",
-      "13.50",
-      "13.50",
-      "Exponential"
-    ],
-    [
-      "Bruiser",
-      "Vertical",
-      "2",
-      "Team gains +100 HP, Bruisers gain extra % HP",
-      "+100 Team HP, +10% Bruiser HP",
-      "6.16",
-      "6.16",
-      "3.08",
-      "3.08",
-      "Flat-then-Spike"
-    ],
-    [
-      "Bruiser",
-      "Vertical",
-      "4",
-      "Team gains +100 HP, Bruisers gain extra % HP",
-      "+100 Team HP, +40% Bruiser HP",
-      "11.76",
-      "11.76",
-      "2.94",
-      "2.94",
-      "Flat-then-Spike"
-    ],
-    [
-      "Bruiser",
-      "Vertical",
-      "6",
-      "Team gains +100 HP, Bruisers gain extra % HP",
-      "+100 Team HP, +70% Bruiser HP",
-      "22.16",
-      "22.16",
-      "3.69",
-      "3.69",
-      "Flat-then-Spike"
-    ],
-    [
-      "Challenger",
-      "Vertical",
-      "2",
-      "Gains Attack Speed, doubled on dash",
-      "30% Attack Speed",
-      "6.00",
-      "0.00",
-      "3.00",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Challenger",
-      "Vertical",
-      "4",
-      "Gains Attack Speed, doubled on dash",
-      "60% Attack Speed",
-      "24.00",
-      "0.00",
-      "6.00",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Challenger",
-      "Vertical",
-      "6",
-      "Gains Attack Speed, doubled on dash",
-      "95% Attack Speed",
-      "57.00",
-      "0.00",
-      "9.50",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Challenger",
-      "Vertical",
-      "8",
-      "Gains Attack Speed, doubled on dash",
-      "140% Attack Speed",
-      "112.00",
-      "0.00",
-      "14.00",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Sorcerer",
-      "Vertical",
-      "2",
-      "Gains AP, deal % max HP splash on enemy death",
-      "+25 AP, 5% max HP explosion",
-      "5.00",
-      "0.00",
-      "2.50",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Sorcerer",
-      "Vertical",
-      "4",
-      "Gains AP, deal % max HP splash on enemy death",
-      "+50 AP, 10% max HP explosion",
-      "20.00",
-      "0.00",
-      "5.00",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Sorcerer",
-      "Vertical",
-      "6",
-      "Gains AP, deal % max HP splash on enemy death",
-      "+85 AP, 11% max HP to 2 enemies",
-      "51.00",
-      "0.00",
-      "8.50",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Sorcerer",
-      "Vertical",
-      "8",
-      "Gains AP, deal % max HP splash on enemy death",
-      "+125 AP, 15% max HP to 2 enemies",
-      "100.00",
-      "0.00",
-      "12.50",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Invoker",
-      "Vertical",
-      "2",
-      "Every 3 seconds, units generate mana",
-      "+5 Mana (Invokers)",
-      "3.33",
-      "0.00",
-      "1.67",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Invoker",
-      "Vertical",
-      "4",
-      "Every 3 seconds, units generate mana",
-      "+15 Mana (Invokers), +5 Mana (Team)",
-      "26.67",
-      "0.00",
-      "6.67",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Invoker",
-      "Vertical",
-      "6",
-      "Every 3 seconds, units generate mana",
-      "+20 Mana (Invokers), +15 Mana (Team)",
-      "50.00",
-      "0.00",
-      "8.33",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Strategist",
-      "Horizontal",
-      "2",
-      "Front row gains shield, back row gains AP",
-      "200 Shield / 20 AP",
-      "16.67",
-      "16.67",
-      "8.33",
-      "8.33",
-      "Horizontal/Flat"
-    ],
-    [
-      "Strategist",
-      "Horizontal",
-      "3",
-      "Front row gains shield, back row gains AP",
-      "350 Shield / 30 AP",
-      "26.67",
-      "26.67",
-      "8.89",
-      "8.89",
-      "Horizontal/Flat"
-    ],
-    [
-      "Strategist",
-      "Horizontal",
-      "4",
-      "Front row gains shield, back row gains AP",
-      "500 Shield / 45 AP",
-      "39.17",
-      "39.17",
-      "9.79",
-      "9.79",
-      "Horizontal/Flat"
-    ],
-    [
-      "Strategist",
-      "Horizontal",
-      "5",
-      "Front row gains shield, back row gains AP",
-      "700 Shield / 60 AP",
-      "53.33",
-      "53.33",
-      "10.67",
-      "10.67",
-      "Horizontal/Flat"
-    ],
-    [
-      "Gunner",
-      "Vertical",
-      "2",
-      "Attacks grant stacking AD, up to 8 stacks",
-      "6% AD per stack (avg +30%)",
-      "6.00",
-      "0.00",
-      "3.00",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Gunner",
-      "Vertical",
-      "4",
-      "Attacks grant stacking AD, up to 8 stacks",
-      "11% AD per stack (avg +55%)",
-      "22.00",
-      "0.00",
-      "5.50",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Gunner",
-      "Vertical",
-      "6",
-      "Attacks grant stacking AD, up to 8 stacks",
-      "20% AD per stack (avg +100%)",
-      "60.00",
-      "0.00",
-      "10.00",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Slayer",
-      "Vertical",
-      "2",
-      "Gains 12% omnivamp and conditional damage amp",
-      "12% Omnivamp, +5% Damage (avg +7.5%)",
-      "3.90",
-      "3.90",
-      "1.95",
-      "1.95",
-      "Super-Linear"
-    ],
-    [
-      "Slayer",
-      "Vertical",
-      "4",
-      "Gains 12% omnivamp and conditional damage amp",
-      "12% Omnivamp, +30% Damage (avg +45%)",
-      "22.80",
-      "22.80",
-      "5.70",
-      "5.70",
-      "Super-Linear"
-    ],
-    [
-      "Slayer",
-      "Vertical",
-      "6",
-      "Gains 12% omnivamp and conditional damage amp",
-      "12% Omnivamp, +60% Damage (avg +90%)",
-      "61.20",
-      "61.20",
-      "10.20",
-      "10.20",
-      "Super-Linear"
-    ],
-    [
-      "Targon",
-      "Horizontal",
-      "2",
-      "All healing & shielding is increased",
-      "+18% Healing & Shielding",
-      "3.60",
-      "3.60",
-      "1.80",
-      "1.80",
-      "Horizontal/Flat"
-    ],
-    [
-      "Targon",
-      "Horizontal",
-      "3",
-      "All healing & shielding is increased",
-      "+25% Healing & Shielding",
-      "7.50",
-      "7.50",
-      "2.50",
-      "2.50",
-      "Horizontal/Flat"
-    ],
-    [
-      "Targon",
-      "Horizontal",
-      "4",
-      "All healing & shielding is increased",
-      "+34% Healing & Shielding",
-      "13.60",
-      "13.60",
-      "3.40",
-      "3.40",
-      "Horizontal/Flat"
-    ],
-    [
-      "Deadeye",
-      "Vertical",
-      "2",
-      "Innate +1 range. Proc bonus AD damage every 3s",
-      "+1 Range, 20% bonus AD proc (avg +8% AD/s)",
-      "4.60",
-      "0.00",
-      "2.30",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Deadeye",
-      "Vertical",
-      "4",
-      "Innate +1 range. Proc bonus AD damage every 3s",
-      "+1 Range, 65% bonus AD proc (avg +26% AD/s)",
-      "16.40",
-      "0.00",
-      "4.10",
-      "0.00",
-      "Super-Linear"
-    ],
-    [
-      "Deadeye",
-      "Vertical",
-      "6",
-      "Innate +1 range. Proc bonus AD damage every 3s",
-      "+1 Range, 150% bonus AD proc (avg +60% AD/s)",
-      "45.00",
-      "0.00",
-      "7.50",
-      "0.00",
-      "Super-Linear"
-    ]
-  ],
   "Meta Comps": [
     [
       "Composition Name",
@@ -2263,159 +1964,6 @@
       "Vi, Ekko, Jayce, Zeri, Jinx, Sejuani, Lissandra, Urgot",
       "3 Piltover, 2 Gunner, 2 Zaun, 2 Freljord, 2 Bruiser",
       "41.16"
-    ]
-  ],
-  "Regional Origins": [
-    [
-      "",
-      "Trait Name",
-      "Natural Units",
-      "Breakpoints",
-      "Exact Mathematical Effects & Stat Balances"
-    ],
-    [
-      "",
-      "Noxus",
-      "7",
-      "3 / 6 / 9",
-      "Conquer unique player boards to gain stacks (up to 5). Noxus units gain Health, AP, and AD.    • (3): 170 HP, 17 AP, 17% AD (+5% per stack)    • (6): 340 HP, 34 AP, 34% AD (+10% per stack)    • (9): 700 HP, 70 AP, 70% AD (+20% per stack)"
-    ],
-    [
-      "",
-      "Demacia",
-      "7",
-      "3 / 5 / 7 / 9",
-      "During planning, your strongest Demacians become Elites and receive a random Radiant item. Elites grant adjacent allies Armor & MR (does not stack).    • (3): 1 Elite, +5 Armor/MR    • (5): 2 Elites, +30 Armor/MR    • (7): 3 Elites, +40 Armor/MR    • (9): 5 Elites, +100 Armor/MR"
-    ],
-    [
-      "",
-      "Ionia",
-      "7",
-      "3 / 6 / 9",
-      "Every 4 seconds, strongest Ionians are enlightened to their spirit form, gaining 20 Mana. Each unit has a unique Ionian bonus that doubles in spirit form.    • (3): 100% Ionian bonus, 1 enlightened unit    • (6): 200% Ionian bonus, 2 enlightened units    • (9): 300% Ionian bonus, 3 enlightened units"
-    ],
-    [
-      "",
-      "Shurima",
-      "7",
-      "3 / 5 / 7 / 9",
-      "Every 4 seconds, Shurimans heal 7% max HP. After 8 seconds, select Shurimans Ascend, gaining 20% max HP and 50% Attack Speed.    • (3): The strongest Shuriman ascends    • (5): All Shurimans ascend    • (7): All Shurimans ascend at the start of combat instead    • (9): +50% Ascension bonus effectiveness"
-    ],
-    [
-      "",
-      "Void",
-      "7",
-      "3 / 6 / 8",
-      "Summon a placeable Void Egg that intercepts enemy positioning. It scales health and AP by 25% per total star level of your Void units.    • (3): Summon Void Remora    • (6): Summon Rift Herald    • (8): Summon Baron Nashor"
-    ],
-    [
-      "",
-      "Piltover",
-      "5",
-      "3 / 6",
-      "Gain a placeable T-Hex. Losing player combat grants Charges. Winning converts Charges to permanent Power for the T-Hex. You can sell it to cash out.    • (3): Gain the T-Hex    • (6): Each loss counts as 2 losses; winning grants bonus round-by-round loot"
-    ],
-    [
-      "",
-      "Zaun",
-      "5",
-      "2 / 4 / 6",
-      "Zaun units gain unique, attachable Chem-Mods (interactive cybernetic modifications) that modify their abilities.    • (2): Gain 1 random Chem-Mod    • (4): Gain 2 Chem-Mods    • (6): Gain 3 Chem-Mods and Overcharge them (unlocking secondary traits)"
-    ],
-    [
-      "",
-      "Freljord",
-      "3",
-      "2 / 3 / 4",
-      "After 8 seconds of combat, an ice storm strikes the board. Enemies take a percentage of their max HP as true damage and are debuffed for 15 seconds.    • (2): 5% HP damage, enemies 40% Sundered (Armor) and Shredded (MR)    • (3): 12% HP damage, enemies also 50% Mana Reaved (max mana increased)    • (4): 20% HP damage, enemies also stunned for 1.5 seconds"
-    ],
-    [
-      "",
-      "Shadow Isles",
-      "5",
-      "2 / 4 / 6",
-      "After dealing or taking damage 12 times, Shadow Isles units gain a Shield for 15 seconds and generate Mana per second for the rest of combat.    • (2): 40% HP Shield, 10 Mana/sec    • (4): 70% HP Shield, 15 Mana/sec    • (6): 100% HP Shield, 20 Mana/sec"
-    ],
-    [
-      "",
-      "Targon",
-      "3",
-      "2 / 3 / 4",
-      "Direct multipliers to restorative logic. All healing and shielding on your team is amplified.    • (2): 18% increased healing and shielding    • (3): 25% increased healing and shielding    • (4): 34% increased healing and shielding"
-    ]
-  ],
-  "Combat Classes": [
-    [
-      "",
-      "Class Name",
-      "Breakpoints",
-      "Exact Mathematical Effects & Stat Balances"
-    ],
-    [
-      "",
-      "Bastion",
-      "2 / 4 / 6 / 8",
-      "Bastion units gain Armor and MR. This bonus is doubled for the first 10 seconds of combat.    • (2): +20 Defenses    • (4): +45 Defenses    • (6): +90 Defenses    • (8): +180 Defenses"
-    ],
-    [
-      "",
-      "Challenger",
-      "2 / 4 / 6 / 8",
-      "Challengers gain bonus Attack Speed. Upon their target's death, they dash to a new target and double this bonus for 2.5 seconds.    • (2): 30% Attack Speed    • (4): 60% Attack Speed    • (6): 95% Attack Speed    • (8): 140% Attack Speed"
-    ],
-    [
-      "",
-      "Sorcerer",
-      "2 / 4 / 6 / 8",
-      "Sorcerers gain flat AP. When an enemy dies after being damaged by a Sorcerer, they trigger a shockwave dealing a % of that enemy's max HP to adjacent targets.    • (2): +25 AP, 5% max HP explosion    • (4): +50 AP, 10% max HP explosion    • (6): +85 AP, 11% max HP explosion to 2 enemies    • (8): +125 AP, 15% max HP explosion to 2 enemies"
-    ],
-    [
-      "",
-      "Invoker",
-      "2 / 4 / 6",
-      "Every 3 seconds, your units generate Mana.    • (2): +5 Mana for Invokers    • (4): +15 Mana for Invokers, +5 Mana for the rest of the team    • (6): +20 Mana for Invokers, +15 Mana for the rest of the team"
-    ],
-    [
-      "",
-      "Bruiser",
-      "2 / 4 / 6",
-      "Your team gains 100 flat HP. Bruisers gain bonus scaling maximum Health.    • (2): +10% Maximum HP    • (4): +40% Maximum HP    • (6): +70% Maximum HP"
-    ],
-    [
-      "",
-      "Deadeye",
-      "2 / 4 / 6",
-      "Innate: Gain 1 Hex range. Every 3 seconds, Deadeyes attack the enemy with the highest health percentage, dealing bonus physical damage scaling with AD.    • (2): +20% AD Bonus Damage    • (4): +65% AD Bonus Damage    • (6): +150% AD Bonus Damage"
-    ],
-    [
-      "",
-      "Juggernaut",
-      "2 / 4 / 6",
-      "Juggernaut units take reduced damage as their current health drops.    • (2): 15% to 25% Damage Reduction    • (4): 25% to 40% Damage Reduction    • (6): 35% to 50% Damage Reduction"
-    ],
-    [
-      "",
-      "Multicaster",
-      "2 / 4",
-      "Multicasters cast their combat spell multiple times. Subsequent casts have reduced effectiveness.    • (2): 1 extra cast at 50% reduced effectiveness    • (4): 2 extra casts at 60% reduced effectiveness"
-    ],
-    [
-      "",
-      "Rogue",
-      "2 / 4",
-      "Innate: Rogue units jump to the enemy backline when dropping below 50% Health.    • (2): Attacks bleed the target for 15% of their max HP as magic damage over 2.5 seconds    • (4): Bleed damage is increased to 30% max HP"
-    ],
-    [
-      "",
-      "Slayer",
-      "2 / 4 / 6",
-      "Slayers gain 12% Omnivamp and deal bonus damage that doubles against targets below 60% Health.    • (2): +5% Damage Amp    • (4): +30% Damage Amp    • (6): +60% Damage Amp"
-    ],
-    [
-      "",
-      "Strategist",
-      "2 / 3 / 4 / 5",
-      "Combat Start: Allies in the front 2 rows gain a Shield for 15 seconds. Allies in the back 2 rows gain flat Ability Power.    • (2): 200 Shield / 20 AP    • (3): 350 Shield / 30 AP    • (4): 500 Shield / 45 AP    • (5): 700 Shield / 60 AP"
     ]
   ],
   "Dashboard": [
@@ -2502,10 +2050,10 @@
       "Cassiopeia",
       "1 Gold",
       "Carry",
+      "Deal 160/240/360 magic damage to the current target and Wound them for 5 seconds. If they are already Wounded, deal [Value] bonus magic damage.Wound: Reduce healing received by 33%",
       "Noxus",
       "Shurima",
       "Invoker",
-      "",
       "",
       "",
       ""
@@ -2515,10 +2063,10 @@
       "Cho'Gath",
       "1 Gold",
       "Tank",
+      "Deal [Value] magic damage to the lowest Health enemy in range. If this kills them, devour them and permanently gain 35 maximum Health (doubled in Hyper Roll). (Current Bonus: +[Value] Health)",
       "Void",
       "",
       "Bruiser",
-      "",
       "",
       "",
       ""
@@ -2528,10 +2076,10 @@
       "Irelia",
       "1 Gold",
       "Tank",
+      "Enter a defensive stance and gain 3 Shield that rapidly decays over 3 seconds. When it expires, deal [Value] magic damage + 0% of the damage absorbed to enemies around and in front of Irelia.Ionia Bonus: +25 Armor and Magic Resist",
       "Ionia",
       "",
       "Bastion",
-      "",
       "",
       "",
       ""
@@ -2541,10 +2089,10 @@
       "Jhin",
       "1 Gold",
       "Carry",
+      "Take aim at the current target and deal 60/90/135 physical damage to enemies in a line; each hit reduces this damage by 100%.Ionia Bonus: +25% Attack Damage",
       "Ionia",
       "",
       "Deadeye",
-      "",
       "",
       "",
       ""
@@ -2554,10 +2102,10 @@
       "Kayle",
       "1 Gold",
       "Carry",
+      "Passive: Gains new Passive effects as your Tactician levels up.Level 1: Attacks deal 30/45/70 bonus magic damage.Level 6: Every 3rd attack launches a wave that deals 30/45/70 magic damage and 20% Shreds enemies for 3 seconds.Level 9: Every attack launches a wave and they travel farther.Shred: Reduce Magic Resist",
       "Demacia",
       "",
       "Slayer",
-      "",
       "",
       "",
       ""
@@ -2567,10 +2115,10 @@
       "Malzahar",
       "1 Gold",
       "Carry",
+      "Open two portals near the current target. Destroy 50% of Shields and deal 220/330/500 magic damage to all enemies caught between the portals.",
       "Void",
       "",
       "Sorcerer",
-      "",
       "",
       "",
       ""
@@ -2580,10 +2128,10 @@
       "Orianna",
       "1 Gold",
       "Support",
+      "Grant the lowest Health ally [Value] Shield for 4 seconds and empowers Orianna's next attack to deal 290/435/650 bonus magic damage.",
       "Piltover",
       "",
       "Sorcerer",
-      "",
       "",
       "",
       ""
@@ -2593,10 +2141,10 @@
       "Poppy",
       "1 Gold",
       "Tank",
+      "Gain 250/325/400 Shield for 4 seconds. Deal 160/240/360 magic damage to the current target.",
       "Demacia",
       "Yordle",
       "Bastion",
-      "",
       "",
       "",
       ""
@@ -2606,10 +2154,10 @@
       "Renekton",
       "1 Gold",
       "Tank",
+      "Deal 180/270/400 magic damage to adjacent enemies. Heal 220/270/320 for the first enemy hit and another 30 for each additional one.",
       "Shurima",
       "",
       "Bruiser",
-      "",
       "",
       "",
       ""
@@ -2619,10 +2167,10 @@
       "Samira",
       "1 Gold",
       "Carry",
+      "Shoot at the current target and deal [Value] to the first enemy hit. Reduce their Armor by 10/15/20 for the rest of combat.",
       "Noxus",
       "",
       "Challenger",
-      "",
       "",
       "",
       ""
@@ -2632,10 +2180,10 @@
       "Tristana",
       "1 Gold",
       "Carry",
+      "Gain 1 Attack Speed for 4 seconds. For the duration, attacks explode on impact and deal [Value] physical damage to enemies within 1 hex.4-Star Upgrade: Every 10th attack deals [Value] bonus physical damage and ricochets to the largest clump of enemies, dealing [Value] physical damage to enemies within 1 hex.",
       "Yordle",
       "",
       "Gunner",
-      "",
       "",
       "",
       ""
@@ -2645,10 +2193,10 @@
       "Viego",
       "1 Gold",
       "Carry",
+      "Deal 110/165/250 magic damage to the current target. For the rest of combat, Viego's attacks deal 20/30/45 bonus stacking magic damage.(Current Bonus: +[Value] magic damage)",
       "Shadow Isles",
       "",
       "Rogue",
-      "",
       "",
       "",
       ""
@@ -2658,10 +2206,10 @@
       "Ashe",
       "2 Gold",
       "Support",
+      "Fire 8 arrows in a cone, each dealing [Value] physical damage to the first enemy hit and Chilling them for 2 seconds.Chill: Reduce Attack Speed by 30%",
       "Freljord",
       "",
       "Deadeye",
-      "",
       "",
       "",
       ""
@@ -2671,10 +2219,10 @@
       "Galio",
       "2 Gold",
       "Tank",
+      "Reduce damage taken by 0/0/0% and heal for 300/350/400 over 2 seconds. After, deal 0/0/0 magic damage to adjacent enemies.",
       "Demacia",
       "",
       "Invoker",
-      "",
       "",
       "",
       ""
@@ -2684,10 +2232,10 @@
       "Jinx",
       "2 Gold",
       "Carry",
+      "Fire 5 rockets at random enemies within 2 hexes of the current target. Each rocket deals [Value] physical damage.",
       "Zaun",
       "",
       "Gunner",
-      "",
       "",
       "",
       ""
@@ -2697,10 +2245,10 @@
       "Kassadin",
       "2 Gold",
       "Tank",
+      "Gain 250/300/400 Shield for 4 seconds. Deal 160/240/360 magic damage to enemies in a cone and Disarm them for 2/2/2 seconds.Disarm: Cannot move or attack, but CAN cast spells",
       "Void",
       "",
       "Bastion",
-      "",
       "",
       "",
       ""
@@ -2710,10 +2258,10 @@
       "Kled",
       "2 Gold",
       "Tank",
+      "Passive: Start combat with 0 Shield. When it expires, dismount and gain 1/1/1 stacking Attack Speed for the rest of combat.Active: Remount and gain 0 Shield.4-Star Upgrade: Execute enemies under 25% Health.",
       "Noxus",
       "Yordle",
       "Slayer",
-      "",
       "",
       "",
       ""
@@ -2723,10 +2271,10 @@
       "Sett",
       "2 Gold",
       "Tank",
+      "Grab an enemy from either side and slam them together, knocking them up. Deals 180/270/420 magic damage and Stuns them for 1/2/2 seconds. If only one enemy is grabbed, the damage and Stun duration are increased by 0%.Ionia Bonus: +180 max Health",
       "Ionia",
       "",
       "Juggernaut",
-      "",
       "",
       "",
       ""
@@ -2736,10 +2284,10 @@
       "Soraka",
       "2 Gold",
       "Support",
+      "Heal the lowest health ally for 140/160/180. If the ally is below 140/160/180% Health, heal them for an additional 140/160/180. Over the next 5 seconds, 5 stars hit the enemy closest to them. Each deals 120/180/280 magic damage.",
       "Targon",
       "",
       "Invoker",
-      "",
       "",
       "",
       ""
@@ -2749,11 +2297,11 @@
       "Swain",
       "2 Gold",
       "Tank",
+      "Transform and gain [Value] max Health. While transformed, deal 25/40/60 magic damage to enemies within 2 hexes every second.If already transformed, gain an additional [Value] max Health and deal 100/160/300 magic damage to enemies within.",
       "Noxus",
       "",
       "Strategist",
       "Sorcerer",
-      "",
       "",
       ""
     ],
@@ -2762,11 +2310,11 @@
       "Teemo",
       "2 Gold",
       "Carry",
+      "Hurl an explosive heat-seeking mushroom at the current target. When it detonates, enemies within 1 hex are Wounded and dealt 260/390/585 magic damage over 3 seconds.4-Star Upgrade: Increase the explosion radius by 1 hex.Wound: Reduce healing received by 33%",
       "Yordle",
       "",
       "Strategist",
       "Multicaster",
-      "",
       "",
       ""
     ],
@@ -2775,10 +2323,10 @@
       "Taliyah",
       "2 Gold",
       "Carry",
+      "Passive: Whenever an enemy is knocked up or back by anything, throw a boulder towards them. It deals 120/180/270 magic damage to the first enemy hit.Active: Deal 220/330/495 magic damage to the current target and knock them up, Stunning them for 2 seconds.",
       "Shurima",
       "",
       "Multicaster",
-      "",
       "",
       "",
       ""
@@ -2788,10 +2336,10 @@
       "Vi",
       "2 Gold",
       "Tank",
+      "Gain 350/400/450 Shield for 4 seconds. Deal [Value] physical damage to enemies within 1 hex of the current target and 0% Sunder them for 4 seconds.Sunder: Reduce Armor",
       "Piltover",
       "",
       "Bruiser",
-      "",
       "",
       "",
       ""
@@ -2801,11 +2349,11 @@
       "Warwick",
       "2 Gold",
       "Tank",
+      "Passive: Attacks heal for 30/35/40.Active: Gain 100% Attack Speed for 2 seconds. Then, Stun adjacent enemies for 2 seconds.",
       "Zaun",
       "",
       "Juggernaut",
       "Challenger",
-      "",
       "",
       ""
     ],
@@ -2814,11 +2362,11 @@
       "Zed",
       "2 Gold",
       "Carry",
+      "Create a shadow at the furthest enemy within [Value] hexes. Zed and his shadow slash adjacent enemies, dealing [Value] physical damage. Ionia Bonus: +15% Critical Strike Chance and Critical Strike Damage",
       "Ionia",
       "",
       "Rogue",
       "Slayer",
-      "",
       "",
       ""
     ],
@@ -2827,10 +2375,10 @@
       "Akshan",
       "3 Gold",
       "Carry",
+      "Lock on to the farthest enemy and unleash a hail of 6 shots toward them. Each deals[Value] physical damage to the first enemy hit.",
       "Shurima",
       "",
       "Deadeye",
-      "",
       "",
       "",
       ""
@@ -2840,10 +2388,10 @@
       "Darius",
       "3 Gold",
       "Carry",
+      "Deal [Value] physical damage to the current target. If they die, immediately cast this again with 1/1/1% damage.",
       "Noxus",
       "",
       "Juggernaut",
-      "",
       "",
       "",
       ""
@@ -2853,10 +2401,10 @@
       "Ekko",
       "3 Gold",
       "Carry",
+      "Heal 0% of damage taken in the last 4 seconds and deal 255/380/570 magic damage to the current target.",
       "Zaun",
       "Piltover",
       "Rogue",
-      "",
       "",
       "",
       ""
@@ -2866,10 +2414,10 @@
       "Garen",
       "3 Gold",
       "Carry",
+      "Spin 3 times every second for the next 4 seconds. Each spin deals [Value] physical damage to adjacent enemies.",
       "Demacia",
       "",
       "Juggernaut",
-      "",
       "",
       "",
       ""
@@ -2879,10 +2427,10 @@
       "Jayce",
       "3 Gold",
       "Support",
+      "Grant [Value] Attack Speed to Jayce and 0 to the allies on his left and right for 3 seconds. Fire a blast at the current target that explodes on the first enemy hit. It deals [Value] physical damage to enemies near the blast.",
       "Piltover",
       "",
       "Gunner",
-      "",
       "",
       "",
       ""
@@ -2892,10 +2440,10 @@
       "Kalista",
       "3 Gold",
       "Carry",
+      "Passive: Attacks impale a spear in the target, which deals 18/27/45 true damage when removed. Kalista rips the spears out if it would kill the target.Active: Impale 6 spears in the current target.",
       "Shadow Isles",
       "",
       "Challenger",
-      "",
       "",
       "",
       ""
@@ -2905,10 +2453,10 @@
       "Karma",
       "3 Gold",
       "Carry",
+      "Fire a burst of energy that explodes upon impact, dealing 200/300/470 magic damage to adjacent enemies. Every third cast launches 3 bursts.Ionia Bonus: +25 Ability Power",
       "Ionia",
       "",
       "Invoker",
-      "",
       "",
       "",
       ""
@@ -2918,10 +2466,10 @@
       "Katarina",
       "3 Gold",
       "Carry",
+      "Throw three daggers that land next to enemies within 1 hexes. Then, teleport to each and deal 145/220/350 magic damage to adjacent enemies and Wound them for 6 seconds.Wound: Reduce healing received by 0%",
       "Noxus",
       "",
       "Rogue",
-      "",
       "",
       "",
       ""
@@ -2931,10 +2479,10 @@
       "Lissandra",
       "3 Gold",
       "Support",
+      "Stun the current target for 2 seconds and deal 160/240/400 magic damage to enemies within 2 hexes of them. They take 160/240/400% more damage for the next 4 seconds.",
       "Freljord",
       "",
       "Invoker",
-      "",
       "",
       "",
       ""
@@ -2944,10 +2492,10 @@
       "Rek'Sai",
       "3 Gold",
       "Carry",
+      "Deal [Value] physical damage to the current target and mark them. If they are below 100% max Health, deal true damage instead. If the target is marked, deal [Value] bonus true damage.If this kills the target, rip through them 1 hex and heal for [Value].",
       "Void",
       "",
       "Bruiser",
-      "",
       "",
       "",
       ""
@@ -2957,10 +2505,10 @@
       "Sona",
       "3 Gold",
       "Support",
+      "Send a wave of sound at the largest clump of enemies and deal 170/255/420 magic damage to enemies hit; each hit reduces this damage by 0%. Allies hit by the wave gain 20/25/35% Attack Speed for the rest of combat.",
       "Demacia",
       "",
       "Multicaster",
-      "",
       "",
       "",
       ""
@@ -2970,11 +2518,11 @@
       "Taric",
       "3 Gold",
       "Tank",
+      "Gain 500/580/680 Shield for 4 seconds. It redirects 0% of the damage received by adjacent allies.",
       "Targon",
       "",
       "Bastion",
       "Sorcerer",
-      "",
       "",
       ""
     ],
@@ -2983,11 +2531,11 @@
       "Vel'Koz",
       "3 Gold",
       "Carry",
+      "Fire a plasma bolt towards the current target that deals 220/330/550 magic damage to the first enemy hit. It then splits in two, dealing 0% less damage whenever it passes through an enemy.",
       "Void",
       "",
       "Sorcerer",
       "Multicaster",
-      "",
       "",
       ""
     ],
@@ -2996,10 +2544,10 @@
       "Aphelios",
       "4 Gold",
       "Carry",
+      "Fire a moon blast at the largest group of enemies that deals [Value] physical damage to enemies within 2 hexes. For 7 seconds, equip 3 Chakram, plus 1 more for each enemy hit by the blast. Attacks deal [Value] bonus physical damage for each Chakram equipped. Aphelios heals for 1 of damage dealt by Chakrams.",
       "Targon",
       "",
       "Deadeye",
-      "",
       "",
       "",
       ""
@@ -3009,10 +2557,10 @@
       "Azir",
       "4 Gold",
       "Carry",
+      "Passive: Every third attack, a Sand Soldier deals 110/160/500 magic damage to their target.Active: Summon a Sand Soldier to attack your target. If Azir already has 3 Soldiers, they all immediately deal [Value] magic damage instead.",
       "Shurima",
       "",
       "Strategist",
-      "",
       "",
       "",
       ""
@@ -3022,10 +2570,10 @@
       "Gwen",
       "4 Gold",
       "Carry",
+      "Dash around the current target and snip 3 times in a cone, each dealing 100/150/400 magic damage to enemies hit.Every 3 casts, gain 120/120/300 Armor and Magic Resist for 3/3/5 seconds.",
       "Shadow Isles",
       "",
       "Slayer",
-      "",
       "",
       "",
       ""
@@ -3035,10 +2583,10 @@
       "Jarvan IV",
       "4 Gold",
       "Tank",
+      "Leap on a nearby enemy. Deal 140/210/800 magic damage to enemies within 2 hexes and Stun them for 2/2/8 seconds.",
       "Demacia",
       "",
       "Strategist",
-      "",
       "",
       "",
       ""
@@ -3048,10 +2596,10 @@
       "Kai'Sa",
       "4 Gold",
       "Carry",
+      "Dash away from all enemies, then fire 15/15/25 missiles split across the 4 nearest enemies. Each missile deals [Value] magic damage.",
       "Void",
       "",
       "Challenger",
-      "",
       "",
       "",
       ""
@@ -3061,10 +2609,10 @@
       "Lux",
       "4 Gold",
       "Carry",
+      "Channel a barrage of light at the current target that deals 735/1100/2750 magic damage over 3 seconds, reducing their Magic Resist by 15/15/40 every second. If they die, shift to a new target.",
       "Demacia",
       "",
       "Sorcerer",
-      "",
       "",
       "",
       ""
@@ -3074,10 +2622,10 @@
       "Nasus",
       "4 Gold",
       "Tank",
+      "Steal 0/0/0% maximum Health, 0% Attack Damage, 4/4/20 Armor, and 4/4/20 Magic Resist from the nearest 4/5/7 enemies for 8 seconds.While empowered, every third attack deals 4/4/7 physical damage.",
       "Shurima",
       "",
       "Juggernaut",
-      "",
       "",
       "",
       ""
@@ -3087,10 +2635,10 @@
       "Sejuani",
       "4 Gold",
       "Tank",
+      "Passive: Whenever an ally attacks a Chilled enemy, they deal 160/240/1200 bonus true damage.Active: Gain 600/700/2000 Shield for 600/700/2000 seconds. Deal 160/240/1200 magic damage to nearby enemies and Chill them for 600/700/2000 seconds.Chill: Reduce Attack Speed by 30%",
       "Freljord",
       "",
       "Bruiser",
-      "",
       "",
       "",
       ""
@@ -3100,11 +2648,11 @@
       "Shen",
       "4 Gold",
       "Tank",
+      "Gain 350/450/2000 Shield and grant 225/275/1500 Shield to the 2 lowest-Health allies for 4 seconds. After shielding his allies, Shen's Shield refreshes with a burst, dealing 240/360/2500 magic damage to adjacent enemies.Ionia Bonus: +8% Damage Reduction",
       "Ionia",
       "",
       "Bastion",
       "Invoker",
-      "",
       "",
       ""
     ],
@@ -3113,10 +2661,10 @@
       "Urgot",
       "4 Gold",
       "Tank",
+      "Passive: Whenever an enemy enters Attack Range, fire a blast from the leg facing that direction that deals [Value] physical damage. Each of Urgot's 6 legs has a 4/4/1 second cooldown.Active: Gain 350/450/1200 Shield for 5 seconds and dash behind the current target. Reset all leg cooldowns.",
       "Zaun",
       "",
       "Deadeye",
-      "",
       "",
       "",
       ""
@@ -3126,10 +2674,10 @@
       "Yasuo",
       "4 Gold",
       "Carry",
+      "Send a whirlwind at the furthest enemy within [Value] hexes, knocking up and Stunning all enemies hit. Dash to and slash the original target, dealing [Value] physical damage to them. Slam them into the ground and deal [Value] physical damage to enemies within 1 hex.Ionia Bonus: +15% OmnivampOmnivamp: Heal for percentage of damage dealt",
       "Ionia",
       "",
       "Challenger",
-      "",
       "",
       "",
       ""
@@ -3139,10 +2687,10 @@
       "Zeri",
       "4 Gold",
       "Carry",
+      "Passive: Execute enemies below 0 Health. Active: For the next 8/8/15 seconds, attacks chain lightning to 3/3/5 additional enemies, dealing [Value] physical damage.",
       "Zaun",
       "",
       "Gunner",
-      "",
       "",
       "",
       ""
@@ -3152,10 +2700,10 @@
       "Ahri",
       "5 Gold",
       "Carry",
+      "Steal essence from enemies around the current target, dealing 105/150/1000 magic damage and 20% Mana Reaving them. Every 2/2/0 casts, unleash a wave that deals 260/390/1999 magic damage to all enemies hit. This deals 0% more damage to enemies whose essence has been stolen.Ionia Bonus: +3 Mana per secondMana Reave: Increase max Mana until the next cast",
       "Ionia",
       "",
       "Sorcerer",
-      "",
       "",
       "",
       ""
@@ -3165,11 +2713,11 @@
       "Aatrox",
       "5 Gold",
       "Carry",
+      "Transform for 12/12/30 seconds, gaining 0 Omnivamp and converting 100% of bonus Attack Speed to Attack Damage. While transformed, attacks deal [Value] physical damage in an area.Omnivamp: Heal for percentage of damage dealt",
       "Darkin",
       "",
       "Slayer",
       "Juggernaut",
-      "",
       "",
       ""
     ],
@@ -3178,9 +2726,9 @@
       "Bel'Veth",
       "5 Gold",
       "Carry",
+      "Lash out at the lowest Health enemy in range 6/6/25 times. Each lash deals [Value] physical damage and 0% of the target's max Health as true damage.",
       "Empress",
       "Void",
-      "",
       "",
       "",
       "",
@@ -3191,9 +2739,9 @@
       "Heimerdinger",
       "5 Gold",
       "Support",
+      "Hurl a grenade towards the largest group of enemies, dealing 150/225/3141 magic damage to enemies in a large area and Stunning them for 2/2/15 seconds.",
       "Technogen",
       "Yordle",
-      "",
       "",
       "",
       "",
@@ -3204,10 +2752,10 @@
       "K'Sante",
       "5 Gold",
       "Tank",
+      "Heal for [Value], then knock up the current target before smashing them to the edge of the battlefield. Deal 250/400/1000 magic damage and Stun them for 2/2/10 seconds. Deal 250/400/1000 magic damage to enemies the target collides with and Stun them for 2/2/10 seconds.If the target can't be pushed back any further, knock them off the battlefield. Otherwise, chase after them.",
       "Shurima",
       "",
       "Bastion",
-      "",
       "",
       "",
       ""
@@ -3217,10 +2765,10 @@
       "Ryze",
       "5 Gold",
       "Support",
+      "Create 5/8/25 portals to Zaun, causing hired guns to fire at nearby enemies. Deals 125/230/2006 magic damage and Wounds, 30% Shreds, and 30% Sunders for 6 seconds. The more gold you have, the more powerful the portals become.25 Gold: +1 portal. Portals fire a rocket that deals 125/230/2006% damage in a one-hex radius.50 Gold: Double the portals. Summon 1 additional portals for every 20 Gold more.Wound: Reduce healing received by 50%Shred: Reduce Magic ResistSunder: Reduce Armor",
       "Wanderer",
       "",
       "Invoker",
-      "",
       "",
       "",
       ""
@@ -3230,10 +2778,10 @@
       "Sion",
       "5 Gold",
       "Tank",
+      "Passive: Upon death, reanimate with 100% Health, decaying at 0/0/0% maximum Health per second. Sion can no longer use his Ability, but is immune to crowd control and gains 2/2/10 Attack Speed.Active: Charge towards the most enemies within 3 hexes. Deal [Value] physical damage to any enemies along the way and knock them up, Stunning them for 1/2/15 seconds.",
       "Noxus",
       "",
       "Bruiser",
-      "",
       "",
       "",
       ""
@@ -3243,10 +2791,10 @@
       "Senna",
       "5 Gold",
       "Support",
+      "Fire a massive beam at the furthest enemy, dealing [Value] physical damage to all enemies hit. Any allies hit gain 200/275/4000 Shield for 4/4/15 seconds.",
       "Redeemer",
       "Shadow Isles",
       "Gunner",
-      "",
       "",
       "",
       ""
