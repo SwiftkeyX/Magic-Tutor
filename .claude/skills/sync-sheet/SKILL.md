@@ -52,6 +52,16 @@ python .claude/scripts/sheet_sync.py write <TabName> <Cell> "<Value>"
 python .claude/scripts/sheet_sync.py write Heroes B2 "Ironclad"
 ```
 
+## Steps to Bulk-Write Rows
+
+To write many rows in a single API call (e.g. rebuilding a whole data block), use the `write-range` command. It takes a worksheet name, a start cell, and a `--file` pointing to a local JSON file containing a list of rows (each row itself a list of cell values — use JSON rather than CSV so fields containing commas don't need escaping):
+
+```bash
+python .claude/scripts/sheet_sync.py --sheet tft-set9 write-range "Meta Comps" A1 --file rows.json
+```
+
+If the named worksheet doesn't exist yet, it is created automatically (sized to fit the data) before writing — useful for adding a brand-new tab to a spreadsheet. Same `writable: true` guard as `write` applies.
+
 ## Steps to Dump All Sheet Content
 To download all tabs of a sheet into a single local, self-describing JSON file (default name `<sheet>_dump_<date>.json`, embeds a `_meta` block with sheet name/key/timestamp):
 

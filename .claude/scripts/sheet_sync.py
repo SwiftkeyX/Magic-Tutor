@@ -116,6 +116,37 @@ def cmd_write(args):
         sys.exit(1)
 
 
+def cmd_write_range(args):
+    entry = get_sheet_entry(args.sheet)
+    if not entry.get("writable", False):
+        print(f"Sheet '{args.sheet}' is marked read-only (role={entry.get('role')}) in sheets_config.json — refusing to write.")
+        print("This is a reference sheet we don't own. Edit sheets_config.json only if that has changed.")
+        sys.exit(1)
+
+    with open(args.file, encoding="utf-8") as f:
+        values = json.load(f)
+    if not isinstance(values, list) or not all(isinstance(row, list) for row in values):
+        print(f"'{args.file}' must contain a JSON list of lists (rows of cell values).")
+        sys.exit(1)
+
+    client = get_client()
+    sh = get_spreadsheet(client, args.sheet)
+    try:
+        ws = sh.worksheet(args.worksheet)
+    except gspread.exceptions.WorksheetNotFound:
+        rows = max(len(values) + 10, 100)
+        cols = max((len(row) for row in values), default=1)
+        ws = sh.add_worksheet(title=args.worksheet, rows=rows, cols=cols)
+        print(f"Worksheet '{args.worksheet}' not found — created it ({rows} rows x {cols} cols).")
+
+    try:
+        ws.update(values, range_name=args.start_cell)
+        print(f"Successfully wrote {len(values)} rows to '{args.worksheet}' starting at {args.start_cell}!")
+    except Exception as e:
+        print(f"Error writing range: {e}")
+        sys.exit(1)
+
+
 def cmd_dump(args):
     client = get_client()
     entry = get_sheet_entry(args.sheet)
@@ -155,6 +186,13 @@ def main():
     parser_write.add_argument("cell", help="Cell coordinates (e.g., A1, B2)")
     parser_write.add_argument("value", help="Value to write")
     parser_write.set_defaults(func=cmd_write)
+
+    # Write-range subcommand
+    parser_write_range = subparsers.add_parser("write-range", help="Bulk-write rows to a worksheet from a local JSON file")
+    parser_write_range.add_argument("worksheet", help="Name of the worksheet (created if it doesn't exist)")
+    parser_write_range.add_argument("start_cell", help="Top-left cell to start writing at (e.g., A1)")
+    parser_write_range.add_argument("--file", required=True, help="Path to a JSON file containing a list of rows (each row a list of cell values)")
+    parser_write_range.set_defaults(func=cmd_write_range)
 
     # Dump subcommand
     parser_dump = subparsers.add_parser("dump", help="Dump all worksheets to a local JSON file")
