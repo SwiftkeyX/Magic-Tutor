@@ -17,8 +17,8 @@ Putting baseline and itemized calculations in a single document guarantees that 
 | **Jhin** (2 Targets Avg) | 1★<br>2★<br>3★ | 54<br>81<br>122 | 0.70 | 36.7<br>55.0<br>82.6 | 37.6<br>56.5<br>84.7 | **74.3**<br>**111.5**<br>**167.3** |
 | **Malzahar** (2 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 27.2<br>40.8<br>61.2 | 49.8<br>74.7<br>113.2 | **77.0**<br>**115.5**<br>**174.4** |
 | **Samira** (Single Target) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 27.4<br>41.0<br>61.5 | 19.0<br>28.5<br>42.7 | **46.4**<br>**69.5**<br>**104.2** |
-| **Tristana** (1 Splash Target) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 20.4<br>30.6<br>45.9 | 38.8<br>58.2<br>87.3 | **59.2**<br>**88.8**<br>**133.2** |
-| **Viego** (2 Stacks on-hit) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.75 | 32.0<br>48.0<br>72.0 | 21.3<br>32.0<br>48.4 | **53.3**<br>**80.0**<br>**120.4** |
+| **Tristana** (1–2 Splash Targets) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 20.4<br>30.6<br>45.9 | 38.8 / 53.3<br>58.2 / 80.6<br>87.3 / 119.7 | **59.2 / 73.7**<br>**88.8 / 111.2**<br>**133.2 / 165.6** |
+| **Viego** (30s Avg Stacks) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.75 | 32.0<br>48.0<br>72.0 | 44.1<br>66.2<br>99.6 | **76.1**<br>**114.2**<br>**171.6** |
 
 ### ⚔️ Table 2: Well-Equipped (3-Item) DPS Summary
 *Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped. Ramping items (AA, Guinsoo) represent **[Start / End / Average]**.*
@@ -29,8 +29,8 @@ Putting baseline and itemized calculations in a single document guarantees that 
 | **Jhin** (2 Targets Avg) | 1★<br>2★<br>3★ | 114<br>171<br>257 | 0.77 | 99.1<br>148.7<br>223.1 | 94.8<br>142.1<br>213.2 | **193.9**<br>**290.8**<br>**436.3** |
 | **Malzahar** (2 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.81 | 34.6<br>51.8<br>77.8 | 204.3<br>306.5<br>464.4 | **238.9**<br>**358.3**<br>**542.2** |
 | **Samira** (Single Target) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.77 | 45.8<br>68.6<br>102.9 | 45.3<br>68.0<br>102.0 | **91.1**<br>**136.6**<br>**204.9** |
-| **Tristana** (1 Splash Target) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.90 / 2.37 / 1.63 | 93.8 / 225.5 / 161.0<br>140.7 / 338.3 / 241.5<br>211.1 / 507.4 / 362.3 | 32.7 / 100.2 / 65.6<br>49.1 / 150.3 / 98.4<br>73.6 / 225.5 / 147.6 | **126.5 / 325.7 / 226.6**<br>**189.8 / 488.6 / 339.9**<br>**284.7 / 732.9 / 509.9** |
-| **Viego** (2 Stacks on-hit) | 1★<br>2★<br>3★ | 77<br>116<br>173 | 0.94 | 79.9<br>119.8<br>179.7 | 125.4<br>188.1<br>283.2 | **205.3**<br>**307.9**<br>**462.9** |
+| **Tristana** (1–2 Splash Targets) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.90 / 2.37 / 1.63 | 93.8 / 225.5 / 161.0<br>140.7 / 338.3 / 241.5<br>211.1 / 507.4 / 362.3 | 32.7 / 100.2 / 65.6 | **126.5 / 325.7 / 226.6** (1 Spl)<br>**159.2 / 425.9 / 292.2** (2 Spl) |
+| **Viego** (30s Avg Stacks) | 1★<br>2★<br>3★ | 77<br>116<br>173 | 0.94 | 79.9<br>120.3<br>179.4 | 125.4<br>188.1<br>283.2 | **205.3**<br>**308.4**<br>**462.6** |
 
 ---
 
@@ -96,6 +96,9 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **End (30s)** | 2.70x | 718.8 | 201.3 | **230.0** |
     | **Average** | 2.00x | 532.5 | 149.1 | **177.8** |
 
+#### 🔍 Analyze DPS
+*   **Tank Melt Specialization**: Cassiopeia is a backliner who only focuses on 1 hero at a time. This concentrated, single-target magic damage output results in exceptionally high sustain DPS, making her highly effective at burning down frontline tanks.
+
 ---
 
 ### 2. Jhin 🏹
@@ -132,6 +135,9 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **3 Targets** | 1.63x | 107.5 | **206.6** |
     | **4 Targets** | 1.72x | 113.1 | **212.2** |
 
+#### 🔍 Analyze DPS
+*   **Burst AoE Distribution**: Jhin is a backliner who does big burst AoE damage. While his raw single-target DPS is limited by his long 1.6s cast lockout, Jhin's DPS can match other carries when his skill hits at least 2 people. This is highly consistent in real combat due to his large skill hitbox.
+
 ---
 
 ### 3. Malzahar 🌌
@@ -163,6 +169,9 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **1 Target** | 605.4 | 102.2 | **136.8** |
     | **2 Targets (Avg)**| 1210.9 | 204.3 | **238.9** |
     | **3 Targets** | 1816.3 | 306.5 | **341.1** |
+
+#### 🔍 Analyze DPS
+*   **High-Impact Small-AoE Portals**: Malzahar is a backliner who does AoE damage. Similar to Jhin, his DPS is not high when his skill only hits 1 person. However, when it hits at least 2 targets, his DPS skyrockets even higher than Jhin's. Note that his portal hitbox is relatively small for an AoE spell, meaning his skill typically hits only 1–2 enemies at a time.
 
 ---
 
@@ -198,6 +207,9 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **Spell Cast** | 164.8 (1 hit) | 45.3 | \- |
     | **Combined** | 331.2 | \- | **91.1** |
 
+#### 🔍 Analyze DPS
+*   **Utility & Armor Shredding**: Samira is a backliner who focuses on 1 target and shreds their armor quickly. Although focusing on a single target (similar to Cassiopeia) might suggest high DPS, Samira's personal DPS is super low when you only look at the numbers. However, this raw DPS does not account for the permanent armor reduction from her skill, which significantly increases the damage output of her entire team against her target.
+
 ---
 
 ### 5. Tristana 🔫
@@ -218,6 +230,10 @@ Putting baseline and itemized calculations in a single document guarantees that 
     *   **1★**: Normal = \((4 \times 45) / 9.71 \times 1.10 = 20.4\) | Spell (4.76 splash attacks) = \((4.76 \times 45 \times 1.60) / 9.71 \times 1.10 = 38.8\) | **Total DPS: 59.2**
     *   **2★**: Normal = 30.6 | Spell = 58.2 | **Total DPS: 88.8**
     *   **3★**: Normal = 45.9 | Spell = 87.3 | **Total DPS: 133.2**
+*   **Star & Splash Scaling (Assuming 2 Splash Targets - 3 Total Hit)**:
+    *   **1★**: Normal = 20.4 | Spell (4.76 attacks @ 2.20x AD total) = \((4.76 \times 45 \times 2.20) / 9.71 \times 1.10 = 53.3\) | **Total DPS: 73.7**
+    *   **2★**: Normal = 30.6 | Spell = 80.6 | **Total DPS: 111.2**
+    *   **3★**: Normal = 45.9 | Spell = 119.7 | **Total DPS: 165.6**
 
 #### 🧮 Equipped Calculations (Guinsoo's Rageblade + Last Whisper + Infinity Edge)
 *   **Stats**: AD = 65 (+45% AD) | Crit Chance = 70% (1.28x avg multiplier)
@@ -228,12 +244,28 @@ Putting baseline and itemized calculations in a single document guarantees that 
     *   *Start (0s)*: Cycle = \((4 / 0.90) + 4.0 = \mathbf{8.46\text{s}}\) (Total Attacks = 9.54)
     *   *End (30s)*: Cycle = \((4 / 2.37) + 4.0 = \mathbf{5.69\text{s}}\) (Total Attacks = 15.42)
     *   *Average*: Cycle = \((4 / 1.63) + 4.0 = \mathbf{6.45\text{s}}\) (Total Attacks = 12.48)
-*   **Ramping Outputs**:
+*   **Ramping Outputs (1 Splash Target)**:
     | Phase | Base AS | Cycle Duration | Total Attacks | Normal DPS | Spell (Splash) DPS | Total DPS |
     | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
     | **Start (0s)** | 0.90 | 8.46s | 9.54 | 93.8 | 32.7 | **126.5** |
     | **End (30s)** | 2.37 | 5.69s | 15.42 | 225.5 | 100.2 | **325.7** |
     | **Average** | 1.63 | 6.45s | 12.48 | 161.0 | 65.6 | **226.6** |
+
+*   **Ramping Outputs (2 Splash Targets)**:
+    | Phase | Base AS | Cycle Duration | Total Attacks | Normal DPS | Spell (Splash) DPS | Total DPS |
+    | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+    | **Start (0s)** | 0.90 | 8.46s | 9.54 | 94.0 | 65.5 | **159.5** |
+    | **End (30s)** | 2.37 | 5.69s | 15.42 | 226.0 | 200.5 | **426.5** |
+    | **Average** | 1.63 | 6.45s | 12.48 | 161.0 | 131.2 | **292.2** |
+
+#### 🔍 Analyze DPS
+*   **Super-Linear Attack Speed Scaling**: Tristana is a backline carry whose baseline DPS appears low because she lacks flat spell damage.
+*   **Why normal carries scale linearly (1:1)**: For a standard carry (e.g., Cassiopeia), their cycle duration is modeled as $\text{Cycle Duration} = \frac{N + L}{\text{AS}}$ (where $N$ is attacks to cast, and $L$ is cast lockout). Since their damage per cycle $D$ (autos + spell) is constant with respect to AS, their DPS formula is:
+    $$\text{DPS} = \frac{D}{\text{Cycle Duration}} = \text{AS} \times \frac{D}{N + L} = \text{Constant} \times \text{AS}$$
+    This represents a mathematically perfect linear (1:1) relationship: doubling AS doubles DPS.
+*   **Why Tristana scales super-linearly (better than 1:1)**: Because Tristana's active steroid phase is a *fixed* 4.0 seconds (which does not scale down with AS), her cycle duration is $\frac{4}{\text{AS}} + 4.0$. However, her damage per cycle *increases* with AS because she squeezes more splash attacks into that 4s window: $D(\text{AS}) = [4 + (6.8 + 4.08 \times S) \times \text{AS}] \times \text{AD}$ (where $S$ is splash targets). Her DPS formula is:
+    $$\text{DPS}(\text{AS}) = \text{AS} \times \text{AD} \times \frac{4 + (6.8 + 4.08 \times S) \times \text{AS}}{4 + 4 \times \text{AS}}$$
+    Because both the numerator and denominator scale with AS, her DPS scaling curve is concave up (super-linear). For instance, tripling her AS from 0.70 to 2.10 yields a **4.03x** DPS increase (climbing from 73.7 to 292.2 with 2 splash targets), showing that she scales far better with AS than any linear champion.
 
 ---
 
@@ -246,25 +278,29 @@ Putting baseline and itemized calculations in a single document guarantees that 
 
 #### 🧮 Baseline (Unequipped) Calculations
 *   **Stats**: AD = 45 | AS = 0.75 | AP = 100 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS (2 Stacks on-hit = 40 bonus Magic Damage)**:
+*   **Cycle & DPS (Scaled over 30s fight: Avg 2 Stacks = 40 Magic Damage per auto-attack on-hit)**:
     *   Cycle Duration = \((5 + 0.8) / 0.75 = 7.73\text{ seconds}\)
     *   Normal DPS = \((5 \times 45) / 7.73 \times 1.10 = \mathbf{32.0}\)
-    *   Spell DPS = \((110 \text{ active} + 40 \text{ stacks}) / 7.73 \times 1.10 = \mathbf{21.3}\)
-    *   Total DPS = \(32.0 + 21.3 = \mathbf{53.3}\)
-*   **Star Scaling (Unequipped, 2 Stacks; active 110/165/250, stack 20/30/45 per star)**:
-    *   **1★**: Normal = 32.0 | Spell = 21.3 | **Total DPS: 53.3**
-    *   **2★**: Normal = 48.0 | Spell = 32.0 | **Total DPS: 80.0**
-    *   **3★**: Normal = 72.0 | Spell = 48.4 | **Total DPS: 120.4**
+    *   Spell DPS = \((110 \text{ active} + 200 \text{ on-hit}) / 7.73 \times 1.10 = \mathbf{44.1}\)  *(Note: 200 on-hit is calculated as 5 basic attacks × average stack damage of 40)*
+    *   Total DPS = \(32.0 + 44.1 = \mathbf{76.1}\)
+*   **Star Scaling (Unequipped, 30s avg stacks; active 110/165/250, stack 20/30/45 per star)**:
+    *   **1★**: Normal = 32.0 | Spell = 44.1 | **Total DPS: 76.1**
+    *   **2★**: Normal = 48.0 | Spell = 66.2 | **Total DPS: 114.2**
+    *   **3★**: Normal = 72.0 | Spell = 99.6 | **Total DPS: 171.6**
 
 #### 🧮 Equipped Calculations (Jeweled Gauntlet + Hextech Gunblade + Titan's Resolve)
 *   **Stats (Max Titan's Stacks)**: AD = 77 (+70% AD) | AS = 0.94 | AP = 195 | Crit Chance = 40% (1.28x avg multiplier, spell crits enabled)
-*   **Cycle & DPS (2 stacks: on-hit = 40 base magic per attack → 200 base on-hit damage over the 5-attack cycle)**:
+*   **Cycle & DPS (Scaled over 30s fight: Avg 2 Stacks = 40 Magic Damage per auto-attack on-hit → 200 base on-hit damage over 5-attack cycle)**:
     *   Cycle Duration = \((5 + 0.8) / 0.94 = \mathbf{6.17\text{ seconds}}\)
     *   Normal DPS = \((5 \times 77) / 6.17 \times 1.28 = \mathbf{79.9}\)
-    *   Spell Damage per cycle = \((110 \text{ active} + 200 \text{ on-hit}) \times 1.95 \text{ AP} \times 1.28 = 773.8\)
+    *   Spell Damage per cycle = \((110 \text{ active} + 200 \text{ on-hit}) \times 1.95 \text{ AP} \times 1.28 = 773.8\)  *(Note: 200 on-hit is calculated as 5 basic attacks × average stack damage of 40)*
 *   **Output Breakdown**:
     | Component | Raw Damage | DPS Contribution | Total DPS |
     | :--- | :---: | :---: | :---: |
     | **Normal Attacks** | 492.8 (5 hits) | 79.9 | \- |
     | **Spell Cast & Stacks** | 773.8 (1 cast + 5 on-hits) | 125.4 | \- |
     | **Combined** | 1266.6 | \- | **205.3** |
+
+#### 🔍 Analyze DPS
+*   **Close-Range Melee Scaling**: Viego is a close-ranged carry who also focuses mainly on 1 target.
+*   **Engagement Scaling**: Stacking magic damage on-hit over a 30s fight duration (averaging 2 stacks active) raises his baseline DPS to **76.1** unequipped and **205.3** equipped, rewarding long melee engagements.

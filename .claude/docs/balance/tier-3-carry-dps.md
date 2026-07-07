@@ -16,12 +16,12 @@ Putting baseline and itemized calculations in a single document guarantees that 
 | **Akshan** (Single Target) | 1★<br>2★<br>3★ | 60<br>90<br>135 | 0.75 | 38.9<br>58.3<br>87.5 | 33.6<br>52.2<br>80.9 | **72.5**<br>**110.5**<br>**168.4** |
 | **Darius** (1 Reset / 2 Casts Avg) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.70 | 40.9<br>61.4<br>92.1 | 37.6<br>56.0<br>82.7 | **78.5**<br>**117.4**<br>**174.8** |
 | **Ekko** (Single Target) | 1★<br>2★<br>3★ | 50<br>75<br>113 | 0.80 | 37.9<br>56.9<br>85.3 | 38.7<br>57.7<br>86.5 | **76.6**<br>**114.6**<br>**171.8** |
-| **Garen** (2 Targets Avg) | 1★<br>2★<br>3★ | 70<br>105<br>158 | 0.75 | 42.0<br>63.0<br>94.5 | 67.2<br>103.3<br>160.7 | **109.2**<br>**166.3**<br>**255.2** |
+| **Garen** (1 Target Typical) | 1★<br>2★<br>3★ | 70<br>105<br>158 | 0.75 | 42.0<br>63.0<br>94.8 | 33.6<br>51.7<br>80.6 | **75.6**<br>**114.7**<br>**175.4** |
 | **Kalista** (Single Target, 12 stack Rend) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.85 | 37.1<br>55.7<br>83.5 | 27.0<br>40.5<br>67.5 | **64.1**<br>**96.2**<br>**151.0** |
 | **Karma** (2 Targets Avg) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 29.9<br>44.8<br>67.3 | 75.2<br>112.8<br>169.3 | **105.1**<br>**157.6**<br>**236.6** |
 | **Katarina** (1.5 Targets / 4.5 hits Avg) | 1★<br>2★<br>3★ | 50<br>75<br>113 | 0.75 | 35.9<br>53.8<br>80.7 | 58.5<br>88.8<br>141.2 | **94.4**<br>**142.6**<br>**221.9** |
 | **Rek'Sai** (Target < 66% HP, Marked) | 1★<br>2★<br>3★ | 60<br>90<br>135 | 0.75 | 45.0<br>67.5<br>101.2 | 25.1<br>37.6<br>56.4 | **70.1**<br>**105.1**<br>**157.6** |
-| **Vel'Koz** (1.5 Targets Avg splits) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 27.2<br>40.8<br>61.2 | 37.4<br>56.1<br>93.4 | **64.6**<br>**96.9**<br>**154.6** |
+| **Vel'Koz** (2 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 27.2<br>40.8<br>61.2 | 49.8<br>74.7<br>124.6 | **77.0**<br>**115.5**<br>**185.8** |
 
 ### ⚔️ Table 2: Well-Equipped (3-Item) DPS Summary
 *Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped. Ramping items (AA, Guinsoo) represent **[Start / End / Average]**.*
@@ -31,12 +31,12 @@ Putting baseline and itemized calculations in a single document guarantees that 
 | **Akshan** (Single Target) | 1★<br>2★<br>3★ | 133<br>200<br>300 | 0.83 | 161.3<br>242.0<br>362.9 | 82.2<br>125.4<br>191.5 | **243.5**<br>**367.4**<br>**554.4** |
 | **Darius** (1 Reset / 2 Casts Avg) | 1★<br>2★<br>3★ | 133<br>200<br>300 | 0.88 | 118.7<br>178.1<br>267.1 | 103.3<br>154.2<br>228.5 | **222.0**<br>**332.3**<br>**495.6** |
 | **Ekko** (Single Target) | 1★<br>2★<br>3★ | 85<br>128<br>191 | 1.00 | 93.8<br>140.8<br>211.1 | 109.7<br>163.5<br>245.3 | **203.5**<br>**304.3**<br>**456.4** |
-| **Garen** (2 Targets Avg) | 1★<br>2★<br>3★ | 119<br>179<br>268 | 0.94 | 97.4<br>146.1<br>219.2 | 194.8<br>299.5<br>465.7 | **292.2**<br>**445.6**<br>**684.9** |
+| **Garen** (1 Target Typical) | 1★<br>2★<br>3★ | 119<br>179<br>268 | 0.94 | 97.4<br>146.3<br>219.0 | 97.4<br>146.3<br>219.0 | **194.8**<br>**292.6**<br>**438.0** |
 | **Kalista** (Single Target, 12 stack Rend) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 1.13 / 2.92 / 2.02 | 57.4 / 148.4 / 102.7<br>86.1 / 222.6 / 154.1<br>129.2 / 333.9 / 231.1 | 75.8 / 195.9 / 135.5<br>113.8 / 293.8 / 203.3<br>189.6 / 489.7 / 338.8 | **133.2 / 344.3 / 238.2**<br>**199.9 / 516.4 / 357.4**<br>**318.8 / 823.6 / 569.9** |
 | **Karma** (2 Targets Avg) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 33.6<br>50.4<br>75.6 | 158.7 / 285.6 / 211.6<br>238.1 / 428.5 / 317.4<br>357.1 / 642.8 / 476.1 | **192.3 / 319.2 / 245.2**<br>**288.5 / 478.9 / 367.8**<br>**432.7 / 718.4 / 551.7** |
 | **Katarina** (1.5 Targets / 4.5 hits Avg) | 1★<br>2★<br>3★ | 50<br>75<br>113 | 0.75 | 41.7<br>62.6<br>93.9 | 113.5<br>172.3<br>274.1 | **155.2**<br>**234.9**<br>**368.0** |
 | **Rek'Sai** (Target < 66% HP, Marked) | 1★<br>2★<br>3★ | 123<br>185<br>277 | 0.94 | 130.3<br>195.5<br>293.2 | 64.4<br>96.6<br>144.9 | **194.7**<br>**292.1**<br>**438.1** |
-| **Vel'Koz** (1.5 Targets Avg splits) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 30.9<br>46.4<br>69.5 | 102.0<br>152.9<br>254.9 | **132.9**<br>**199.3**<br>**324.4** |
+| **Vel'Koz** (2 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 30.9<br>46.4<br>69.5 | 135.9<br>203.8<br>339.7 | **166.8**<br>**250.2**<br>**409.2** |
 
 ---
 
@@ -101,6 +101,10 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **Bullet Spray Spell** | 1385.7 (6 hits) | 82.2 | \- |
     | **Combined** | 4106.9 | \- | **243.5** |
 
+#### 🔍 Analyze DPS
+*   **Backline Sniping & Target Lock**: Akshan is a backliner who focuses on the enemy's backline. When nothing blocks his line of sight, he easily snipes and executes fragile targets.
+*   **Game Plan vs. Frontline Melt**: Although his raw sustained DPS is lower than Jinx, he is not weaker because his goal is to pick off the high-value enemy carries directly rather than melting front-row tanks.
+
 ---
 
 ### 2. Darius 🪓
@@ -137,6 +141,10 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **Guillotine Casts** | 1291.1 (2 hits) | 103.3 | \- |
     | **Combined** | 2775.4 | \- | **222.0** |
 
+#### 🔍 Analyze DPS
+*   **タンクかつ火力 (Tanky Juggernaut)**: Darius is a tanky Juggernaut who balances durability with high damage.
+*   **Reset Mechanics**: His DPS is highly dependent on his executing reset mechanic, which allows immediate recasts upon securing a kill. Factoring in a conservative average of 1 reset (2 casts) per cycle, his DPS (**78.5** unequipped, **222.0** equipped) is solid, reflecting his strong hybrid identity.
+
 ---
 
 ### 3. Ekko ⏳
@@ -172,6 +180,10 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **Chronobreak Cast** | 636.5 (1 hit) | 109.7 | \- |
     | **Combined** | 1180.5 | \- | **203.5** |
 
+#### 🔍 Analyze DPS
+*   **Assassin Archetype**: Ekko is a melee assassin similar to Zed.
+*   **Carrying Focus**: His raw sustained DPS is lower than Jinx's, which is normal for his class. As an assassin, his game plan is to dive and eliminate the enemy carry in the backline, rather than grinding down frontline defenders.
+
 ---
 
 ### 4. Garen 🌀
@@ -183,30 +195,34 @@ Putting baseline and itemized calculations in a single document guarantees that 
 
 #### 🧮 Baseline (Unequipped) Calculations
 *   **Stats**: AD = 70 | AS = 0.75 | AP = 100 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS (Assuming 2 Targets Hit Avg, spins = 8)**:
+*   **Cycle & DPS (Assuming 1 Target Typical, spins = 8)**:
     *   Cycle Duration = \((8 / 0.75) + 4.0 = \mathbf{14.67\text{ seconds}}\)
     *   Normal DPS = \((8 \times 70) / 14.67 \times 1.10 = \mathbf{42.0}\)
-    *   Spell Damage = \((70 \text{ AD} \times 0.80) \times 8 \text{ spins} \times 2 \text{ targets} = 896.0\)
-    *   Spell DPS = \(896.0 / 14.67 \times 1.10 = \mathbf{67.2}\)
-    *   Total DPS = \(42.0 + 67.2 = \mathbf{109.2}\)
-*   **Star Scaling (Unequipped, 2 Targets; spin AD-ratio scales 0.80/0.82/0.85 per star)**:
-    *   **1★**: AD = 70 | Spell = 896.0 | **Total DPS: 109.2**
-    *   **2★**: AD = 105 | Spell = 1377.6 | **Total DPS: 166.3**
-    *   **3★**: AD = 158 | Spell = 2142.0 | **Total DPS: 255.2**
+    *   Spell Damage = \((70 \text{ AD} \times 0.80) \times 8 \text{ spins} \times 1 \text{ target} = 448.0\)
+    *   Spell DPS = \(448.0 / 14.67 \times 1.10 = \mathbf{33.6}\)
+    *   Total DPS = \(42.0 + 33.6 = \mathbf{75.6}\)
+*   **Star Scaling (Unequipped, 1 Target; spin AD-ratio scales 0.80/0.82/0.85 per star)**:
+    *   **1★**: AD = 70 | Spell = 448.0 | **Total DPS: 75.6**
+    *   **2★**: AD = 105 | Spell = 688.8 | **Total DPS: 114.7**
+    *   **3★**: AD = 158 | Spell = 1074.4 | **Total DPS: 175.4**
 
 #### 🧮 Equipped Calculations (Bloodthirster + Titan's Resolve + Jeweled Gauntlet)
 *   **Stats**: AD = 119 (+70% AD) | AS = 0.94 | AP = 170 (no effect — Judgement is a pure AD-ratio spin) | Crit Chance = 40% (1.28x avg multiplier, JG spell crits enabled)
-*   **Cycle & DPS (Assuming 2 Targets Hit Avg; +25% bonus AS → 2.5 spins/s × 4s = 10 spins)**:
+*   **Cycle & DPS (Assuming 1 Target Typical; +25% bonus AS → 2.5 spins/s × 4s = 10 spins)**:
     *   Cycle Duration = \((8 / 0.94) + 4.0 = \mathbf{12.53\text{ seconds}}\)
     *   Normal DPS = \((8 \times 119) / 12.53 \times 1.28 = \mathbf{97.4}\)
     *   Single Spin Damage = \((119 \text{ AD} \times 0.80) \times 1.28 \text{ (Crit)} = 121.9\)
-    *   Spell DPS = \(121.9 \times 10 \text{ spins} \times 2 \text{ targets} / 12.53 = \mathbf{194.8}\)
+    *   Spell DPS = \(121.9 \times 10 \text{ spins} \times 1 \text{ target} / 12.53 = \mathbf{97.4}\)
 *   **AoE Multi-Target Outputs**:
-    | Target Count | Spell Damage (10 spins) | Spell DPS | Total DPS |
+    | Target Density | Spell Damage (10 spins) | Spell DPS | Total DPS |
     | :--- | :---: | :---: | :---: |
-    | **1 Target** | 1218.6 | 97.4 | **194.8** |
-    | **2 Targets (Avg)** | 2437.1 | 194.8 | **292.2** |
+    | **1 Target (Typical)** | 1218.6 | 97.4 | **194.8** |
+    | **2 Targets** | 2437.1 | 194.8 | **292.2** |
     | **3 Targets** | 3655.7 | 292.2 | **389.6** |
+
+#### 🔍 Analyze DPS
+*   **Juggernaut Archetype Balance**: Garen is a tanky Juggernaut who deals damage. Previously, assuming he always hit 2 targets resulted in a misleadingly high 100+ baseline DPS, making him look far stronger than Darius.
+*   **Hit Density Realism**: In practice, his spin typically hits only 1 target (occasionally 2). Restricting the baseline calculation to 1 target typical lowers his unequipped DPS to **75.6** and equipped to **194.8**, bringing him in line with Darius's profile.
 
 ---
 
@@ -247,6 +263,13 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **End (30s)** | 2.92 | 2.33s | 148.4 | 195.9 | **344.3** |
     | **Average** | 2.02 | 3.37s | 102.7 | 135.5 | **238.2** |
 
+#### 🔍 Analyze DPS
+*   **Tank Melt Specialization**: Kalista is a backline tank-shredder who focuses purely on a single target. Logically, she should have the highest DPS in Tier 3, yet she sits at a relatively low **64.1** baseline.
+*   **Mitigating Factors**:
+    1.  **True Damage Execution**: Her spell damage is true damage (bypassing armor and magic resist), which is inherently highly efficient.
+    2.  **No Overdamage Waste**: Her passive executes targets at their exact health threshold. This prevents "overdamage" (e.g. losing value by overkilling a 300 HP target with a 1000 damage spell), giving her higher functional combat value than her paper DPS suggests.
+    3.  **AS Scaling Profile**: Like Tristana, she is an Attack Speed-reliant hero, meaning her baseline starts low but scales dramatically with items.
+
 ---
 
 ### 6. Karma 🪷
@@ -285,6 +308,10 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **End (30s)** | 2.70x | 587.5 | 142.8 | **176.4** | 285.6 | **319.2** |
     | **Average** | 2.00x | 435.2 | 105.8 | **139.4** | 211.6 | **245.2** |
 
+#### 🔍 Analyze DPS
+*   **Massive Area Burst & Overlap**: Karma is a backliner who deals massive AoE damage. Her energy bursts have a 1-hex radius (the same as Teemo's mushroom), giving her a large effective hitbox.
+*   **High Sustained Output**: Because of her large hitbox, it is easy to consistently hit 2 targets per cast. Factoring in her multicaster bursts (where every 3rd cast fires 3 bursts), her unequipped DPS of **105.1** and equipped average of **245.2** reflect her status as a premier backline AP carry.
+
 ---
 
 ### 7. Katarina 🔪
@@ -319,6 +346,10 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **1 Target** | 3 hits | 928.4 | 75.7 | **117.4** |
     | **1.5 Targets (Avg)**| 4.5 hits | 1392.6 | 113.5 | **155.2** |
     | **2 Targets** | 6 hits | 1856.9 | 151.4 | **193.1** |
+
+#### 🔍 Analyze DPS
+*   **Premier Assassin Threat**: Katarina is a melee assassin who teleports into the backline.
+*   **Class-Leading DPS**: Among the assassin champions (like Zed and Ekko), Katarina exhibits the highest raw DPS (**94.4** unequipped, **155.2** equipped). This high damage potential, combined with backline access and wound/grievous wounds utility, makes her one of the most powerful and meta-defining carry units in her tier.
 
 ---
 
@@ -359,26 +390,46 @@ Putting baseline and itemized calculations in a single document guarantees that 
 
 #### 🧮 Baseline (Unequipped) Calculations
 *   **Stats**: AD = 40 | AS = 0.70 | AP = 100 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS (Assuming 1.5 Targets Avg = 75% extra damage split)**:
+*   **Split Projectile Damage Model**: The primary plasma fission bolt deals 100% damage to the first target hit. The two perpendicular split projectiles each deal 50% damage to any targets they pass through. Total damage per cast is modeled as:
+    $$\text{Spell Damage} = \text{Base Damage} \times (1.0 + 0.5 \times T_{\text{split}})$$
+    where $T_{\text{split}}$ is the number of secondary targets hit by both split projectiles.
+*   **Cycle & DPS (Assuming 2 Split Targets hit, $T_{\text{split}} = 2$, base = 220)**:
     *   Cycle Duration = \((6 + 0.8) / 0.70 = \mathbf{9.71\text{ seconds}}\)
     *   Normal DPS = \((6 \times 40) / 9.71 \times 1.10 = \mathbf{27.2}\)
-    *   Spell Damage = \(220 \text{ base} \times 1.5 \text{ targets} = 330.0\)
-    *   Spell DPS = \(330.0 / 9.71 \times 1.10 = \mathbf{37.4}\)
-    *   Total DPS = \(27.2 + 37.4 = \mathbf{64.6}\)
-*   **Star Scaling (Unequipped, 1.5 Targets; bolt base 220/330/550 per star)**:
-    *   **1★**: Normal = 27.2 | Spell = 37.4 | **Total DPS: 64.6**
-    *   **2★**: Normal = 40.8 | Spell = 56.1 | **Total DPS: 96.9**
-    *   **3★**: Normal = 61.2 | Spell = 93.4 | **Total DPS: 154.6**
+    *   Spell Damage = \(220 \text{ base} \times (1.0 + 0.5 \times 2) = 440.0\)
+    *   Spell DPS = \(440.0 / 9.71 \times 1.10 = \mathbf{49.8}\)
+    *   Total DPS = \(27.2 + 49.8 = \mathbf{77.0}\)
+*   **Unequipped Hit Density Scenarios (1★, AD=40, AS=0.70)**:
+    | Scenario | $T_{\text{split}}$ | Spell Damage | Spell DPS | Total DPS |
+    | :--- | :---: | :---: | :---: | :---: |
+    | **Min (Main only)** | 0 | 220.0 | 24.9 | **52.1** |
+    | **1 Split Target** | 1 | 330.0 | 37.4 | **64.6** |
+    | **2 Split Targets (Avg)** | 2 | 440.0 | 49.8 | **77.0** |
+    | **3 Split Targets** | 3 | 550.0 | 62.3 | **89.5** |
+    | **4 Split Targets (Max)** | 4 | 660.0 | 74.8 | **102.0** |
+*   **Star Scaling (Unequipped, 2 Split Targets ($T_{\text{split}} = 2$); base 220/330/550)**:
+    *   **1★**: Normal = 27.2 | Spell = 49.8 | **Total DPS: 77.0**
+    *   **2★**: Normal = 40.8 | Spell = 74.7 | **Total DPS: 115.5**
+    *   **3★**: Normal = 61.2 | Spell = 124.6 | **Total DPS: 185.8**
 
 #### 🧮 Equipped Calculations (Blue Buff + Jeweled Gauntlet + Rabadon's Deathcap)
 *   **Stats**: AD = 40 | AS = 0.70 | AP = 200 (100 + BB 10 + JG 20 + Rabadon 70) | Crit Chance = 40% (1.28x avg multiplier, spell crits enabled)
-*   **Cycle & DPS (Assuming 1.5 Targets Avg, Blue Buff requires 5 attacks to cast)**:
+*   **Cycle & DPS (Assuming 2 Split Targets, Blue Buff requires 5 attacks to cast)**:
     *   Cycle Duration = \((5 + 0.8) / 0.70 = \mathbf{8.29\text{ seconds}}\)
     *   Normal DPS = \((5 \times 40) / 8.29 \times 1.28 = \mathbf{30.9}\)
     *   Base Spell Damage = \(220 \text{ base} \times 2.00 \text{ AP} \times 1.28 = 563.2\)
-*   **AoE Multi-Target / Split Outputs**:
-    | Target Count | Spell Damage | Spell DPS | Total DPS |
-    | :--- | :---: | :---: | :---: |
-    | **1 Target (No splits)** | 563.2 | 68.0 | **98.9** |
-    | **1.5 Targets (Avg splits)**| 844.8 | 102.0 | **132.9** |
-    | **2 Targets (Full splits)** | 1126.4 | 135.9 | **166.8** |
+*   **Equipped Split Projectile Outputs**:
+    | Scenario | $T_{\text{split}}$ | Spell Damage | Spell DPS | Total DPS |
+    | :--- | :---: | :---: | :---: | :---: |
+    | **Min (Main only)** | 0 | 563.2 | 68.0 | **98.9** |
+    | **1 Split Target** | 1 | 844.8 | 102.0 | **132.9** |
+    | **2 Split Targets (Avg)** | 2 | 1126.4 | 135.9 | **166.8** |
+    | **3 Split Targets** | 3 | 1408.0 | 169.8 | **200.7** |
+    | **4 Split Targets (Max)** | 4 | 1689.6 | 203.8 | **234.7** |
+
+#### 🔍 Analyze DPS
+*   **Multicaster Burst & Split Mechanics**: Vel'Koz is a backline AP carry similar to Teemo. He relies on his Plasma Fission splits to hit multiple targets.
+*   **Hit Density & Split Pathing**: 
+    > [!WARNING]
+    > **Unsure / Under Review**: Vel'Koz's actual combat hit density is highly variable. Unlike standard AoE circles, his spell only hits the first target directly. The split projectiles travel outwards perpendicular to the collision point and can pierce multiple enemies in their path.
+*   **High Density Potential**: If the enemy frontline is clumped, the split bolts can easily pass through 3 or 4 secondary heroes ($T_{\text{split}} \ge 3$), sending his equipped DPS up to **200.7** or **234.7** (and 3★ scaling beyond **500+**). While the tables assume a conservative average of 2 split targets hit ($T_{\text{split}} = 2$) for a total DPS of **77.0** unequipped / **166.8** equipped, this number represents a baseline that can easily be exceeded in crowded fights.

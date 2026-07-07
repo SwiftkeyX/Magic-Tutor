@@ -16,7 +16,7 @@ Putting baseline and itemized calculations in a single document guarantees that 
 | **Jinx** (5 Rockets Sum) | 1★<br>2★<br>3★ | 50<br>75<br>113 | 0.75 | 36.1<br>54.1<br>81.2 | 46.4<br>70.3<br>110.9 | **82.5**<br>**124.4**<br>**192.1** |
 | **Teemo** (2 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 26.6<br>39.8<br>59.7 | 69.0<br>103.5<br>155.3 | **95.6**<br>**143.3**<br>**215.0** |
 | **Taliyah** (Self-Trigger, 1 Boulder) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 27.2<br>40.8<br>61.2 | 38.5<br>57.8<br>86.6 | **65.7**<br>**98.6**<br>**147.8** |
-| **Zed** (Double Slash, 1 Target) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.70 | 42.4<br>63.5<br>95.3 | 22.4<br>34.2<br>51.8 | **64.8**<br>**97.7**<br>**147.1** |
+| **Zed** (Slash x3, 2 Targets Avg) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.70 | 42.4<br>63.9<br>95.5 | 33.7<br>51.5<br>77.9 | **76.1**<br>**115.4**<br>**173.4** |
 
 ### ⚔️ Table 2: Well-Equipped (3-Item) DPS Summary
 *Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped. Ramping items (Archangel's for Taliyah) represent **[Start / End / Average]** over a 30s fight.*
@@ -26,7 +26,7 @@ Putting baseline and itemized calculations in a single document guarantees that 
 | **Jinx** (5 Rockets Sum) | 1★<br>2★<br>3★ | 98<br>147<br>221 | 0.90 | 132.0<br>198.0<br>297.0 | 103.9<br>158.9<br>248.7 | **235.9**<br>**356.9**<br>**545.7** |
 | **Teemo** (2 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 29.9<br>44.8<br>67.2 | 194.1<br>291.2<br>436.8 | **224.0**<br>**336.0**<br>**504.0** |
 | **Taliyah** (2 Passive Boulders) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 31.6<br>47.4<br>71.1 | 100.0 / 172.7 / 130.3<br>150.0 / 259.1 / 195.5<br>225.0 / 388.6 / 293.2 | **131.6 / 204.3 / 161.9**<br>**197.4 / 306.5 / 242.9**<br>**296.1 / 459.7 / 364.3** |
-| **Zed** (3 Slashes / 2 Targets) | 1★<br>2★<br>3★ | 122<br>183<br>275 | 0.70 | 105.9<br>158.9<br>238.3 | 72.8<br>110.2<br>171.8 | **178.7**<br>**269.1**<br>**410.1** |
+| **Zed** (Slash x3, 2 Targets Avg) | 1★<br>2★<br>3★ | 122<br>183<br>275 | 0.70 | 105.9<br>158.9<br>238.3 | 72.8<br>110.2<br>171.8 | **178.7**<br>**269.1**<br>**410.1** |
 
 ---
 
@@ -88,6 +88,9 @@ Putting baseline and itemized calculations in a single document guarantees that 
     *   Spell DPS = \(810 / 8.89 \times 1.14 = \mathbf{103.9}\)
     *   Total DPS = \(132.0 + 103.9 = \mathbf{235.9}\)
 
+#### 🔍 Analyze DPS
+*   **Backline Splash Damage**: Jinx is a backliner who does splash damage. Her base and equipped DPS numbers are naturally higher than Tier 1 carries (such as Tristana's single-splash baseline), which aligns with her higher cost tier and clean rocket targeting.
+
 ---
 
 ### 2. Teemo 🍄
@@ -118,6 +121,10 @@ Putting baseline and itemized calculations in a single document guarantees that 
     *   Spell Damage (1 Target) = \(260 \times 2.00 \text{ AP} \times 1.28 = 665.6\)
     *   Spell DPS (2 Targets) = \(1331.2 / 6.86 = \mathbf{194.1}\)
     *   Total DPS = \(29.9 + 194.1 = \mathbf{224.0}\)
+
+#### 🔍 Analyze DPS
+*   **Massive Area Poison & Delay**: Teemo is a backliner who does AoE damage. His baseline and equipped DPS are higher than Tier 1 carries, and his total damage output can escalate dramatically in crowded fights due to the large circular area of his mushroom blast.
+*   **Why is he not OP?**: Despite high theoretical DPS, Teemo's damage is a Damage-over-Time (DoT) effect applied over 3 seconds. This delay allows enemies to heal through it, and often leads to "wasted" damage on units that die before the full duration ticks out, balancing his large AoE threat.
 
 ---
 
@@ -157,6 +164,10 @@ Putting baseline and itemized calculations in a single document guarantees that 
     | **End (30s)** | 2.85x | 1678.1 | 172.7 | **204.3** |
     | **Average** | 2.15x | 1266.1 | 130.3 | **161.9** |
 
+#### 🔍 Analyze DPS
+*   **Synergy-Dependent Combo Carry**: Taliyah is a backliner who scales her damage with knockups. Her unequipped baseline DPS is lower than Tier 1 carries, which is expected because she is balanced around her passive, which requires external knockups from allies to trigger bonus damage boulders.
+*   **Comp Limitation**: Without allies triggering stuns/knockups, her DPS is very low. She can only function as a main carry in highly specific team compositions (such as the Sett + Taliyah double-knockup combo).
+
 ---
 
 ### 4. Zed 🥷
@@ -169,21 +180,40 @@ Putting baseline and itemized calculations in a single document guarantees that 
 
 #### 🧮 Baseline (Unequipped) Calculations
 *   **Stats**: AD = 55 | AS = 0.70 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS (Zed + clone double-slash the same target: \((55 \times 1.40 + 25) \times 2 = 204\))**:
+*   **Cycle & DPS (Zed + clone slash 2 targets avg — 3 slashes total: \((55 \times 1.40 + 25) \times 3 = 306\))**:
     *   Cycle Duration = \(7 / 0.70 = \mathbf{10.00\text{ seconds}}\)
     *   Normal DPS = \(55 \times 0.70 \times 1.10 = \mathbf{42.4}\)
-    *   Spell DPS = \(204 / 10.00 \times 1.10 = \mathbf{22.4}\)
-    *   Total DPS = \(42.4 + 22.4 = \mathbf{64.8}\)
-*   **Star Scaling (Unequipped, Double Slash; ratio 1.40/1.40/1.50, flat 25/40/50)**:
-    *   **1★**: Slash ×2 = 204 | **Total DPS: 64.8**
-    *   **2★**: Slash ×2 = 311 | **Total DPS: 97.7**
-    *   **3★**: Slash ×2 = 471.2 | **Total DPS: 147.1**
+    *   Spell DPS (3 hits total) = \(306 / 10.00 \times 1.10 = \mathbf{33.7}\)
+    *   Total DPS (3 hits total) = \(42.4 + 33.7 = \mathbf{76.1}\)
+*   **Star & Target Scaling (Unequipped; ratio 1.40/1.40/1.50, flat 25/40/50)**:
+    *   *Slash x2 (1 Target double-hit)*:
+        *   **1★**: Normal = 42.4 | Spell = 22.4 | **Total DPS: 64.8**
+        *   **2★**: Normal = 63.9 | Spell = 34.2 | **Total DPS: 98.1**
+        *   **3★**: Normal = 95.5 | Spell = 51.9 | **Total DPS: 147.4**
+    *   *Slash x3 (2 Targets Avg, 3 hits total)*:
+        *   **1★**: Normal = 42.4 | Spell = 33.7 | **Total DPS: 76.1**
+        *   **2★**: Normal = 63.9 | Spell = 51.5 | **Total DPS: 115.4**
+        *   **3★**: Normal = 95.5 | Spell = 77.9 | **Total DPS: 173.4**
+    *   *Slash x4 (2 Targets Max, 4 hits total)*:
+        *   **1★**: Normal = 42.4 | Spell = 44.9 | **Total DPS: 87.3**
+        *   **2★**: Normal = 63.9 | Spell = 68.7 | **Total DPS: 132.6**
+        *   **3★**: Normal = 95.5 | Spell = 103.8 | **Total DPS: 199.3**
 
 #### 🧮 Equipped Calculations (Infinity Edge + Deathblade + Bloodthirster)
 *   **Stats**: AD = 122 (+121% AD) | AS = 0.70 | Crit Chance = 60% (1.24x avg multiplier, spell crits enabled)
-*   **Cycle & DPS (3 slashes hitting 2 targets — typical clumped fight)**:
+*   **Cycle & DPS (Zed and clone slash 2 adjacent targets — 3 slashes avg total)**:
     *   Cycle Duration = \(7 / 0.70 = \mathbf{10.00\text{ seconds}}\)
     *   Normal DPS = \(122 \times 0.70 \times 1.24 = \mathbf{105.9}\)
     *   Single Slash = \((122 \times 1.40 + 25) \times 1.24 = 242.8\)
-    *   Spell DPS (3 slashes) = \(728.4 / 10.00 = \mathbf{72.8}\)
-    *   Total DPS = \(105.9 + 72.8 = \mathbf{178.7}\)
+    *   Spell DPS (3 slashes avg) = \(728.4 / 10.00 = \mathbf{72.8}\)
+    *   Total DPS (3 slashes avg) = \(105.9 + 72.8 = \mathbf{178.7}\)
+*   **AoE Multi-Target Outputs**:
+    | Target Count / Slashes | Spell Damage | Spell DPS | Total DPS |
+    | :--- | :---: | :---: | :---: |
+    | **1 Target (2 slashes)** | 485.6 | 48.6 | **154.5** |
+    | **2 Targets Avg (3 slashes)**| 728.4 | 72.8 | **178.7** |
+    | **2 Targets Max (4 slashes)**| 971.2 | 97.1 | **203.0** |
+
+#### 🔍 Analyze DPS
+*   **Backline Infiltration & Cleave**: Zed is a melee assassin who can jump directly to the enemy backline to assassinate carries.
+*   **AoE Hit Density & Jinx Comparison**: To ensure balanced scaling, Zed's DPS should not exceed Jinx's (the primary Tier 2 backline splash carry). By assuming his skill hits 2 targets on average but does not trigger a full double-slash (averaging 3 slashes total across all targets, rather than 4), his unequipped DPS is centered at **76.1** and equipped at **178.7** (both safely below Jinx's **82.5** / **235.9**), while his maximum cleave potential (Slash x4) can still reach **87.3** unequipped and **203.0** equipped.
