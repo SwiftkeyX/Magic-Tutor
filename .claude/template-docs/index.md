@@ -27,3 +27,8 @@ These files are structural templates for a new project. They contain no project-
 | `other/coding-style.md` | Reference only | Required code patterns and anti-patterns |
 | `other/asset-conventions.md` | Reference only | Folder layout, naming rules, import settings |
 | `other/onboarding.md` | Reference only | Onboarding guide for new contributors or agents |
+
+## Balance (`balance/`)
+| File | Use | Purpose |
+|---|---|---|
+| `balance/template-tier-[x]-dps-analysis.md` | Copy and fill | Standard layout for tier-specific carry DPS overview analyses |
