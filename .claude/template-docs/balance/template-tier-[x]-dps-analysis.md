@@ -8,11 +8,8 @@ All calculations are derived from first principles using base stats sourced dire
 
 ## 🗺️ Index & Navigation
 
-*   **Summary Tables**:
-    *   [Table 1a: Baseline (Unequipped) DPS - 15s Fight](#table-1a-baseline-unequipped-dps---15s-fight)
-    *   [Table 1b: Well-Equipped (3-Item) DPS - 15s Fight](#table-1b-well-equipped-3-item-dps---15s-fight)
-    *   [Table 2a: Baseline (Unequipped) DPS - 30s Fight](#table-2a-baseline-unequipped-dps---30s-fight)
-    *   [Table 2b: Well-Equipped (3-Item) DPS - 30s Fight](#table-2b-well-equipped-3-item-dps---30s-fight)
+*   [Table 1: Baseline (Unequipped) DPS Summary](#table-1-baseline-unequipped-dps-summary)
+*   [Table 2: Well-Equipped (3-Item) DPS Summary](#table-2-well-equipped-3-item-dps-summary)
 *   **Carries Breakdown**:
     *   [[Champion 1 Name]](#1-champion-1-name)
     *   [[Champion 2 Name]](#2-champion-2-name)
@@ -20,47 +17,23 @@ All calculations are derived from first principles using base stats sourced dire
 
 ---
 
-## 📊 Summary tables
+## 📊 Summary Tables
 
-### ⚔️ 15-Second Combat DPS Tables
-*Consolidated comparison across 1★, 2★, and 3★ star levels for a 15-second fight.*
+### Table 1: Baseline (Unequipped) DPS Summary
+*Consolidated comparison across 1★, 2★, and 3★ star levels with NO items equipped (applicable for both 15s and 30s fights unless specified).*
 
-#### Table 1a: Baseline (Unequipped) DPS - 15s Fight
-*With NO items equipped.*
+| Champion | Hero Archetype | Duration | Star | Base AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **[Champ 1]** | [Archetype, target density / range details] | Not specify | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
+| **[Champ 2]** | [Archetype, target density / range details] | Not specify | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
 
-| Champion | Hero Archetype | Star | Base AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **[Champ 1]** | [Archetype, target density / range details] | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
-| **[Champ 2]** | [Archetype, target density / range details] | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
+### Table 2: Well-Equipped (3-Item) DPS Summary
+*Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped (applicable for both 15s and 30s fights unless specified).*
 
-#### Table 1b: Well-Equipped (3-Item) DPS - 15s Fight
-*With 3 optimal core items equipped (ramping effects averaged over 15s).*
-
-| Champion | Hero Archetype | Star | AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **[Champ 1]** ([Build/AP/AS]) | [Archetype, target density / range details] | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
-| **[Champ 2]** ([Build/AP/AS]) | [Archetype, target density / range details] | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
-
----
-
-### ⚔️ 30-Second Combat DPS Tables
-*Consolidated comparison across 1★, 2★, and 3★ star levels for a 30-second fight.*
-
-#### Table 2a: Baseline (Unequipped) DPS - 30s Fight
-*With NO items equipped.*
-
-| Champion | Hero Archetype | Star | Base AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **[Champ 1]** | [Archetype, target density / range details] | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
-| **[Champ 2]** | [Archetype, target density / range details] | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
-
-#### Table 2b: Well-Equipped (3-Item) DPS - 30s Fight
-*With 3 optimal core items equipped (ramping effects averaged over 30s).*
-
-| Champion | Hero Archetype | Star | AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **[Champ 1]** ([Build/AP/AS]) | [Archetype, target density / range details] | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
-| **[Champ 2]** ([Build/AP/AS]) | [Archetype, target density / range details] | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
+| Champion | Hero Archetype | Duration | Star | AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **[Champ 1]** (Standard) | [Archetype, target density / range details] | Not specify | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
+| **[Champ 2]** (Standard) | [Archetype, target density / range details] | Not specify | 1★<br>2★<br>3★ | [Val]<br>[Val]<br>[Val] | [Val] | [Val]<br>[Val]<br>[Val] | [Val]<br>[Val]<br>[Val] | **[Val]**<br>**[Val]**<br>**[Val]** |
 
 ---
 
@@ -76,11 +49,9 @@ All calculations are derived from first principles using base stats sourced dire
 
 #### 🧮 DPS Output Summary
 *   **Baseline (Unequipped)**:
-    *   15s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
-    *   30s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
+    *   15s / 30s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
 *   **Well-Equipped ([Item 1] + [Item 2] + [Item 3])**:
-    *   15s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
-    *   30s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
+    *   15s / 30s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
 *   **Detailed DPS Calculations**: [[Champion 1] DPS Calculations](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/[champion-1-kebab]-dps-calculation.md)
 
 #### 🔍 Analyze DPS
@@ -99,11 +70,9 @@ All calculations are derived from first principles using base stats sourced dire
 
 #### 🧮 DPS Output Summary
 *   **Baseline (Unequipped)**:
-    *   15s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
-    *   30s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
+    *   15s / 30s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
 *   **Well-Equipped ([Item 1] + [Item 2] + [Item 3])**:
-    *   15s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
-    *   30s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
+    *   15s / 30s Fight: 1★: **[Val]** | 2★: **[Val]** | 3★: **[Val]**
 *   **Detailed DPS Calculations**: [[Champion 2] DPS Calculations](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/[champion-2-kebab]-dps-calculation.md)
 
 #### 🔍 Analyze DPS
