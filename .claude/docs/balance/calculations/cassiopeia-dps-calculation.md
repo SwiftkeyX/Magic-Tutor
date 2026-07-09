@@ -59,7 +59,8 @@ This document provides the step-by-step mathematical calculations for Cassiopeia
 
 | Stat | Formula | Calculation | 1★ | 2★ | 3★ |
 | :--- | :--- | :--- | :---: | :---: | :---: |
-| AP Total | `AP_base + AP_BB + AP_JG + AP_Arch` | `100 + 10 + 20 + 70` | 200 | 200 | 200 |
+| AP Total (15s) | `AP_base + AP_BB + AP_JG + AP_Arch(15s)` | `100 + 10 + 20 + 40` (Archangel averages +40 AP over 15s) | 170 | 170 | 170 |
+| AP Total (30s) | `AP_base + AP_BB + AP_JG + AP_Arch(30s)` | `100 + 10 + 20 + 70` (Archangel averages +70 AP over 30s) | 200 | 200 | 200 |
 | Crit Chance | `Crit_base + Crit_JG` | `25% + 15%` | 40% | 40% | 40% |
 | Crit Damage | `CritDmg_base + CritDmg_JG` | `140% + 30%` | 170% | 170% | 170% |
 | Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.40 × 0.70` | 1.28 | 1.28 | 1.28 |
@@ -72,9 +73,14 @@ This document provides the step-by-step mathematical calculations for Cassiopeia
 | Cycle Duration | `ATC / AS + Lockout` | `2 / 0.70 + 0.5` | 3.357s | 3.357s | 3.357s |
 | Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(2 × [40, 60, 90] × 1.28) / 3.357s` | 30.5 | 45.8 | 68.6 |
 | Spell Base (1 Target) | `Spell` | `[160, 240, 360]` | 160.0 | 240.0 | 360.0 |
-| Spell Damage | `Spell Base × Wound × AP × Crit` | `[160, 240, 360] × 1.30 × 2.00 × 1.28` | 532.5 | 798.7 | 1198.1 |
-| Spell DPS | `Spell Damage / Cycle` | `[532.5, 798.7, 1198.1] / 3.357s` | 158.6 | 237.9 | 356.9 |
-| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **189.1** | **283.7** | **425.5** |
+| **Case 1: 15s Fight (170 AP)** | | | | | |
+| Spell Damage (15s) | `Spell Base × Wound × AP × Crit` | `[160, 240, 360] × 1.30 × 1.70 × 1.28` | 452.6 | 678.9 | 1018.4 |
+| Spell DPS (15s) | `Spell Damage / Cycle` | `[452.6, 678.9, 1018.4] / 3.357s` | 134.8 | 202.2 | 303.4 |
+| **Total DPS (15s)** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **165.3** | **248.0** | **372.0** |
+| **Case 2: 30s Fight (200 AP)** | | | | | |
+| Spell Damage (30s) | `Spell Base × Wound × AP × Crit` | `[160, 240, 360] × 1.30 × 2.00 × 1.28` | 532.5 | 798.7 | 1198.1 |
+| Spell DPS (30s) | `Spell Damage / Cycle` | `[532.5, 798.7, 1198.1] / 3.357s` | 158.6 | 237.9 | 356.9 |
+| **Total DPS (30s)** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **189.1** | **283.7** | **425.5** |
 
 ---
 

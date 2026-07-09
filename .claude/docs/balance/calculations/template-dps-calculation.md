@@ -22,11 +22,13 @@ This document provides the step-by-step mathematical calculations for [Champion 
 | :--- | :---: |
 | **Attack Speed (AS)** | [Value] |
 | **Max Mana** | [Value] |
+| **Start Mana** | [Value] |
 | **Cast Lockout** | [Value]s |
 
-### 3. Skill Description & Mechanics
-*   **Skill**: [Brief description of the skill behavior].
-*   **[Unique Mechanic]**: [Explain any target density, damage splits, wound multipliers, or duration refreshes here].
+### 2. Skill Description & Mechanics
+*   **Skill**: [Insert summary of skill effects, duration, and damage scaling]
+*   **Mana Rules**: [Specify mana generation locks, cast animations, or Shojin interactions]
+*   **Special Scaling / Uptime**: [Detail any stacking mechanics, splash target averages, or steroid adjustments]
 
 ---
 
@@ -36,13 +38,15 @@ This document provides the step-by-step mathematical calculations for [Champion 
 
 | Step | Formula | Calculation | 1★ | 2★ | 3★ |
 | :--- | :--- | :--- | :---: | :---: | :---: |
-| ATC | `ceil(Max Mana / 10)` | `ceil([Max] / 10)` | [Val] | [Val] | [Val] |
-| Cycle Duration | `ATC / AS + Lockout` | `[ATC] / [AS] + [Lockout]` | [Val]s | [Val]s | [Val]s |
-| Auto Attack DPS | `(ATC × AD) / Cycle` | `([ATC] × [Base AD Array]) / [Cycle]s` | [Val] | [Val] | [Val] |
-| Spell Base (1 Target) | `[Derivation if AD-scaling, otherwise flat Spell]` | `[Derivation if AD-scaling, otherwise flat Spell]` | [Val] | [Val] | [Val] |
-| Spell Damage | `Spell Base × [Modifiers]` | `[Spell Base Array] × [Modifiers]` | [Val] | [Val] | [Val] |
-| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage Array] / [Cycle]s` | [Val] | [Val] | [Val] |
-| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **[Val]** | **[Val]** | **[Val]** |
+| ATC | `ceil((Max Mana - Start Mana) / 10)` | `ceil(([Max] - [Start]) / 10)` | [Value] | [Value] | [Value] |
+| Cycle Duration | `ATC / AS + Lockout + [Steroid Duration, if mana locked]` | `[Attacks] / [AS] + [Lockout/Steroid]` | [Value]s | [Value]s | [Value]s |
+| [Buff Attacks] | `[Steroid Duration] × AS_buffed` *(if applicable)* | `[Duration] × [AS]` | [Value] | [Value] | [Value] |
+| Total Cycle Attacks | `ATC + [Buff Attacks]` | `[Mana Gen] + [Steroid]` | [Value] | [Value] | [Value] |
+| Auto Attack DPS | `(Total Cycle Attacks × AD) / Cycle` | `([Attacks] × [AD]) / [Cycle]` | [Value] | [Value] | [Value] |
+| Spell Base (1 Target) | [Formula for base spell scaling] | [Numbers plugged in] | [Value] | [Value] | [Value] |
+| Spell Damage | `Spell Base × [Targets/Multipliers]` | `[Base] × [Multiplier]` | [Value] | [Value] | [Value] |
+| Spell DPS | `Spell Damage / Cycle` | `[Damage] / [Cycle]` | [Value] | [Value] | [Value] |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **[Value]** | **[Value]** | **[Value]** |
 
 ---
 
@@ -51,36 +55,40 @@ This document provides the step-by-step mathematical calculations for [Champion 
 ### 1. Item Stats & Effects
 | Item | Effect |
 | :--- | :--- |
-| **[Item 1]** | [Details of stat buffs or passive effects relevant to DPS] |
-| **[Item 2]** | [Details of stat buffs or passive effects relevant to DPS] |
-| **[Item 3]** | [Details of stat buffs or passive effects relevant to DPS] |
+| **[Item Name 1]** | [AP, AD%, AS%, Crit%, or Passive effects] |
+| **[Item Name 2]** | [AP, AD%, AS%, Crit%, or Passive effects] |
+| **[Item Name 3]** | [AP, AD%, AS%, Crit%, or Passive effects] |
 
 ### 2. Stats & Multipliers
 
 | Stat | Formula | Calculation | 1★ | 2★ | 3★ |
 | :--- | :--- | :--- | :---: | :---: | :---: |
-| AP Total | `AP_base + AP_items` | `100 + [Item AP]` | [Val] | [Val] | [Val] |
-| Crit Chance | `Crit_base + Crit_items` | `25% + [Item Crit]` | [Val] | [Val] | [Val] |
-| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [Item CritDmg]` | [Val] | [Val] | [Val] |
-| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + [Chance] × [Damage - 1]` | [Val] | [Val] | [Val] |
+| AD Mult | `1.00 + [Item AD% modifiers]` | `1.00 + [Modifiers]` | [Value] | [Value] | [Value] |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD] × [AD Mult])` | [Value] | [Value] | [Value] |
+| AS Equipped | `AS_base × (1 + [Item AS% modifiers])` | `[Base AS] × [1 + Modifiers]` | [Value] | [Value] | [Value] |
+| Crit Chance | `0.25 + [Item Crit% modifiers]` | `0.25 + [Modifiers]` | [Value] | [Value] | [Value] |
+| Crit Damage | `1.40 + [Item Crit Dmg modifiers]` | `1.40 + [Modifiers]` | [Value] | [Value] | [Value] |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage - 1)` | `1 + [Chance] × ([Dmg] - 1)` | [Value] | [Value] | [Value] |
 
 ### 3. DPS Calculations
 
 | Step | Formula | Calculation | 1★ | 2★ | 3★ |
 | :--- | :--- | :--- | :---: | :---: | :---: |
-| ATC | `ceil((Max Mana − [Mana Reductions]) / [Mana Per Attack])` | `ceil(([Max] − [BB]) / [MPA])` | [Val] | [Val] | [Val] |
-| Cycle Duration | `ATC / AS_equipped + Lockout` | `[ATC] / [AS_eq] + [Lockout]` | [Val]s | [Val]s | [Val]s |
-| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `([ATC] × [Equipped AD Array] × [Crit]) / [Cycle]s` | [Val] | [Val] | [Val] |
-| Spell Base (1 Target) | `[Derivation if AD-scaling, otherwise flat Spell]` | `[Derivation if AD-scaling, otherwise flat Spell]` | [Val] | [Val] | [Val] |
-| Spell Damage | `Spell Base × [Mod] × AP × Crit` | `[Spell Base Array] × [Mod] × [AP] × [Crit]` | [Val] | [Val] | [Val] |
-| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage Array] / [Cycle]s` | [Val] | [Val] | [Val] |
-| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **[Val]** | **[Val]** | **[Val]** |
-
----
-
-## ⚠️ Script Reference (champion_db.py)
-
-> [!WARNING]
-> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
->
-> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.
+| ATC | `ceil((Max Mana - Start Mana - [Mana Items]) / [Mana/Attack])` | `ceil(([Max] - [Start] - [Item]) / [Mana])` | [Value] | [Value] | [Value] |
+| Spell Base (1 Target) | [Formula utilizing equipped AP/AD] | [Numbers plugged in] | [Value] | [Value] | [Value] |
+| **Case 1: 15s Fight** | | | | | |
+| Cycle Duration (15s) | `ATC / AS_equipped(15s) + Lockout + [Steroid]` | `[Attacks] / [AS] + [Lockout/Steroid]` | [Value]s | [Value]s | [Value]s |
+| [Buff Attacks/Stacks] | [Attacks or stacks accumulated in 15s] | [Numbers plugged in] | [Value] | [Value] | [Value] |
+| Total Cycle Attacks | `ATC + [Buff Attacks]` | `[Mana Gen] + [Steroid]` | [Value] | [Value] | [Value] |
+| Auto Attack DPS (15s) | `(Total Attacks × AD_equipped × Crit × [Amp]) / Cycle` | `([Attacks] × [AD] × [Crit] × [Amp]) / [Cycle]` | [Value] | [Value] | [Value] |
+| Spell Damage (15s) | `Spell Base × AP_mult × Crit × [Stacks/Amplifiers]` | `[Base] × [AP] × [Crit] × [Amp]` | [Value] | [Value] | [Value] |
+| Spell DPS (15s) | `Spell Damage / Cycle` | `[Damage] / [Cycle]` | [Value] | [Value] | [Value] |
+| **Total DPS (15s)** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **[Value]** | **[Value]** | **[Value]** |
+| **Case 2: 30s Fight** | | | | | |
+| Cycle Duration (30s) | `ATC / AS_equipped(30s) + Lockout + [Steroid]` | `[Attacks] / [AS] + [Lockout/Steroid]` | [Value]s | [Value]s | [Value]s |
+| [Buff Attacks/Stacks] | [Attacks or stacks accumulated in 30s] | [Numbers plugged in] | [Value] | [Value] | [Value] |
+| Total Cycle Attacks | `ATC + [Buff Attacks]` | `[Mana Gen] + [Steroid]` | [Value] | [Value] | [Value] |
+| Auto Attack DPS (30s) | `(Total Attacks × AD_equipped × Crit × [Amp]) / Cycle` | `([Attacks] × [AD] × [Crit] × [Amp]) / [Cycle]` | [Value] | [Value] | [Value] |
+| Spell Damage (30s) | `Spell Base × AP_mult × Crit × [Stacks/Amplifiers]` | `[Base] × [AP] × [Crit] × [Amp]` | [Value] | [Value] | [Value] |
+| Spell DPS (30s) | `Spell Damage / Cycle` | `[Damage] / [Cycle]` | [Value] | [Value] | [Value] |
+| **Total DPS (30s)** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **[Value]** | **[Value]** | **[Value]** |
