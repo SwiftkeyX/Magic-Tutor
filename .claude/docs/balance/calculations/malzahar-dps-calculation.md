@@ -1,115 +1,88 @@
 # Malzahar DPS Calculation Details 🔮
 
-This document provides the step-by-step mathematical calculations and formulas for Malzahar's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Malzahar's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.70 (constant across star levels)
-*   **Attack Damage (AD)**: 40 / 60 / 90
-*   **Spell Magic Damage (Base)**: AP Ratio: 1.00x | Flat: 220 / 330 / 500
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Malzahar Mechanics
-*   **Skill Description**: Open two portals near the current target. Destroy 50% of Shields and deal 220/330/500 magic damage to all enemies caught between the portals.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base represents the flat base damage ([220, 330, 500]). Applies target density multiplier of 1.50 directly to the spell base. Calculated dynamically without overrides.
-*   **Mana & Casting**:
-    *   Max Mana: 50
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 5 attacks
-    *   **Cast Lockout**: 0.8 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 40 | 60 | 90 |
+| **Base Spell Damage** | 220 | 330 | 500 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.70 |
+| **Max Mana** | 50 |
+| **Cast Lockout** | 0.8s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Spawns two portals dealing magic damage in a rectangular area. Portal hits instantly destroy 50% of active shields on all hit targets.
+*   **Target Density Multiplier**: Since his portal hit-area is rectangular, it typically hits an average of **1.50 targets**. We apply a ×1.50 multiplier to the single-target damage to obtain the total spell damage per cast.
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS) + Base Lockout = (5) / (0.70) + 0.8 = 7.943 seconds`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD) / 7.943s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.943s`
-
-*   **1★ Malzahar**:
-    *   Auto Attack DPS: `(5 Attacks * 40 AD) / 7.943s = 25.2`
-    *   Spell Damage: `220 * 1.50 Target Density = 330.0`
-    *   Spell DPS: `330.0 / 7.943s = 41.5`
-    *   Total DPS: `25.2 + 41.5 = 66.7`
-*   **2★ Malzahar**:
-    *   Auto Attack DPS: `(5 Attacks * 60 AD) / 7.943s = 37.8`
-    *   Spell Damage: `330 * 1.50 Target Density = 495.0`
-    *   Spell DPS: `495.0 / 7.943s = 62.3`
-    *   Total DPS: `37.8 + 62.3 = 100.1`
-*   **3★ Malzahar**:
-    *   Auto Attack DPS: `(5 Attacks * 90 AD) / 7.943s = 56.7`
-    *   Spell Damage: `500 * 1.50 Target Density = 750.0`
-    *   Spell DPS: `750.0 / 7.943s = 94.4`
-    *   Total DPS: `56.7 + 94.4 = 151.1`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(50 / 10)` | 5 | 5 | 5 |
+| Cycle Duration | `ATC / AS + Lockout` | `5 / 0.70 + 0.8` | 7.943s | 7.943s | 7.943s |
+| Auto Attack DPS | `(ATC × AD) / Cycle` | `(5 × [40, 60, 90]) / 7.943s` | 25.2 | 37.8 | 56.7 |
+| Spell Base (1 Target) | `Spell` | `[220, 330, 500]` | 220.0 | 330.0 | 500.0 |
+| Spell Damage | `Spell Base × Target Density` | `[220.0, 330.0, 500.0] × 1.50` | 330.0 | 495.0 | 750.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[330.0, 495.0, 750.0] / 7.943s` | 41.5 | 62.3 | 94.4 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **66.8** | **100.1** | **151.1** |
 
 ---
 
 ## 🧮 Equipped Calculations (Spear of Shojin + Jeweled Gauntlet + Rabadon's Deathcap)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: +15% AD (1.15* multiplier)
-*   **Total Equipped AP Modifier**: 215 AP (2.15* spell multiplier)
-*   **Crit Stats**: 40% Crit Chance, 170% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.28*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Spear of Shojin** | +15% AD, +15 AP. Unique passive: Attacks grant +5 extra mana (total 15 mana/auto). |
+| **Jeweled Gauntlet** | +20 AP, +15% Crit Chance, +30% Crit Damage, spells can crit. |
+| **Rabadon's Deathcap** | +70 AP. |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS_equipped) + Base Lockout = (4) / (0.70) + 0.8 = 6.514 seconds`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (4 * AD_equipped) / 6.514s * 1.28 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AP Total | `AP_base + AP_Shojin + AP_JG + AP_Rabadon` | `100 + 15 + 20 + 70` | 215 | 215 | 215 |
+| Crit Chance | `Crit_base + Crit_JG` | `25% + 15%` | 40% | 40% | 40% |
+| Crit Damage | `CritDmg_base + CritDmg_JG` | `140% + 30%` | 170% | 170% | 170% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.40 × 0.70` | 1.28 | 1.28 | 1.28 |
+| AD Mult | `1.00 + Shojin_ad` | `1.00 + 0.15` | 1.15× | 1.15× | 1.15× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([40, 60, 90] × 1.15)` | 46 | 69 | 104 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 6.514s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 15)` | `ceil(50 / 15)` | 4 | 4 | 4 |
+| Cycle Duration | `ATC / AS + Lockout` | `4 / 0.70 + 0.8` | 6.514s | 6.514s | 6.514s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(4 × [46, 69, 104] × 1.28) / 6.514s` | 36.2 | 54.2 | 81.7 |
+| Spell Base (1 Target) | `Spell` | `[220, 330, 500]` | 220.0 | 330.0 | 500.0 |
+| Spell Damage | `Spell Base × Target Density × AP × Crit` | `[220, 330, 500] × 1.50 × 2.15 × 1.28` | 908.2 | 1362.2 | 2064.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[908.2, 1362.2, 2064.0] / 6.514s` | 139.4 | 209.1 | 316.8 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **175.6** | **263.3** | **398.5** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Malzahar (Equipped)**:
-    *   Auto Attack DPS: `(4 Attacks * 46 AD) / 6.514s * 1.28 Crit = 36.2`
-    *   Spell Damage: `(220 * 1.50) * 2.15 AP * 1.28 Crit = 908.2`
-    *   Spell DPS: `908.2 / 6.514s = 139.4`
-    *   Total DPS: `36.2 + 139.4 = 175.6`
-*   **2★ Malzahar (Equipped)**:
-    *   Auto Attack DPS: `(4 Attacks * 69 AD) / 6.514s * 1.28 Crit = 54.2`
-    *   Spell Damage: `(330 * 1.50) * 2.15 AP * 1.28 Crit = 1362.2`
-    *   Spell DPS: `1362.2 / 6.514s = 209.1`
-    *   Total DPS: `54.2 + 209.1 = 263.3`
-*   **3★ Malzahar (Equipped)**:
-    *   Auto Attack DPS: `(4 Attacks * 103 AD) / 6.514s * 1.28 Crit = 81.0`
-    *   Spell Damage: `(500 * 1.50) * 2.15 AP * 1.28 Crit = 2064.0`
-    *   Spell DPS: `2064.0 / 6.514s = 316.8`
-    *   Total DPS: `81.0 + 316.8 = 397.8`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: spell[idx] * 1.50` (1.5 targets hit baseline).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: (spell[idx] * 1.50) * (ap / 100.0) * crit` (scales with AP and JG crit).
-*   **Baseline / Equipped Overrides**: Removed; calculated dynamically.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.70`
-    *   `base_attacks`: `5`
-    *   `lockout`: `0.8` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

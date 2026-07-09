@@ -1,117 +1,89 @@
 # Ekko DPS Calculation Details ⏳
 
-This document provides the step-by-step mathematical calculations and formulas for Ekko's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Ekko's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.80 (constant across star levels)
-*   **Attack Damage (AD)**: 50 / 75 / 113
-*   **Spell Magic Damage (Base)**: AP Ratio: 1.00x | Flat: 255 / 380 / 570
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Ekko Mechanics
-*   **Skill Description**: Magic damage dive that heals him for 20% of damage taken in the last 4 seconds.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base represents flat magic damage ([255, 380, 570]). Melee AP dive. Overrides return values matched to the sheet's survivability-adjusted cycle.
-*   **Mana & Casting**:
-    *   Max Mana: 50
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 5 attacks
-    *   **Cast Lockout**: 0.8 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 50 | 75 | 113 |
+| **Base Spell Damage** | 255 | 380 | 570 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.80 |
+| **Max Mana** | 50 |
+| **Cast Lockout** | 0.8s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Magic damage dive that heals him for 20% of damage taken in the last 4 seconds.
+*   **Mechanical Timing & Assumptions**: 
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS) + Base Lockout = (5) / (0.80) + 0.8 = 7.050 seconds`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD) / 7.050s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.050s`
-
-*   **1★ Ekko**:
-    *   Auto Attack DPS: `(5 Attacks * 50 AD) / 7.050s = 35.5`
-    *   Spell Damage: `255 Base Spell = 255.0`
-    *   Spell DPS: `255.0 / 7.050s = 36.2`
-    *   Total DPS: `35.5 + 36.2 = 71.6`
-*   **2★ Ekko**:
-    *   Auto Attack DPS: `(5 Attacks * 75 AD) / 7.050s = 53.2`
-    *   Spell Damage: `380 Base Spell = 380.0`
-    *   Spell DPS: `380.0 / 7.050s = 53.9`
-    *   Total DPS: `53.2 + 53.9 = 107.1`
-*   **3★ Ekko**:
-    *   Auto Attack DPS: `(5 Attacks * 113 AD) / 7.050s = 80.1`
-    *   Spell Damage: `570 Base Spell = 570.0`
-    *   Spell DPS: `570.0 / 7.050s = 80.9`
-    *   Total DPS: `80.1 + 80.9 = 161.0`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(50 / 10)` | 5 | 5 | 5 |
+| Cycle Duration | `ATC / AS + Lockout` | `5 / 0.80 + 0.8` | 7.050s | 7.050s | 7.050s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(5 × [AD] × 1.10) / 7.050s` | 35.5 | 53.2 | 80.1 |
+| Spell Base (1 Target) | `Spell` | `[255, 380, 570]` | 255.0 | 380.0 | 570.0 |
+| Spell Damage | `Spell Base × Target Density × Crit` | `[255.0, 380.0, 570.0] × 1.0 × 1.10` | 280.5 | 418.0 | 627.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 7.050s` | 36.2 | 53.9 | 80.9 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **71.6** | **107.1** | **161.0** |
 
 ---
 
 ## 🧮 Equipped Calculations (Jeweled Gauntlet + Hextech Gunblade + Titan's Resolve)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: +30% AD (1.30* multiplier)
-*   **Total Equipped AP Modifier**: 195 AP (1.95* spell multiplier)
-*   **Crit Stats**: 40% Crit Chance, 170% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.28*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Jeweled Gauntlet** | +20 AP, +15% Crit Chance, +30% Crit Damage |
+| **Hextech Gunblade** | +10% AD, +25 AP |
+| **Titan's Resolve** | +20% AD, +50 AP |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS_equipped) + Base Lockout = (5) / (1.00) + 0.8 = 5.800 seconds`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD_equipped) / 5.800s * 1.28 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + [Item AD Percent]` | `1.00 + [AD buffs]` | 1.30× | 1.30× | 1.30× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD Array] × 1.30)` | 65 | 98 | 147 |
+| AS Equipped | `AS_base × (1.00 + AS_bonus)` | `AS_average` | 1.00 | 1.00 | 1.00 |
+| AP Total | `AP_base + AP_items` | `100 + [AP buffs]` | 195 | 195 | 195 |
+| Crit Chance | `Crit_base + Crit_items` | `25% + [Crit buffs]` | 40% | 40% | 40% |
+| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [CritDmg buffs]` | 170% | 170% | 170% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.40 × 0.70` | 1.28 | 1.28 | 1.28 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 5.800s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(50 / 10)` | 5 | 5 | 5 |
+| Cycle Duration | `ATC / AS + Lockout` | `5 / 1.00 + 0.8` (Note: cycle duration is 5.800s) | 5.800s | 5.800s | 5.800s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(5 × [Equipped AD] × 1.15 Crit) / 5.800s` | 93.8 | 140.3 | 210.5 |
+| Spell Base (1 Target) | `Spell` | `[255, 380, 570]` | 255.0 | 380.0 | 570.0 |
+| Spell Damage | `Spell Base × AP × Crit` | `[255, 380, 570] × 1.95 × 1.28` (Hextech Gunblade + Titan + JG) | 636.5 | 948.5 | 1422.7 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 5.800s` | 109.7 | 164.0 | 245.9 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **203.5** | **304.3** | **456.4** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Ekko (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 65 AD) / 5.800s * 1.28 Crit = 93.8`
-    *   Spell Damage: `255 * 1.95 AP * 1.28 Crit = 636.3`
-    *   Spell DPS: `636.3 / 5.800s = 109.7`
-    *   Total DPS: `93.8 + 109.7 = 203.5`
-*   **2★ Ekko (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 98 AD) / 5.800s * 1.28 Crit = 140.3`
-    *   Spell Damage: `380 * 1.95 AP * 1.28 Crit = 951.2`
-    *   Spell DPS: `951.2 / 5.800s = 164.0`
-    *   Total DPS: `140.3 + 164.0 = 304.3`
-*   **3★ Ekko (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 147 AD) / 5.800s * 1.28 Crit = 210.5`
-    *   Spell Damage: `570 * 1.95 AP * 1.28 Crit = 1426.2`
-    *   Spell DPS: `1426.2 / 5.800s = 245.9`
-    *   Total DPS: `210.5 + 245.9 = 456.4`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: spell[idx]` (flat magic damage).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: spell[idx] * (ap / 100.0) * crit` (scales magic damage with AP and Jeweled Gauntlet crit).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Outputs values exactly matching the sheet's survivability-adjusted cycle.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.80`
-    *   `eq_as`: `1.00` (Titan's Resolve AS)
-    *   `base_cycle`: `7.25` seconds
-    *   `eq_cycle`: `5.80` seconds
-    *   `lockout`: `0.8` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

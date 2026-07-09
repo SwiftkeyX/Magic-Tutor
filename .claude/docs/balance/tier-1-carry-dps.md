@@ -12,21 +12,25 @@ This document provides a unified mathematical breakdown of baseline (unequipped)
 | **Cassiopeia** (Single Target) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 25.1<br>37.6<br>56.4 | 43.5<br>65.2<br>97.8 | **68.6**<br>**102.8**<br>**154.2** |
 | **Jhin** (2 Targets Avg) | 1★<br>2★<br>3★ | 54<br>81<br>122 | 0.70 | 34.6<br>51.9<br>78.1 | 35.5<br>53.2<br>80.1 | **70.1**<br>**105.1**<br>**158.2** |
 | **Malzahar** (1.5 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 25.2<br>37.8<br>56.7 | 41.5<br>62.3<br>94.4 | **66.8**<br>**100.1**<br>**151.1** |
-| **Samira** (Single Target) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 26.5<br>40.1<br>59.6 | 33.4<br>50.1<br>75.2 | **59.9**<br>**90.2**<br>**134.8** |
-| **Tristana** (1 Splash Target Avg) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 31.5<br>47.6<br>70.7 | 22.3<br>33.4<br>50.2 | **53.8**<br>**81.0**<br>**120.9** |
-| **Viego** (2 Stacks Avg) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.75 | 30.1<br>45.5<br>67.6 | 37.9<br>56.9<br>85.3 | **68.0**<br>**102.4**<br>**152.9** |
+| **Samira** (Single Target) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 26.5<br>40.1<br>59.6 | 16.8<br>25.4<br>39.7 | **43.3**<br>**65.5**<br>**99.3** |
+| **Tristana** (1 Splash Target Avg) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 31.5<br>47.6<br>70.7 | 22.3<br>33.7<br>50.1 | **53.8**<br>**81.3**<br>**120.8** |
+| **Viego** (15s fight) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.75 | 30.1<br>45.5<br>67.6 | 34.8<br>52.2<br>78.7 | **64.9**<br>**97.7**<br>**146.3** |
+| **Viego** (30s fight) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.75 | 30.1<br>45.5<br>67.6 | 95.1<br>142.6<br>214.3 | **125.2**<br>**188.1**<br>**281.9** |
 
 ### ⚔️ Table 2: Well-Equipped (3-Item) DPS Summary
-*Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped. Ramping items (AA, Guinsoo) represent **[Start / End / Average]**.*
+*Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped. Ramping items represent average stats.*
 
 | Champion | Star | AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Cassiopeia** (Single Target) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 30.5<br>45.8<br>68.6 | 158.6<br>237.9<br>356.9 | **189.1**<br>**283.7**<br>**425.5** |
-| **Jhin** (2 Targets Avg) | 1★<br>2★<br>3★ | 114<br>171<br>257 | 0.77 | 99.1<br>148.7<br>223.1 | 94.8<br>142.1<br>213.2 | **193.9**<br>**290.8**<br>**436.3** |
-| **Malzahar** (1.5 Targets Avg) | 1★<br>2★<br>3★ | 46<br>69<br>103 | 0.70 | 36.2<br>54.2<br>81.0 | 139.4<br>209.1<br>316.8 | **175.6**<br>**263.3**<br>**397.8** |
-| **Samira** (Single Target) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.77 | 45.8<br>68.6<br>102.9 | 45.3<br>68.0<br>102.0 | **91.1**<br>**136.6**<br>**204.9** |
-| **Tristana** (1 Splash Target) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 1.63 | 187.3<br>282.1<br>420.3 | 81.4<br>122.7<br>182.8 | **268.7**<br>**404.8**<br>**603.1** <br>*(2 Splash: **350.1** / **527.6** / **785.9**)* |
-| **Viego** (30s Avg Stacks) | 1★<br>2★<br>3★ | 77<br>116<br>173 | 0.94 | 79.9<br>120.3<br>179.4 | 125.4<br>188.1<br>283.2 | **205.3**<br>**308.4**<br>**462.6** |
+| **Jhin** (2 Targets Avg) | 1★<br>2★<br>3★ | 114<br>171<br>257 | 0.77 | 99.5<br>149.3<br>224.3 | 87.6<br>131.4<br>197.4 | **187.1**<br>**280.7**<br>**421.7** |
+| **Malzahar** (1.5 Targets Avg) | 1★<br>2★<br>3★ | 46<br>69<br>104 | 0.70 | 36.2<br>54.2<br>81.7 | 139.4<br>209.1<br>316.8 | **175.6**<br>**263.3**<br>**398.5** |
+| **Samira** (Single Target) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.77 | 47.8<br>72.9<br>107.4 | 45.4<br>69.2<br>107.4 | **93.2**<br>**142.1**<br>**214.8** |
+| **Tristana** (1 Splash Target) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 1.63 | 175.5<br>267.3<br>394.2 | 76.3<br>116.3<br>171.4 | **251.8**<br>**383.6**  <br>**565.6** |
+| **Viego** (15s fight, Standard) | 1★<br>2★<br>3★ | 58<br>88<br>131 | 0.75 | 49.7<br>75.4<br>112.3 | 62.5<br>93.7<br>141.4 | **112.2**<br>**169.1**<br>**253.7** |
+| **Viego** (30s fight, Standard) | 1★<br>2★<br>3★ | 58<br>88<br>131 | 0.75 | 49.7<br>75.4<br>112.3 | 139.6<br>209.4<br>315.0 | **189.3**<br>**284.8**<br>**427.3** |
+| **Viego** (15s fight, RFC × 3) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 1.49 | 83.8<br>126.6<br>188.1 | 229.4<br>344.1<br>517.1 | **313.2**<br>**470.7**<br>**705.2** |
+| **Viego** (30s fight, RFC × 3) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 1.49 | 83.8<br>126.6<br>188.1 | 554.1<br>831.2<br>1247.8 | **637.9**<br>**957.8**<br>**1435.9** |
 
 ---
 
@@ -77,9 +81,7 @@ This document provides a unified mathematical breakdown of baseline (unequipped)
 *   **Baseline (Unequipped)**:
     *   1★: **68.6** | 2★: **102.8** | 3★: **154.2**
 *   **Well-Equipped (Blue Buff + Jeweled Gauntlet + Archangel's Staff)**:
-    *   1★: **189.1 Avg** (149.5 Start `rightarrow` 244.6 End)
-    *   2★: **283.7 Avg** (224.2 Start `rightarrow` 367.0 End)
-    *   3★: **425.5 Avg** (336.3 Start `rightarrow` 550.4 End)
+    *   1★: **189.1 Avg** | 2★: **283.7 Avg** | 3★: **425.5 Avg**
 *   **Detailed DPS Calculations**: [Cassiopeia DPS Calculations](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/cassiopeia-dps-calculation.md)
 
 #### 🔍 Analyze DPS
@@ -155,10 +157,9 @@ This document provides a unified mathematical breakdown of baseline (unequipped)
 
 #### 🧮 DPS Output Summary
 *   **Baseline (Unequipped)**:
-    *   1 Splash Target Avg: 1★: **53.8** | 2★: **81.0** | 3★: **120.9**
+    *   1 Splash Target Avg: 1★: **53.8** | 2★: **81.3** | 3★: **120.8**
 *   **Well-Equipped (Guinsoo's + Last Whisper + Infinity Edge)**:
-    *   1 Splash Target: 1★: **226.6 Avg** (126.5 Start `rightarrow` 325.7 End)
-    *   2 Splash Targets: 1★: **292.2 Avg** (159.5 Start `rightarrow` 426.5 End)
+    *   1 Splash Target: 1★: **251.8 Avg** | 2★: **383.6 Avg** | 3★: **565.6 Avg**
 *   **Detailed DPS Calculations**: [Tristana DPS Calculations](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/tristana-dps-calculation.md)
 
 #### 🔍 Analyze DPS
@@ -184,12 +185,18 @@ This document provides a unified mathematical breakdown of baseline (unequipped)
 *   **Attacks to Cast**: 5 attacks.
 
 #### 🧮 DPS Output Summary
-*   **Baseline (Unequipped, 2 Stacks Avg)**:
-    *   1★: **68.0** | 2★: **102.4** | 3★: **152.9**
-*   **Well-Equipped (Jeweled Gauntlet + Hextech Gunblade + Titan's Resolve, 30s Avg Stacks)**:
-    *   1★: **205.3** | 2★: **308.4** | 3★: **462.6**
+*   **Baseline (Unequipped)**:
+    *   15s Fight (1.5 stacks avg): 1★: **64.9** | 2★: **97.7** | 3★: **146.3**
+    *   30s Fight (6.0 stacks avg): 1★: **125.2** | 2★: **188.1** | 3★: **281.9**
+*   **Well-Equipped (Standard: Gunblade + Titan's + Jeweled Gauntlet)**:
+    *   15s Fight (1.5 stacks avg): 1★: **112.2** | 2★: **169.1** | 3★: **253.7**
+    *   30s Fight (6.0 stacks avg): 1★: **189.3** | 2★: **284.8** | 3★: **427.3**
+*   **Well-Equipped (RFC × 3)**:
+    *   15s Fight (5.06 stacks avg): 1★: **313.2** | 2★: **470.7** | 3★: **705.2**
+    *   30s Fight (13.78 stacks avg): 1★: **637.9** | 2★: **957.8** | 3★: **1435.9**
 *   **Detailed DPS Calculations**: [Viego DPS Calculations](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/viego-dps-calculation.md)
 
 #### 🔍 Analyze DPS
 *   **Close-Range Melee Scaling**: Viego is a close-ranged carry who also focuses mainly on 1 target.
-*   **Engagement Scaling**: Stacking magic damage on-hit over a 30s fight duration (averaging 2 stacks active) raises his baseline DPS to **76.1** unequipped and **205.3** equipped, rewarding long melee engagements.
+*   **Engagement Scaling**: Stacking magic damage on-hit over combat duration rewards long melee engagements, raising his baseline DPS from 64.9 (15s average) to 125.2 (30s average).
+*   **Rapid Firecannon Ramping**: Equipping 3 Rapid Firecannons spikes Viego's Attack Speed to 1.49, allowing him to attack 36 times in 30 seconds and ramp his stacking damage to an average of 13.78 stacks, yielding an exceptional 1435.9 DPS at 3★.

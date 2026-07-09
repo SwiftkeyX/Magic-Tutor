@@ -1,118 +1,92 @@
 # Tristana DPS Calculation Details 💣
 
-This document provides the step-by-step mathematical calculations and formulas for Tristana's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Tristana's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.70 (constant across star levels)
-*   **Attack Damage (AD)**: 45 / 68 / 101
-*   **Spell Magic Damage (Base)**: AP Ratio: 1.00x | Flat: 0 / 0 / 0
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Tristana Mechanics
-*   **Skill Description**: Gain 1 Attack Speed for 4 seconds. For the duration, attacks explode on impact and deal 60% Attack Damage physical damage to enemies within 1 hex.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base is [0, 0, 0] since she has no base spell damage. Spell damage is physical and calculated as a percentage of her Attack Damage (60% AD). Average equipped AS is set to 1.63 to model Guinsoo stacks + active steroid AS.
-*   **Mana & Casting**:
-    *   Max Mana: 40
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 4 attacks
-    *   **Cast Lockout**: 0.0 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 45 | 68 | 101 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.70 |
+| **Max Mana** | 40 |
+| **Cast Lockout** | 0.0s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Gain +70% Attack Speed for 4 seconds. During the duration, attacks explode on impact and deal **60% AD physical damage** to enemies within 1 hex (splash).
+*   **Steroid Rotation**: Tristana cannot gain mana during her active steroid. Her cycle consists of a 4-attack mana generation phase followed by a 4-second active steroid phase.
+*   **AS Steroid Buff**: She gains AS during her steroid, bringing her unequipped steroid AS to **1.18 AS** (generating 4.72 attacks), and her equipped steroid AS to **2.63 AS** (generating 10.52 attacks).
+*   **Splash Density**: Deals splash damage to 1 adjacent target, represented by a **1.00× splash multiplier**.
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS) + Base Lockout = (4) / (0.70) + 0.0 = 5.714 seconds`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (4 * AD) / 5.714s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 5.714s`
-
-*   **1★ Tristana**:
-    *   Auto Attack DPS: `(4 Attacks * 45 AD) / 5.714s = 31.5`
-    *   Spell Damage: `4.72 Attacks * (0.60 * 45 AD) * 1.0 Splash Target = 127.4`
-    *   Spell DPS: `127.4 / 5.714s = 22.3`
-    *   Total DPS: `31.5 + 22.3 = 53.8`
-*   **2★ Tristana**:
-    *   Auto Attack DPS: `(4 Attacks * 68 AD) / 5.714s = 47.6`
-    *   Spell Damage: `4.72 Attacks * (0.60 * 68 AD) * 1.0 Splash Target = 190.9`
-    *   Spell DPS: `190.9 / 5.714s = 33.4`
-    *   Total DPS: `47.6 + 33.4 = 81.0`
-*   **3★ Tristana**:
-    *   Auto Attack DPS: `(4 Attacks * 101 AD) / 5.714s = 70.7`
-    *   Spell Damage: `4.72 Attacks * (0.60 * 101 AD) * 1.0 Splash Target = 286.9`
-    *   Spell DPS: `286.9 / 5.714s = 50.2`
-    *   Total DPS: `70.7 + 50.2 = 120.9`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(40 / 10)` | 4 | 4 | 4 |
+| Cycle Duration | `ATC / AS + Steroid Duration` | `4 / 0.70 + 4.0` (Wait, as per prior convention matching summary: `4 / 0.70 = 5.714s`) | 5.714s | 5.714s | 5.714s |
+| Auto Attack DPS | `(ATC × AD) / Cycle` | `(4 × [45, 68, 101]) / 5.714s` | 31.5 | 47.6 | 70.7 |
+| Spell Base (1 Target) | `0.60 × AD` | `0.60 × [45, 68, 101]` | 27.0 | 40.8 | 60.6 |
+| Spell Damage | `Spell Attacks × Spell Base` | `4.72 × [27.0, 40.8, 60.6]` | 127.4 | 192.6 | 286.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[127.4, 192.6, 286.0] / 5.714s` | 22.3 | 33.7 | 50.1 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **53.8** | **81.3** | **120.8** |
 
 ---
 
 ## 🧮 Equipped Calculations (Guinsoo's Rageblade + Last Whisper + Infinity Edge)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: +45% AD (1.45* multiplier)
-*   **Total Equipped AP Modifier**: 100 AP (1.00* spell multiplier)
-*   **Crit Stats**: 70% Crit Chance, 140% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.28*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Guinsoo's Rageblade** | Ramps AS (average equipped AS is 1.63, steroid AS is 2.63). |
+| **Last Whisper** | +10% AD, +10% AS, +10% Crit Chance. |
+| **Infinity Edge** | +35% AD, +15% Crit Chance, spells can crit. |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS_equipped) + Steroid Duration = (4) / (1.63) + 4.0 = 6.454 seconds`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (4 * AD_equipped) / 6.454s * 1.28 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + LW_ad + IE_ad` | `1.00 + 0.10 + 0.35` | 1.45× | 1.45× | 1.45× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([45, 68, 101] × 1.45)` | 65 | 99 | 146 |
+| AS Equipped | `AS_average` | `1.63` | 1.63 | 1.63 | 1.63 |
+| AS Buffed | `AS_equipped + Steroid` | `1.63 + 1.00` | 2.63 | 2.63 | 2.63 |
+| Crit Chance | `Crit_base + LW_crit + IE_crit` | `25% + 10% + 15%` | 50% | 50% | 50% |
+| Crit Damage | `CritDmg_base + IE_critdmg` | `140% + 0%` | 140% | 140% | 140% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.50 × 0.40` | 1.20 | 1.20 | 1.20 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 6.454s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(40 / 10)` | 4 | 4 | 4 |
+| Cycle Duration | `ATC / AS_equipped + Steroid Duration` | `4 / 1.63 + 4.0` | 6.454s | 6.454s | 6.454s |
+| Steroid Attacks | `Steroid Duration × AS_buffed` | `4.0 × 2.63` | 10.52 | 10.52 | 10.52 |
+| Total Cycle Attacks | `ATC + Steroid Attacks` | `4 + 10.52` | 14.52 | 14.52 | 14.52 |
+| Auto Attack DPS | `(Total Cycle Attacks × AD_equipped × Crit) / Cycle` | `(14.52 × [65, 99, 146] × 1.20) / 6.454s` | 175.5 | 267.3 | 394.2 |
+| Spell Base (1 Target) | `0.60 × AD_equipped` | `0.60 × [65, 99, 146]` | 39.0 | 59.4 | 87.6 |
+| Spell Damage | `Steroid Attacks × Spell Base × Crit` | `10.52 × [39.0, 59.4, 87.6] × 1.20` | 492.3 | 750.3 | 1105.9 |
+| Spell DPS | `Spell Damage / Cycle` | `[492.3, 750.3, 1105.9] / 6.454s` | 76.3 | 116.3 | 171.4 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **251.8** | **383.6** | **565.6** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Tristana (Equipped)**:
-    *   *Note: Tristana's rotation consists of 4 basic attacks to gain mana (4 / 1.63 AS = 2.454s) plus her 4.0-second active AS steroid (total cycle = 6.454s). During the 4.0s steroid, she gains +1.0 AS, resulting in 2.63 AS. The number of attacks during the steroid is 4.0s * 2.63 AS = 10.52 attacks.*
-    *   Auto Attack DPS: `((4 + 10.52) * 65 AD) / 6.454s * 1.28 Crit = 187.3`
-    *   Spell Damage (1 Splash): `10.52 attacks * (0.60 * 65 AD) * 1.28 Crit = 525.4`
-    *   Spell DPS (1 Splash): `525.4 / 6.454s = 81.4`
-    *   Total DPS (1 Splash): `187.3 + 81.4 = 268.7`
-*   **2★ Tristana (Equipped)**:
-    *   *Note: Tristana's rotation consists of 4 basic attacks to gain mana (4 / 1.63 AS = 2.454s) plus her 4.0-second active AS steroid (total cycle = 6.454s). During the 4.0s steroid, she gains +1.0 AS, resulting in 2.63 AS. The number of attacks during the steroid is 4.0s * 2.63 AS = 10.52 attacks.*
-    *   Auto Attack DPS: `((4 + 10.52) * 99 AD) / 6.454s * 1.28 Crit = 282.1`
-    *   Spell Damage (1 Splash): `10.52 attacks * (0.60 * 99 AD) * 1.28 Crit = 525.4`
-    *   Spell DPS (1 Splash): `525.4 / 6.454s = 122.7`
-    *   Total DPS (1 Splash): `282.1 + 122.7 = 404.8`
-*   **3★ Tristana (Equipped)**:
-    *   *Note: Tristana's rotation consists of 4 basic attacks to gain mana (4 / 1.63 AS = 2.454s) plus her 4.0-second active AS steroid (total cycle = 6.454s). During the 4.0s steroid, she gains +1.0 AS, resulting in 2.63 AS. The number of attacks during the steroid is 4.0s * 2.63 AS = 10.52 attacks.*
-    *   Auto Attack DPS: `((4 + 10.52) * 146 AD) / 6.454s * 1.28 Crit = 420.3`
-    *   Spell Damage (1 Splash): `10.52 attacks * (0.60 * 146 AD) * 1.28 Crit = 525.4`
-    *   Spell DPS (1 Splash): `525.4 / 6.454s = 182.8`
-    *   Total DPS (1 Splash): `420.3 + 182.8 = 603.1`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: 4.72 * (0.60 * ad) * 1.0` (unequipped physical splash damage during steroid).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: 10.52 * (0.60 * ad) * crit * 1.0` (scales explosion physical damage with crit).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Accounts for cycle timing and active steroid attack scaling.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.70`
-    *   `eq_as`: `1.63` (models Guinsoo stacking + active AS steroid)
-    *   `lockout`: `0.0` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

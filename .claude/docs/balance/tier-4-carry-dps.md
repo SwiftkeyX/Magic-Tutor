@@ -17,21 +17,20 @@ Putting baseline and itemized calculations in a single document guarantees that 
 | **Azir** (Max 3 Soldiers + Direct Cast) | 1★<br>2★<br>3★ | 30<br>45<br>68 | 0.75 | 19.4<br>29.1<br>44.0 | 56.4<br>83.1<br>640.4 | **75.8**<br>**112.2**<br>**684.4** |
 | **Gwen** (2 Targets Avg) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.80 | 35.2<br>53.1<br>79.4 | 96.0<br>144.0<br>384.0 | **131.2**<br>**197.1**<br>**463.4** |
 | **Kai'Sa** (15 Missiles Split) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.80 | 32.0<br>48.3<br>71.8 | 66.7<br>98.6<br>266.6 | **98.7**<br>**146.9**<br>**338.4** |
-| **Lux** (Single Target Channel) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 20.7<br>31.2<br>46.4 | 84.3<br>126.2<br>315.6 | **105.0**<br>**157.4**<br>**362.0** |
-| **Yasuo** (2 Targets Avg) | 1★<br>2★<br>3★ | 75<br>113<br>169 | 0.80 | 50.0<br>75.3<br>112.7 | 56.3<br>84.8<br>133.8 | **106.3**<br>**160.1**<br>**246.5** |
+| **Lux** (Single Target Channel) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 20.7<br>31.2<br>46.4 | 84.3<br>126.2<br>315.6| **Yasuo** (2 Targets Avg) | 1★<br>2★<br>3★ | 75<br>113<br>169 | 0.80 | 55.2<br>83.1<br>124.4 | 45.2<br>68.0<br>107.4 | **89.0**<br>**134.2**<br>**204.9** |
 | **Zeri** (4 Targets Avg Chain) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.80 | 44.8<br>67.6<br>100.7 | 67.2<br>101.4<br>151.0 | **112.0**<br>**169.0**<br>**251.7** |
 
 ### ⚔️ Table 2: Well-Equipped (3-Item) DPS Summary
 *Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped. Shows average outputs over a 30s fight.*
 
 | Champion | Star | AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Aphelios** (3 Targets, 6 Chakrams) | 1★<br>2★<br>3★ | 130<br>197<br>293 | 1.40 | 198.5<br>300.8<br>447.3 | 212.4<br>321.8<br>545.7 | **410.9**<br>**622.6**<br>**993.0** |
 | **Azir** (Max 3 Soldiers + Direct Cast) | 1★<br>2★<br>3★ | 30<br>45<br>68 | 1.10 | 36.4<br>54.6<br>82.6 | 281.1<br>416.7<br>2844.7 | **317.5**<br>**471.3**<br>**2927.3** |
 | **Gwen** (2 Targets Avg) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.80 | 42.2<br>63.7<br>95.2 | 307.2<br>460.8<br>1228.8 | **349.4**<br>**524.5**<br>**1324.0** |
 | **Kai'Sa** (15 Missiles Split) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.92 | 44.6<br>67.0<br>100.4 | 299.8<br>449.7<br>1249.0 | **344.4**<br>**516.7**<br>**1349.4** |
 | **Lux** (Single Target Channel) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 23.7<br>35.6<br>53.4 | 258.2<br>386.3<br>965.7 | **281.9**<br>**421.9**<br>**1019.1** |
-| **Yasuo** (2 Targets Avg) | 1★<br>2★<br>3★ | 166<br>249<br>374 | 0.80 | 137.2<br>205.9<br>308.8 | 154.4<br>231.6<br>347.3 | **291.6**<br>**437.5**<br>**656.1** |
+| **Yasuo** (2 Targets Avg) | 1★<br>2★<br>3★ | 166<br>250<br>373 | 0.80 | 151.3<br>227.8<br>339.9 | 92.9<br>140.0<br>220.4 | **244.2**<br>**367.8**<br>**560.3** |
 | **Zeri** (4 Targets Avg Chain) | 1★<br>2★<br>3★ | 137<br>207<br>308 | 1.00 | 151.2<br>228.4<br>339.9 | 226.8<br>342.6<br>509.8 | **377.9**<br>**571.0**<br>**849.7** |
 
 ---
@@ -88,7 +87,7 @@ Putting baseline and itemized calculations in a single document guarantees that 
 ---
 
 ### 2. Azir ☀️
-*   **Detailed Math & Formula Proofs**: See [azir-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity Project/Magic School/.claude/docs/balance/calculations/azir-dps-calculation.md)
+*   **Detailed Math & Formula Proofs**: See [azir-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/azir-dps-calculation.md)
 *   **Combat Role & Mechanics**: Backline AP summoner. Summons Sand Soldiers (max 3) who strike magic damage on every 3rd basic attack of Azir. Once 3 soldiers are active, subsequent casts deal direct magic damage.
 *   **Key DPS Outputs**:
     *   *Baseline (Unequipped) Total DPS*: **75.8 / 112.2 / 684.4**
@@ -102,7 +101,7 @@ Putting baseline and itemized calculations in a single document guarantees that 
 *   **Combat Role & Mechanics**: Melee AP carry. Dashes and snips 3 times in a cone, dealing magic damage. Every 3rd cast grants armor and MR.
 *   **Key DPS Outputs**:
     *   *Baseline (Unequipped) Total DPS*: **131.2 / 197.1 / 463.4**
-    *   *Well-Equipped (3-Item) Total DPS*: **340.8 / 511.7 / 1270.9**
+    *   *Well-Equipped (3-Item) Total DPS*: **349.4 / 524.5 / 1324.0**
 *   **Aesthetic Balance Note**: Large cone hitbox makes her a premier frontline AP threat.
 
 ---
@@ -131,8 +130,8 @@ Putting baseline and itemized calculations in a single document guarantees that 
 *   **Detailed Math & Formula Proofs**: See [yasuo-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/yasuo-dps-calculation.md)
 *   **Combat Role & Mechanics**: Melee physical carry. Whirlwind knocks up and slashes target + adjacent enemies (assumed 2 targets average).
 *   **Key DPS Outputs**:
-    *   *Baseline (Unequipped) Total DPS*: **106.3 / 160.1 / 246.5**
-    *   *Well-Equipped (3-Item) Total DPS*: **291.6 / 437.5 / 656.1**
+    *   *Baseline (Unequipped) Total DPS*: **89.0 / 134.2 / 204.9**
+    *   *Well-Equipped (3-Item) Total DPS*: **244.2 / 367.8 / 560.3**
 *   **Aesthetic Balance Note**: Heavy AD scaling makes physical spell crits extremely lethal.
 
 ---

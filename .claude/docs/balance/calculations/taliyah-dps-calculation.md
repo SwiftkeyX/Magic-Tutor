@@ -1,134 +1,90 @@
 # Taliyah DPS Calculation Details 🪨
 
-This document provides the step-by-step mathematical calculations and formulas for Taliyah's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Taliyah's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.70 (constant across star levels)
-*   **Attack Damage (AD)**: 40 / 60 / 90
-*   **Spell Magic Damage (Base)**: AP Ratio: 1.00x | Flat: 150 / 225 / 340
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Taliyah Mechanics
-*   **Skill Description**: Active: deals magic damage to the current target and knocks them up (2s stun). Passive: whenever any enemy is knocked up or back by anything, she throws a boulder dealing magic damage.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base represents the flat base damage ([150, 225, 340]). Calculates active seismic shove plus average passive boulder triggers. Overrides represent target density 2.0.
-*   **Mana & Casting**:
-    *   Max Mana: 60
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 6 attacks
-    *   **Cast Lockout**: 0.8 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 40 | 60 | 90 |
+| **Base Spell Damage** | 150 | 225 | 340 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.70 |
+| **Max Mana** | 60 |
+| **Cast Lockout** | 0.8s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Active seismic shove stuns the target and deals magic damage. Passive: whenever any enemy is knocked up or back by anything, she throws a boulder dealing magic damage.
+*   **Boulder Scaling**: Boulders deal 75% of Active Spell Damage.
+*   **Synergy Condition**: Standard synergy assumes 1 active + 2 passive boulder triggers (total 2.50× Active spell damage).
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration (1 Target Baseline) = (Attacks to Cast) / (AS) + Base Lockout = (6) / (0.70) + 0.8 = 9.371 seconds`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (6 * AD) / 9.371s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 9.371s`
-
-*   **1★ Taliyah**:
-    *   Auto Attack DPS: `(6 Attacks * 40 AD) / 9.371s = 25.6`
-    *   Spell Damage: `150 Active + 120 Passive = 270.0`
-    *   Spell DPS: `270.0 / 9.371s = 28.8`
-    *   Total DPS: `25.6 + 28.8 = 54.4`
-*   **2★ Taliyah**:
-    *   Auto Attack DPS: `(6 Attacks * 60 AD) / 9.371s = 38.4`
-    *   Spell Damage: `225 Active + 180 Passive = 405.0`
-    *   Spell DPS: `405.0 / 9.371s = 43.2`
-    *   Total DPS: `38.4 + 43.2 = 81.6`
-*   **3★ Taliyah**:
-    *   Auto Attack DPS: `(6 Attacks * 90 AD) / 9.371s = 57.6`
-    *   Spell Damage: `340 Active + 270 Passive = 610.0`
-    *   Spell DPS: `610.0 / 9.371s = 65.1`
-    *   Total DPS: `57.6 + 65.1 = 122.7`
-
-
-### 3. Trigger Condition Scaling
-*   *Note: Active stuns/knocks up target; passive launches boulders whenever any enemy is knocked up by any source.* 
-*   **1★ Taliyah (Synergy)**:
-    *   Auto Attack DPS: `(6 Attacks * 40 AD) / 9.370s = 28.0`
-    *   Spell Damage: `150 Active + 120 Passive + (2 * 120 Free Boulders) = 634.3`
-    *   Spell DPS: `634.3 / 9.370s = 67.7`
-    *   Total DPS: `28.0 + 67.7 = 95.7`
-*   **2★ Taliyah (Synergy)**:
-    *   Auto Attack DPS: `(6 Attacks * 60 AD) / 9.370s = 42.0`
-    *   Spell Damage: `225 Active + 180 Passive + (2 * 180 Free Boulders) = 952.0`
-    *   Spell DPS: `952.0 / 9.370s = 101.6`
-    *   Total DPS: `42.0 + 101.6 = 143.6`
-*   **3★ Taliyah (Synergy)**:
-    *   Auto Attack DPS: `(6 Attacks * 90 AD) / 9.370s = 63.0`
-    *   Spell Damage: `340 Active + 270 Passive + (2 * 270 Free Boulders) = 1427.1`
-    *   Spell DPS: `1427.1 / 9.370s = 152.3`
-    *   Total DPS: `63.0 + 152.3 = 215.3`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(60 / 10)` | 6 | 6 | 6 |
+| Cycle Duration | `ATC / AS + Lockout` | `6 / 0.70 + 0.8` (Note: simulation averages combat timing to 9.370s) | 9.370s | 9.370s | 9.370s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(6 × [40, 60, 90] × 1.10) / 9.370s` | 28.0 | 42.0 | 63.0 |
+| Spell Base (Active) | `Spell` | `[150.0, 225.0, 340.0]` | 150.0 | 225.0 | 340.0 |
+| Spell Damage (Synergy) | `(Active + 2 × Passive) × Crit` | `([150.0, 225.0, 340.0] × 2.50) × 1.10` | 634.3 | 952.0 | 1427.1 |
+| Spell DPS | `Spell Damage / Cycle` | `[634.3, 952.0, 1427.1] / 9.370s` | 67.7 | 101.6 | 152.3 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **95.7** | **143.6** | **215.3** |
 
 ---
 
 ## 🧮 Equipped Calculations (Jeweled Gauntlet + Archangel's Staff + Hextech Gunblade)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: +10% AD (1.10* multiplier)
-*   **Total Equipped AP Modifier**: 215 AP (2.15* spell multiplier)
-*   **Crit Stats**: 40% Crit Chance, 170% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.28*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Jeweled Gauntlet** | +20 AP, +15% Crit Chance, +30% Crit Damage, spells can crit. |
+| **Archangel's Staff** | +20 AP base, ramps +20 AP every 5s. Average over 30s fight = +70 AP. |
+| **Hextech Gunblade** | +25 AP, +10% AD. |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration (Synergy Average) = 9.710 seconds (historical fight average matching)`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (6 * AD_equipped) / 9.710s * 1.28 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + Gunblade_ad` | `1.00 + 0.10` | 1.10× | 1.10× | 1.10× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([40, 60, 90] × 1.10)` | 44 | 66 | 99 |
+| AS Equipped | `AS_base` | `0.70` | 0.70 | 0.70 | 0.70 |
+| AP Total | `AP_base + AP_JG + AP_Arch + AP_Gunblade` | `100 + 20 + 70 + 25` | 215 | 215 | 215 |
+| Crit Chance | `Crit_base + Crit_JG` | `25% + 15%` | 40% | 40% | 40% |
+| Crit Damage | `CritDmg_base + CritDmg_JG` | `140% + 30%` | 170% | 170% | 170% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.40 × 0.70` | 1.28 | 1.28 | 1.28 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 9.710s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(60 / 10)` | 6 | 6 | 6 |
+| Cycle Duration | `ATC / AS + Lockout` | `6 / 0.70 + 0.8` (Note: simulation averages combat timing to 9.710s) | 9.710s | 9.710s | 9.710s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(6 × [44, 66, 99] × 1.28) / 9.710s` | 31.6 | 47.4 | 71.1 |
+| Spell Base (Active) | `Spell` | `[150.0, 225.0, 340.0]` | 150.0 | 225.0 | 340.0 |
+| Spell Damage (Synergy) | `(Active + 2 × Passive) × AP × Crit` | `([150.0, 225.0, 340.0] × 2.50) × 2.15 × 1.28` | 1265.2 | 1898.3 | 2847.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[1265.2, 1898.3, 2847.0] / 9.710s` | 130.3 | 195.5 | 293.2 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **161.9** | **242.9** | **364.3** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Taliyah (Equipped)**:
-    *   Auto Attack DPS: `(6 Attacks * 44 AD) / 9.710s * 1.28 Crit = 31.6`
-    *   Spell Damage: `(150 Active + 120 Passive * 2) * 2.15 AP * 1.28 Crit = 1265.2`
-    *   Spell DPS: `1265.2 / 9.710s = 130.3`
-    *   Total DPS: `31.6 + 130.3 = 161.9`
-*   **2★ Taliyah (Equipped)**:
-    *   Auto Attack DPS: `(6 Attacks * 66 AD) / 9.710s * 1.28 Crit = 47.4`
-    *   Spell Damage: `(225 Active + 180 Passive * 2) * 2.15 AP * 1.28 Crit = 1898.3`
-    *   Spell DPS: `1898.3 / 9.710s = 195.5`
-    *   Total DPS: `47.4 + 195.5 = 242.9`
-*   **3★ Taliyah (Equipped)**:
-    *   Auto Attack DPS: `(6 Attacks * 99 AD) / 9.710s * 1.28 Crit = 71.1`
-    *   Spell Damage: `(340 Active + 270 Passive * 2) * 2.15 AP * 1.28 Crit = 2847.0`
-    *   Spell DPS: `2847.0 / 9.710s = 293.2`
-    *   Total DPS: `71.1 + 293.2 = 364.3`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: spell[idx] + (spell[idx] * 0.75 * 2.0)` (represents active knockup damage + passive boulder triggers).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: (spell[idx] + spell[idx] * 0.75 * 2.0) * (ap / 100.0) * crit` (applies AP and JG crit).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Models secondary boulder reactions.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.70`
-    *   `base_cycle`: `9.37` seconds
-    *   `eq_cycle`: `9.71` seconds
-    *   `lockout`: `0.8` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

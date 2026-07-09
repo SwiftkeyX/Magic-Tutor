@@ -1,116 +1,89 @@
 # Bel'Veth DPS Calculation Details 🦈
 
-This document provides the step-by-step mathematical calculations and formulas for Bel'Veth's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Bel'Veth's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.85 (constant across star levels)
-*   **Attack Damage (AD)**: 80 / 120 / 180
-*   **Spell Magic Damage (Base)**: AD Ratio: 0.60 / 0.60 / 0.60
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Bel'Veth Mechanics
-*   **Skill Description**: Lashes out 6 times (1★, 2★) / 25 times (3★). Each lash deals physical damage equal to 60% AD, plus a true damage execute component based on target max health: 1% / 1.5% / 5% target max health.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base is [0, 0, 0] since there is no flat damage component, and spell_ad_ratio is [0.60, 0.60, 0.60] (lash AD scaling).
-*   **Mana & Casting**:
-    *   Max Mana: 70
-    *   Start Mana: 20
-    *   **Attacks to Cast**: 5 attacks
-    *   **Cast Lockout**: 1.2 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 80 | 120 | 180 |
+| **Base Spell Damage** | 0 | 0 | 0 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.85 |
+| **Max Mana** | 70 |
+| **Cast Lockout** | 1.2s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Lashes out 6 times (1★, 2★) / 25 times (3★). Each lash deals physical damage equal to 60% AD, plus a true damage execute component based on target max health: 1% / 1.5% / 5% target max health.
+*   **Mechanical Timing & Assumptions**: spell_base is [0, 0, 0] since there is no flat damage component, and spell_ad_ratio is [0.60, 0.60, 0.60] (lash AD scaling).
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = 7.290 seconds (adjusted for combat timing)`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD) / 7.290s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.290s`
-
-*   **1★ Bel'Veth**:
-    *   Auto Attack DPS: `(5 Attacks * 80 AD) / 7.290s = 54.9`
-    *   Spell Damage: `(80 AD * 0.60 + 2000 HP * 0.010) * 6 lashes = 408.0`
-    *   Spell DPS: `408.0 / 7.290s = 56.0`
-    *   Total DPS: `54.9 + 56.0 = 110.8`
-*   **2★ Bel'Veth**:
-    *   Auto Attack DPS: `(5 Attacks * 120 AD) / 7.290s = 82.3`
-    *   Spell Damage: `(120 AD * 0.60 + 2000 HP * 0.015) * 6 lashes = 612.0`
-    *   Spell DPS: `612.0 / 7.290s = 84.0`
-    *   Total DPS: `82.3 + 84.0 = 166.3`
-*   **3★ Bel'Veth**:
-    *   Auto Attack DPS: `(5 Attacks * 180 AD) / 7.290s = 123.5`
-    *   Spell Damage: `(180 AD * 0.60 + 2000 HP * 0.050) * 25 lashes = 5200.0`
-    *   Spell DPS: `5200.0 / 7.290s = 713.3`
-    *   Total DPS: `123.5 + 713.3 = 836.8`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(70 / 10)` | 7 | 7 | 7 |
+| Cycle Duration | `ATC / AS + Lockout` | `7 / 0.85 + 1.2` | 7.290s | 7.290s | 7.290s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(7 × [AD] × 1.10) / 7.290s` | 76.8 | 115.2 | 172.8 |
+| Spell Base (1 Target) | `Spell` | `[0, 0, 0]` | 0.0 | 0.0 | 0.0 |
+| Spell Damage | `(AD × 0.60 + 2000 HP × Max HP Execute %) × Lashes` | `([80, 120, 180] × 0.60 + 2000 × Execute %) × [6, 6, 25]` | 408.0 | 612.0 | 5200.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 7.290s` | 56.0 | 84.0 | 713.3 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **132.8** | **199.2** | **886.1** |
 
 ---
 
 ## 🧮 Equipped Calculations (Deathblade + Infinity Edge + Bloodthirster)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: +121% AD (2.21* multiplier)
-*   **Total Equipped AP Modifier**: 100 AP (1.00* spell multiplier)
-*   **Crit Stats**: 60% Crit Chance, 140% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.24*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Deathblade** | +66% AD |
+| **Infinity Edge** | +35% AD, +35% Crit Chance |
+| **Bloodthirster** | +20% AD |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = 7.290 seconds (adjusted for combat timing)`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD_equipped) / 7.290s * 1.24 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + [Item AD Percent]` | `1.00 + [AD buffs]` | 2.21× | 2.21× | 2.21× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD Array] × 2.21)` | 177 | 265 | 398 |
+| AS Equipped | `AS_base × (1.00 + AS_bonus)` | `AS_average` | 0.85 | 0.85 | 0.85 |
+| AP Total | `AP_base + AP_items` | `100 + [AP buffs]` | 100 | 100 | 100 |
+| Crit Chance | `Crit_base + Crit_items` | `25% + [Crit buffs]` | 60% | 60% | 60% |
+| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [CritDmg buffs]` | 140% | 140% | 140% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.60 × 0.40` | 1.24 | 1.24 | 1.24 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.290s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(70 / 10)` | 7 | 7 | 7 |
+| Cycle Duration | `ATC / AS + Lockout` | `7 / 0.85 + 1.2` (Note: cycle duration is 7.290s) | 7.290s | 7.290s | 7.290s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(7 × [Equipped AD] × 1.35 Crit) / 7.290s` | 150.5 | 225.8 | 338.6 |
+| Spell Base (1 Target) | `Spell` | `[0, 0, 0]` | 0.0 | 0.0 | 0.0 |
+| Spell Damage | `(AD_equipped × 0.60 × Crit + 2000 HP × Max HP Execute %) × Lashes` | `([177, 265, 398] × 0.60 × 1.24 + 2000 × Execute %) × [6, 6, 25]` | 909.8 | 1364.7 | 9902.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 7.290s` | 124.8 | 187.2 | 1358.3 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **275.3** | **413.0** | **1696.9** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Bel'Veth (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 177 AD) / 7.290s * 1.24 Crit = 150.5`
-    *   Spell Damage: `(177 AD * 0.60 * 1.24 Crit + 2000 HP * 0.010) * 6 lashes = 909.8`
-    *   Spell DPS: `909.8 / 7.290s = 124.8`
-    *   Total DPS: `150.5 + 124.8 = 275.3`
-*   **2★ Bel'Veth (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 265 AD) / 7.290s * 1.24 Crit = 225.8`
-    *   Spell Damage: `(265 AD * 0.60 * 1.24 Crit + 2000 HP * 0.015) * 6 lashes = 1364.7`
-    *   Spell DPS: `1364.7 / 7.290s = 187.2`
-    *   Total DPS: `225.8 + 187.2 = 413.0`
-*   **3★ Bel'Veth (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 398 AD) / 7.290s * 1.24 Crit = 338.6`
-    *   Spell Damage: `(398 AD * 0.60 * 1.24 Crit + 2000 HP * 0.050) * 25 lashes = 9902.0`
-    *   Spell DPS: `9902.0 / 7.290s = 1358.3`
-    *   Total DPS: `338.6 + 1358.3 = 1696.9`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: (ad * 0.60 + 2000.0 * ((5.0 if idx==2 else (1.5 if idx==1 else 1.0)) / 100.0)) * (25 if idx==2 else 6)` (calculates physical lash scaling plus true damage execute against a standardized 2000 HP target).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: (ad * 0.60 * crit + 2000.0 * ((5.0 if idx==2 else (1.5 if idx==1 else 1.0)) / 100.0)) * (25 if idx==2 else 6)` (applies crit multiplier to the physical damage portion).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Maps exact execute calculations to the final output.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.85`
-    *   `eq_as`: `0.85`
-    *   `base_cycle` / `eq_cycle`: `7.29` seconds
-    *   `lockout`: `1.2` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

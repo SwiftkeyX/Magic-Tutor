@@ -15,13 +15,13 @@ Putting baseline and itemized calculations in a single document guarantees that 
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Aatrox** (1 adjacent target) | 1★<br>2★<br>3★ | 80<br>120<br>180 | 0.80 | 53.3<br>80.0<br>120.0 | 42.7<br>64.0<br>96.0 | **96.0**<br>**144.0**<br>**216.0** |
 | **Ahri** (5 Wave targets avg) | 1★<br>2★<br>3★ | 50<br>75<br>113 | 0.85 | 35.4<br>53.1<br>80.0 | 91.1<br>134.7<br>755.4 | **126.5**<br>**187.8**<br>**835.4** |
-| **Bel'Veth** (2000 HP target avg) | 1★<br>2★<br>3★ | 80<br>120<br>180 | 0.85 | 54.8<br>82.3<br>123.5 | 55.9<br>84.0<br>713.3 | **110.7**<br>**166.3**<br>**836.8** |
+| **Bel'Veth** (2000 HP target avg) | 1★<br>2★<br>3★ | 80<br>120<br>180 | 0.85 | 76.8<br>115.2<br>172.8 | 56.0<br>84.0<br>713.3 | **132.8**<br>**199.2**<br>**886.1** |
 
 ### ⚔️ Table 2: Well-Equipped (3-Item) DPS Summary
 *Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped. Shows average outputs over a 30s fight.*
 
 | Champion | Star | AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Aatrox** (1 adjacent target) | 1★<br>2★<br>3★ | 177<br>266<br>398 | 0.80 | 146.3<br>219.5<br>329.2 | 117.1<br>175.7<br>263.5 | **263.4**<br>**395.2**<br>**592.7** |
 | **Ahri** (5 Wave targets avg) | 1★<br>2★<br>3★ | 50<br>75<br>113 | 0.85 | 43.5<br>65.3<br>97.9 | 280.0<br>413.5<br>2320.6 | **323.5**<br>**478.8**<br>**2418.5** |
 | **Bel'Veth** (2000 HP target avg) | 1★<br>2★<br>3★ | 177<br>266<br>398 | 0.85 | 150.5<br>225.8<br>338.6 | 124.8<br>187.2<br>1358.3 | **275.3**<br>**413.0**<br>**1696.9** |
@@ -93,6 +93,6 @@ Putting baseline and itemized calculations in a single document guarantees that 
 *   **Detailed Math & Formula Proofs**: See [belveth-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/belveth-dps-calculation.md)
 *   **Combat Role & Mechanics**: Frontline physical carry. Lashes out rapid strikes, dealing physical damage + target max health true damage execute component (standardized around a 2000 HP target).
 *   **Key DPS Outputs**:
-    *   *Baseline (Unequipped) Total DPS*: **110.7 / 166.3 / 836.8**
+    *   *Baseline (Unequipped) Total DPS*: **132.8 / 199.2 / 886.1**
     *   *Well-Equipped (3-Item) Total DPS*: **275.3 / 413.0 / 1696.9**
 *   **Aesthetic Balance Note**: True damage percentage execute renders health-stacking tanks ineffective against her.

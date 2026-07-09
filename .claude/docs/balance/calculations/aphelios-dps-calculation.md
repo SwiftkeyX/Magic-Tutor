@@ -1,118 +1,89 @@
 # Aphelios DPS Calculation Details 🌙
 
-This document provides the step-by-step mathematical calculations and formulas for Aphelios's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Aphelios's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.75 (constant across star levels)
-*   **Attack Damage (AD)**: 65 / 98 / 146
-*   **Spell Magic Damage (Base)**: AD Ratio: 2.00 / 2.00 / 2.50
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Aphelios Mechanics
-*   **Skill Description**: Fires a blast dealing physical damage: AD * 2.00 / 2.00 / 2.50 in a 2-hex area. Equips Chakrams (+3 base, +1 per enemy hit). Each Chakram adds +8% AD bonus physical damage on-hit, totaling +48% AD scaling bonus per attack.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base is [0, 0, 0] and spell_ad_ratio is [2.00, 2.00, 2.50]. Overrides incorporate complex stacking Chakram damage.
-*   **Mana & Casting**:
-    *   Max Mana: 100
-    *   Start Mana: 50
-    *   **Attacks to Cast**: 5 attacks
-    *   **Cast Lockout**: 1.0 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 65 | 98 | 146 |
+| **Base Spell Damage** | 0 | 0 | 0 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.75 |
+| **Max Mana** | 100 |
+| **Cast Lockout** | 1.0s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Fires a blast dealing physical damage: AD * 2.00 / 2.00 / 2.50 in a 2-hex area. Equips Chakrams (+3 base, +1 per enemy hit). Each Chakram adds +8% AD bonus physical damage on-hit, totaling +48% AD scaling bonus per attack.
+*   **Mechanical Timing & Assumptions**: spell_base is [0, 0, 0] and spell_ad_ratio is [2.00, 2.00, 2.50]. Overrides incorporate complex stacking Chakram damage.
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = 14.670 seconds (adjusted for combat timing)`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD) / 14.670s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 14.670s`
-
-*   **1★ Aphelios**:
-    *   Auto Attack DPS: `(10 Attacks * 65 AD) / 14.670s = 44.3`
-    *   Spell Damage: `65 AD * (2.00 blast * 3 Targets + 5.25 Chakrams * 0.48) = 553.8`
-    *   Spell DPS: `553.8 / 14.670s = 37.8`
-    *   Total DPS: `44.3 + 37.8 = 82.1`
-*   **2★ Aphelios**:
-    *   Auto Attack DPS: `(10 Attacks * 98 AD) / 14.670s = 66.8`
-    *   Spell Damage: `98 AD * (2.00 blast * 3 Targets + 5.25 Chakrams * 0.48) = 835.0`
-    *   Spell DPS: `835.0 / 14.670s = 56.9`
-    *   Total DPS: `66.8 + 56.9 = 123.7`
-*   **3★ Aphelios**:
-    *   Auto Attack DPS: `(10 Attacks * 146 AD) / 14.670s = 99.5`
-    *   Spell Damage: `146 AD * (2.50 blast * 3 Targets + 5.25 Chakrams * 0.48) = 1462.9`
-    *   Spell DPS: `1462.9 / 14.670s = 99.7`
-    *   Total DPS: `99.5 + 99.7 = 199.2`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(100 / 10)` | 10 | 10 | 10 |
+| Cycle Duration | `ATC / AS + Lockout` | `10 / 0.75 + 1.0` | 14.670s | 14.670s | 14.670s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(10 × [AD] × 1.10) / 14.670s` | 44.3 | 66.8 | 99.5 |
+| Spell Base (1 Target) | `Spell` | `[0, 0, 0]` | 0.0 | 0.0 | 0.0 |
+| Spell Damage | `AD × (2.00 blast × 3.0 targets + 5.25 Chakrams × 0.48)` | `[65, 98, 146] × (6.00 + 2.52)` | 553.8 | 835.0 | 1462.9 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 14.670s` | 37.8 | 56.9 | 99.7 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **82.1** | **123.7** | **199.2** |
 
 ---
 
 ## 🧮 Equipped Calculations (Guinsoo's Rageblade + Deathblade + Infinity Edge)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: +100% AD (2.00* multiplier)
-*   **Total Equipped AP Modifier**: 100 AP (1.00* spell multiplier)
-*   **Crit Stats**: 60% Crit Chance, 140% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.24*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Guinsoo's Rageblade** | +18% AS |
+| **Deathblade** | +66% AD |
+| **Infinity Edge** | +35% AD, +35% Crit Chance |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = 7.860 seconds (adjusted for combat timing)`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD_equipped) / 7.860s * 1.24 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + [Item AD Percent]` | `1.00 + [AD buffs]` | 2.00× | 2.00× | 2.00× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD Array] × 2.00)` | 130 | 196 | 292 |
+| AS Equipped | `AS_base × (1.00 + AS_bonus)` | `AS_average` | 1.40 | 1.40 | 1.40 |
+| AP Total | `AP_base + AP_items` | `100 + [AP buffs]` | 100 | 100 | 100 |
+| Crit Chance | `Crit_base + Crit_items` | `25% + [Crit buffs]` | 60% | 60% | 60% |
+| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [CritDmg buffs]` | 140% | 140% | 140% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.60 × 0.40` | 1.24 | 1.24 | 1.24 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.860s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(100 / 10)` | 10 | 10 | 10 |
+| Cycle Duration | `ATC / AS + Lockout` | `10 / 1.40 + 1.0` (Note: cycle duration is 7.860s) | 7.860s | 7.860s | 7.860s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(10 × [Equipped AD] × 1.35 Crit) / 7.860s` | 198.5 | 300.8 | 447.3 |
+| Spell Base (1 Target) | `Spell` | `[0, 0, 0]` | 0.0 | 0.0 | 0.0 |
+| Spell Damage | `AD_equipped × (2.00 blast × 3.0 targets + 9.80 Chakrams × 0.48) × Crit` | `[130, 196, 292] × (6.00 + 4.704) × 1.24` | 1725.7 | 2601.8 | 3875.9 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 7.860s` | 212.4 | 321.8 | 545.7 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **410.9** | **622.6** | **993.0** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Aphelios (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 130 AD) / 7.860s * 1.24 Crit = 198.5`
-    *   Spell Damage: `130 AD * (2.00 blast * 3 Targets + 9.80 Chakrams * 0.48) * 1.24 Crit = 1669.5`
-    *   Spell DPS: `1669.5 / 7.860s = 212.4`
-    *   Total DPS: `198.5 + 212.4 = 410.9`
-*   **2★ Aphelios (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 196 AD) / 7.860s * 1.24 Crit = 300.8`
-    *   Spell Damage: `196 AD * (2.00 blast * 3 Targets + 9.80 Chakrams * 0.48) * 1.24 Crit = 2529.3`
-    *   Spell DPS: `2529.3 / 7.860s = 321.8`
-    *   Total DPS: `300.8 + 321.8 = 622.6`
-*   **3★ Aphelios (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 292 AD) / 7.860s * 1.24 Crit = 447.3`
-    *   Spell Damage: `292 AD * (2.50 blast * 3 Targets + 9.80 Chakrams * 0.48) * 1.24 Crit = 4289.2`
-    *   Spell DPS: `4289.2 / 7.860s = 545.7`
-    *   Total DPS: `447.3 + 545.7 = 993.0`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: ad * ((2.50 if idx==2 else 2.00) * 3.0 + 5.25 * 0.48)` (models area blast plus baseline Chakram stack physical damage).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: ad * ((2.50 if idx==2 else 2.00) * 3.0 + 9.8 * 0.48) * crit` (models AP area blast plus Guinsoo/crit-scaled Chakrams).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Utilized to account for complex dynamic ramping of Chakram auto-attack damage.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.75`
-    *   `eq_as`: `1.40` (represents average AS over 30s fight with Guinsoo stacking)
-    *   `eq_ad_mult`: `2.00` (Deathblade + Infinity Edge AD bonus multiplier)
-    *   `base_cycle`: `14.67` seconds
-    *   `eq_cycle`: `7.86` seconds
-    *   `lockout`: `1.0` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

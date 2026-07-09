@@ -1,134 +1,89 @@
 # Vel'Koz DPS Calculation Details 👁️
 
-This document provides the step-by-step mathematical calculations and formulas for Vel'Koz's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Vel'Koz's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.70 (constant across star levels)
-*   **Attack Damage (AD)**: 40 / 60 / 90
-*   **Spell Magic Damage (Base)**: AP Ratio: 1.00x | Flat: 220 / 330 / 550
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Vel'Koz Mechanics
-*   **Skill Description**: Plasma Fission fires a bolt that splits in two at right angles, dealing 50% damage to all targets passed through.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base represents the flat base damage ([220, 330, 550]). Splitting magic bolt. Applies target density factor of 2.00 (two split beams). Overrides match the sheet's AP values.
-*   **Mana & Casting**:
-    *   Max Mana: 60
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 6 attacks
-    *   **Cast Lockout**: 0.8 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 40 | 60 | 90 |
+| **Base Spell Damage** | 220 | 330 | 550 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.70 |
+| **Max Mana** | 60 |
+| **Cast Lockout** | 0.8s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Plasma Fission fires a bolt that splits in two at right angles, dealing 50% damage to all targets passed through.
+*   **Mechanical Timing & Assumptions**: 
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration (1 Target Baseline) = (Attacks to Cast) / (AS) + Base Lockout = (6) / (0.70) + 0.8 = 9.371 seconds`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (6 * AD) / 9.371s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 9.371s`
-
-*   **1★ Vel'Koz**:
-    *   Auto Attack DPS: `(6 Attacks * 40 AD) / 9.371s = 25.6`
-    *   Spell Damage: `220 * 1.0 Bolt (1 Target) = 220.0`
-    *   Spell DPS: `220.0 / 9.371s = 23.5`
-    *   Total DPS: `25.6 + 23.5 = 49.1`
-*   **2★ Vel'Koz**:
-    *   Auto Attack DPS: `(6 Attacks * 60 AD) / 9.371s = 38.4`
-    *   Spell Damage: `330 * 1.0 Bolt (1 Target) = 330.0`
-    *   Spell DPS: `330.0 / 9.371s = 35.2`
-    *   Total DPS: `38.4 + 35.2 = 73.6`
-*   **3★ Vel'Koz**:
-    *   Auto Attack DPS: `(6 Attacks * 90 AD) / 9.371s = 57.6`
-    *   Spell Damage: `550 * 1.0 Bolt (1 Target) = 550.0`
-    *   Spell DPS: `550.0 / 9.371s = 58.7`
-    *   Total DPS: `57.6 + 58.7 = 116.3`
-
-
-### 3. Trigger Condition Scaling
-*   *Note: Plasma Fission splits in two. Synergy assumes 2 targets hit on average.* 
-*   **1★ Vel'Koz (Synergy)**:
-    *   Auto Attack DPS: `(6 Attacks * 40 AD) / 9.710s = 24.7`
-    *   Spell Damage: `220 * 2.0 splitting (2 Targets Avg) = 440.0`
-    *   Spell DPS: `440.0 / 9.710s = 45.3`
-    *   Total DPS: `24.7 + 45.3 = 70.0`
-*   **2★ Vel'Koz (Synergy)**:
-    *   Auto Attack DPS: `(6 Attacks * 60 AD) / 9.710s = 37.1`
-    *   Spell Damage: `330 * 2.0 splitting (2 Targets Avg) = 660.0`
-    *   Spell DPS: `660.0 / 9.710s = 68.0`
-    *   Total DPS: `37.1 + 68.0 = 105.0`
-*   **3★ Vel'Koz (Synergy)**:
-    *   Auto Attack DPS: `(6 Attacks * 90 AD) / 9.710s = 55.6`
-    *   Spell Damage: `550 * 2.0 splitting (2 Targets Avg) = 1100.0`
-    *   Spell DPS: `1100.0 / 9.710s = 113.3`
-    *   Total DPS: `55.6 + 113.3 = 168.9`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(60 / 10)` | 6 | 6 | 6 |
+| Cycle Duration | `ATC / AS + Lockout` | `6 / 0.70 + 0.8` | 9.710s | 9.710s | 9.710s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(6 × [AD] × 1.10) / 9.710s` | 24.7 | 37.1 | 55.6 |
+| Spell Base (1 Target) | `Spell` | `[220, 330, 550]` | 220.0 | 330.0 | 550.0 |
+| Spell Damage | `Spell Base × Splits × Crit` | `[220.0, 330.0, 550.0] × 2.00 × 1.10` (splits perpendicularly on first hit) | 484.0 | 726.0 | 1210.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 9.710s` | 45.3 | 68.0 | 113.3 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **70.0** | **105.0** | **168.9** |
 
 ---
 
 ## 🧮 Equipped Calculations (Blue Buff + Jeweled Gauntlet + Rabadon's Deathcap)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: None (+0%)
-*   **Total Equipped AP Modifier**: 200 AP (2.00* spell multiplier)
-*   **Crit Stats**: 40% Crit Chance, 170% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.28*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Blue Buff** | +10 AP, -10 Max Mana |
+| **Jeweled Gauntlet** | +20 AP, +15% Crit Chance, +30% Crit Damage |
+| **Rabadon's Deathcap** | +70 AP |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration (Synergy Average) = 8.290 seconds (historical fight average matching)`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD_equipped) / 8.290s * 1.28 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + [Item AD Percent]` | `1.00 + [AD buffs]` | 1.00× | 1.00× | 1.00× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD Array] × 1.00)` | 40 | 60 | 90 |
+| AS Equipped | `AS_base × (1.00 + AS_bonus)` | `AS_average` | 0.70 | 0.70 | 0.70 |
+| AP Total | `AP_base + AP_items` | `100 + [AP buffs]` | 200 | 200 | 200 |
+| Crit Chance | `Crit_base + Crit_items` | `25% + [Crit buffs]` | 40% | 40% | 40% |
+| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [CritDmg buffs]` | 170% | 170% | 170% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.40 × 0.70` | 1.28 | 1.28 | 1.28 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 8.290s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil((Max Mana - 10) / 10)` | `ceil((60 - 10) / 10)` | 5 | 5 | 5 |
+| Cycle Duration | `ATC / AS + Lockout` | `5 / 0.70 + 0.8` (Note: cycle duration is 8.290s) | 8.290s | 8.290s | 8.290s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(5 × [Equipped AD] × 1.15 Crit) / 8.290s` | 30.9 | 46.4 | 69.5 |
+| Spell Base (1 Target) | `Spell` | `[220, 330, 550]` | 220.0 | 330.0 | 550.0 |
+| Spell Damage | `Spell Base × Splits × AP × Crit` | `[220, 330, 550] × 2.00 × 2.00 × 1.28` (Blue Buff + JG + Rabadon) | 1126.4 | 1689.6 | 2816.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 8.290s` | 135.9 | 203.8 | 339.7 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **166.8** | **250.2** | **409.2** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Vel'Koz (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 40 AD) / 8.290s * 1.28 Crit = 30.9`
-    *   Spell Damage: `(220 * 2.0 splitting) * 2.00 AP * 1.28 Crit = 1126.6`
-    *   Spell DPS: `1126.6 / 8.290s = 135.9`
-    *   Total DPS: `30.9 + 135.9 = 166.8`
-*   **2★ Vel'Koz (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 60 AD) / 8.290s * 1.28 Crit = 46.4`
-    *   Spell Damage: `(330 * 2.0 splitting) * 2.00 AP * 1.28 Crit = 1689.5`
-    *   Spell DPS: `1689.5 / 8.290s = 203.8`
-    *   Total DPS: `46.4 + 203.8 = 250.2`
-*   **3★ Vel'Koz (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 90 AD) / 8.290s * 1.28 Crit = 69.5`
-    *   Spell Damage: `(550 * 2.0 splitting) * 2.00 AP * 1.28 Crit = 2816.1`
-    *   Spell DPS: `2816.1 / 8.290s = 339.7`
-    *   Total DPS: `69.5 + 339.7 = 409.2`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: spell[idx] * 2.0` (target density factor of 2.0).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: (spell[idx] * 2.0) * (ap / 100.0) * crit` (scales split magic bolts).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Models multi-beam split pathing.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.70`
-    *   `base_cycle`: `9.71` seconds
-    *   `eq_cycle`: `8.29` seconds
-    *   `lockout`: `0.8` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

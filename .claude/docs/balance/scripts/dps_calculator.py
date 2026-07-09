@@ -42,11 +42,10 @@ def compile_equipped_stats(champ_name):
     crit_dmg = champ.get("eq_crit_dmg", crit_dmg)
     amp = champ.get("eq_amp", amp)
     
-    # Calculate attacks to cast
+    # Calculate attacks to cast (sustained cycle does not use start mana)
     final_max_mana = champ["max_mana"] + max_mana_mod
-    needed_mana = final_max_mana - champ["start_mana"]
     if final_max_mana > 0:
-        attacks_to_cast = int(math.ceil(needed_mana / mana_per_attack))
+        attacks_to_cast = int(math.ceil(final_max_mana / mana_per_attack))
     else:
         attacks_to_cast = 0
         
@@ -85,7 +84,7 @@ def calculate_dps(champ_name, star_level, equipped=False):
             
         ad = champ["ad"][idx]
         as_rate = champ["as"]
-        attacks = champ.get("base_attacks", int(math.ceil((champ["max_mana"] - champ["start_mana"]) / 10.0)) if champ["max_mana"] > 0 else 0)
+        attacks = champ.get("base_attacks", int(math.ceil(champ["max_mana"] / 10.0)) if champ["max_mana"] > 0 else 0)
         cycle = champ.get("base_cycle", (attacks / as_rate) + champ["lockout"])
         
         normal_dps = (attacks * ad) / cycle

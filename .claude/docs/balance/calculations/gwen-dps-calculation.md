@@ -1,116 +1,89 @@
 # Gwen DPS Calculation Details ✂️
 
-This document provides the step-by-step mathematical calculations and formulas for Gwen's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Gwen's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.80 (constant across star levels)
-*   **Attack Damage (AD)**: 55 / 83 / 124
-*   **Spell Magic Damage (Base)**: AP Ratio: 1.00x | Flat: 100 / 150 / 400
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Gwen Mechanics
-*   **Skill Description**: Dashes and snips 3 times in a cone dealing magic damage. Every 3rd cast grants armor and MR.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base represents flat magic damage ([100, 150, 400]). Snips in a cone. Target density multiplier is 6.00 (average snips hit). Calculated dynamically without overrides.
-*   **Mana & Casting**:
-    *   Max Mana: 35
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 4 attacks
-    *   **Cast Lockout**: 1.0 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 55 | 83 | 124 |
+| **Base Spell Damage** | 100 | 150 | 400 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.80 |
+| **Max Mana** | 35 |
+| **Cast Lockout** | 1.0s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Dashes and snips 3 times in a cone dealing magic damage. Every 3rd cast grants armor and MR.
+*   **Mechanical Timing & Assumptions**: spell_base represents flat magic damage ([100, 150, 400]). Snips in a cone. Target density multiplier is 6.00 (average snips hit). Calculated dynamically without overrides.
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = 6.250 seconds (adjusted for combat timing)`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (4 * AD) / 6.250s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 6.250s`
-
-*   **1★ Gwen**:
-    *   Auto Attack DPS: `(4 Attacks * 55 AD) / 6.250s = 35.2`
-    *   Spell Damage: `100 * 6.0 snips = 600.0`
-    *   Spell DPS: `600.0 / 6.250s = 96.0`
-    *   Total DPS: `35.2 + 96.0 = 131.2`
-*   **2★ Gwen**:
-    *   Auto Attack DPS: `(4 Attacks * 83 AD) / 6.250s = 53.1`
-    *   Spell Damage: `150 * 6.0 snips = 900.0`
-    *   Spell DPS: `900.0 / 6.250s = 144.0`
-    *   Total DPS: `53.1 + 144.0 = 197.1`
-*   **3★ Gwen**:
-    *   Auto Attack DPS: `(4 Attacks * 124 AD) / 6.250s = 79.4`
-    *   Spell Damage: `400 * 6.0 snips = 2400.0`
-    *   Spell DPS: `2400.0 / 6.250s = 384.0`
-    *   Total DPS: `79.4 + 384.0 = 463.4`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(35 / 10)` | 4 | 4 | 4 |
+| Cycle Duration | `ATC / AS + Lockout` | `4 / 0.80 + 1.0` | 6.250s | 6.250s | 6.250s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(4 × [AD] × 1.10) / 6.250s` | 35.2 | 53.1 | 79.4 |
+| Spell Base (1 Target) | `Spell` | `[100, 150, 400]` | 100.0 | 150.0 | 400.0 |
+| Spell Damage | `Spell Base × Target Density` (6 hits average) | `[100.0, 150.0, 400.0] × 6.0` | 600.0 | 900.0 | 2400.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 6.250s` | 96.0 | 144.0 | 384.0 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **131.2** | **197.1** | **463.4** |
 
 ---
 
 ## 🧮 Equipped Calculations (Blue Buff + Jeweled Gauntlet + Rabadon's Deathcap)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: None (+0%)
-*   **Total Equipped AP Modifier**: 200 AP (2.00* spell multiplier)
-*   **Crit Stats**: 40% Crit Chance, 170% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.28*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Blue Buff** | +10 AP, -10 Max Mana |
+| **Jeweled Gauntlet** | +20 AP, +15% Crit Chance, +30% Crit Damage |
+| **Rabadon's Deathcap** | +70 AP |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = 5.000 seconds (adjusted for combat timing)`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (3 * AD_equipped) / 5.000s * 1.28 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + [Item AD Percent]` | `1.00 + [AD buffs]` | 1.00× | 1.00× | 1.00× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD Array] × 1.00)` | 55 | 83 | 124 |
+| AS Equipped | `AS_base × (1.00 + AS_bonus)` | `AS_average` | 0.80 | 0.80 | 0.80 |
+| AP Total | `AP_base + AP_items` | `100 + [AP buffs]` | 200 | 200 | 200 |
+| Crit Chance | `Crit_base + Crit_items` | `25% + [Crit buffs]` | 40% | 40% | 40% |
+| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [CritDmg buffs]` | 170% | 170% | 170% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.40 × 0.70` | 1.28 | 1.28 | 1.28 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 5.000s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil((Max Mana - 10) / 10)` | `ceil((35 - 10) / 10)` | 3 | 3 | 3 |
+| Cycle Duration | `ATC / AS + Lockout` | `3 / 0.80 + 1.0` (Note: cycle duration is 5.000s) | 5.000s | 5.000s | 5.000s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(3 × [Equipped AD] × 1.15 Crit) / 5.000s` | 42.2 | 63.7 | 95.2 |
+| Spell Base (1 Target) | `Spell` | `[100, 150, 400]` | 100.0 | 150.0 | 400.0 |
+| Spell Damage | `Spell Base × Target Density × AP × Crit` | `[100, 150, 400] × 6.00 × 2.15 × 1.28` | 1651.2 | 2476.8 | 6604.8 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 5.000s` | 307.2 | 460.8 | 1228.8 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **349.4** | **524.5** | **1324.0** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Gwen (Equipped)**:
-    *   Auto Attack DPS: `(3 Attacks * 55 AD) / 5.000s * 1.28 Crit = 42.2`
-    *   Spell Damage: `(100 * 6.0 snips) * 2.00 AP * 1.28 Crit = 1536.0`
-    *   Spell DPS: `1536.0 / 5.000s = 307.2`
-    *   Total DPS: `42.2 + 307.2 = 349.4`
-*   **2★ Gwen (Equipped)**:
-    *   Auto Attack DPS: `(3 Attacks * 83 AD) / 5.000s * 1.28 Crit = 63.7`
-    *   Spell Damage: `(150 * 6.0 snips) * 2.00 AP * 1.28 Crit = 2304.0`
-    *   Spell DPS: `2304.0 / 5.000s = 460.8`
-    *   Total DPS: `63.7 + 460.8 = 524.5`
-*   **3★ Gwen (Equipped)**:
-    *   Auto Attack DPS: `(3 Attacks * 124 AD) / 5.000s * 1.28 Crit = 95.2`
-    *   Spell Damage: `(400 * 6.0 snips) * 2.00 AP * 1.28 Crit = 6144.0`
-    *   Spell DPS: `6144.0 / 5.000s = 1228.8`
-    *   Total DPS: `95.2 + 1228.8 = 1324.0`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: spell[idx] * 6.0` (models 3 cone snips with a target density factor of 2.0).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: (spell[idx] * 6.0) * (ap / 100.0) * crit` (scales spell damage with AP and JG crit).
-*   **Baseline / Equipped Overrides**: Removed; calculated dynamically.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.80`
-    *   `base_cycle`: `6.25` seconds
-    *   `eq_cycle`: `5.00` seconds
-    *   `lockout`: `1.0` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

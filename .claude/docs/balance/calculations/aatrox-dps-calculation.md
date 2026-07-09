@@ -1,117 +1,89 @@
 # Aatrox DPS Calculation Details 😈
 
-This document provides the step-by-step mathematical calculations and formulas for Aatrox's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Aatrox's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.80 (constant across star levels)
-*   **Attack Damage (AD)**: 80 / 120 / 180
-*   **Spell Magic Damage (Base)**: AD Ratio: 0.80 / 0.80 / 0.80
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Aatrox Mechanics
-*   **Skill Description**: Transforms for a duration, convert AS to AD. Attacks deal physical damage in an area. Splash Assumptions: Assuming attacks hit an average of 2 targets total (1 main + 1 adjacent target), scaling auto-attack damage multiplier to 1.80x (normal + 80% splash).
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base is [0, 0, 0] since there is no flat spell damage, and spell_ad_ratio is [0.80, 0.80, 0.80] (splash AD ratio).
-*   **Mana & Casting**:
-    *   Max Mana: 50
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 5 attacks
-    *   **Cast Lockout**: 1.0 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 80 | 120 | 180 |
+| **Base Spell Damage** | 0 | 0 | 0 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.80 |
+| **Max Mana** | 50 |
+| **Cast Lockout** | 1.0s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Transforms for a duration, convert AS to AD. Attacks deal physical damage in an area. Splash Assumptions: Assuming attacks hit an average of 2 targets total (1 main + 1 adjacent target), scaling auto-attack damage multiplier to 1.80x (normal + 80% splash).
+*   **Mechanical Timing & Assumptions**: spell_base is [0, 0, 0] since there is no flat spell damage, and spell_ad_ratio is [0.80, 0.80, 0.80] (splash AD ratio).
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = 7.500 seconds (adjusted for combat timing)`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD) / 7.500s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.500s`
-
-*   **1★ Aatrox**:
-    *   Auto Attack DPS: `(5 Attacks * 80 AD) / 7.500s = 53.3`
-    *   Spell Damage: `(5.0 attacks * 80 AD) * 0.80 Splash = 320.0`
-    *   Spell DPS: `320.0 / 7.500s = 42.7`
-    *   Total DPS: `53.3 + 42.7 = 96.0`
-*   **2★ Aatrox**:
-    *   Auto Attack DPS: `(5 Attacks * 120 AD) / 7.500s = 80.0`
-    *   Spell Damage: `(5.0 attacks * 120 AD) * 0.80 Splash = 480.0`
-    *   Spell DPS: `480.0 / 7.500s = 64.0`
-    *   Total DPS: `80.0 + 64.0 = 144.0`
-*   **3★ Aatrox**:
-    *   Auto Attack DPS: `(5 Attacks * 180 AD) / 7.500s = 120.0`
-    *   Spell Damage: `(5.0 attacks * 180 AD) * 0.80 Splash = 720.0`
-    *   Spell DPS: `720.0 / 7.500s = 96.0`
-    *   Total DPS: `120.0 + 96.0 = 216.0`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(50 / 10)` | 5 | 5 | 5 |
+| Cycle Duration | `ATC / AS + Lockout` | `5 / 0.80 + 1.0` | 7.500s | 7.500s | 7.500s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(5 × [AD] × 1.10) / 7.500s` | 53.3 | 80.0 | 120.0 |
+| Spell Base (1 Target) | `Spell` | `[0, 0, 0]` | 0.0 | 0.0 | 0.0 |
+| Spell Damage | `5.0 attacks × AD × Splash Ratio` | `5.0 × [80, 120, 180] × 0.80` | 320.0 | 480.0 | 720.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 7.500s` | 42.7 | 64.0 | 96.0 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **96.0** | **144.0** | **216.0** |
 
 ---
 
 ## 🧮 Equipped Calculations (Deathblade + Infinity Edge + Bloodthirster)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: +121% AD (2.21* multiplier)
-*   **Total Equipped AP Modifier**: 100 AP (1.00* spell multiplier)
-*   **Crit Stats**: 60% Crit Chance, 140% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.24*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Deathblade** | +66% AD |
+| **Infinity Edge** | +35% AD, +35% Crit Chance |
+| **Bloodthirster** | +20% AD |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = 7.500 seconds (adjusted for combat timing)`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD_equipped) / 7.500s * 1.24 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + [Item AD Percent]` | `1.00 + [AD buffs]` | 2.21× | 2.21× | 2.21× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD Array] × 2.21)` | 177 | 265 | 398 |
+| AS Equipped | `AS_base × (1.00 + AS_bonus)` | `AS_average` | 0.80 | 0.80 | 0.80 |
+| AP Total | `AP_base + AP_items` | `100 + [AP buffs]` | 100 | 100 | 100 |
+| Crit Chance | `Crit_base + Crit_items` | `25% + [Crit buffs]` | 60% | 60% | 60% |
+| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [CritDmg buffs]` | 140% | 140% | 140% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.60 × 0.40` | 1.24 | 1.24 | 1.24 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.500s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(50 / 10)` | 5 | 5 | 5 |
+| Cycle Duration | `ATC / AS + Lockout` | `5 / 0.80 + 1.0` (Note: cycle duration is 7.500s) | 7.500s | 7.500s | 7.500s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(5 × [Equipped AD] × 1.35 Crit) / 7.500s` | 146.3 | 219.5 | 329.2 |
+| Spell Base (1 Target) | `Spell` | `[0, 0, 0]` | 0.0 | 0.0 | 0.0 |
+| Spell Damage | `5.0 attacks × AD_equipped × Splash Ratio × Crit` | `5.0 × [177, 265, 398] × 0.80 × 1.24` | 878.2 | 1314.4 | 1974.1 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 7.500s` | 117.1 | 175.7 | 263.5 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **263.4** | **395.2** | **592.7** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Aatrox (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 177 AD) / 7.500s * 1.24 Crit = 146.3`
-    *   Spell Damage: `(5.0 attacks * 177 AD) * 0.80 Splash * 1.24 Crit = 878.2`
-    *   Spell DPS: `878.2 / 7.500s = 117.1`
-    *   Total DPS: `146.3 + 117.1 = 263.4`
-*   **2★ Aatrox (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 265 AD) / 7.500s * 1.24 Crit = 219.5`
-    *   Spell Damage: `(5.0 attacks * 265 AD) * 0.80 Splash * 1.24 Crit = 1317.8`
-    *   Spell DPS: `1317.8 / 7.500s = 175.7`
-    *   Total DPS: `219.5 + 175.7 = 395.2`
-*   **3★ Aatrox (Equipped)**:
-    *   Auto Attack DPS: `(5 Attacks * 398 AD) / 7.500s * 1.24 Crit = 329.2`
-    *   Spell Damage: `(5.0 attacks * 398 AD) * 0.80 Splash * 1.24 Crit = 1976.2`
-    *   Spell DPS: `1976.2 / 7.500s = 263.5`
-    *   Total DPS: `329.2 + 263.5 = 592.7`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: (5.0 * ad) * 0.80` (representing 5 transform-boosted attacks dealing 80% splash).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: (5.0 * ad) * 0.80 * crit` (adds equipped crit scaling to the transform slashes).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Used to bypass the generic math and return the exact unequipped/equipped calculations representing 100% active transform uptime.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.80`
-    *   `eq_as`: `0.80`
-    *   `base_attacks`: `5`
-    *   `base_cycle` / `eq_cycle`: `7.50` seconds
-    *   `lockout`: `1.0` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

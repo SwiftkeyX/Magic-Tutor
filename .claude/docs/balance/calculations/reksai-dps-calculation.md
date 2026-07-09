@@ -1,118 +1,89 @@
 # Rek'Sai DPS Calculation Details 🦈
 
-This document provides the step-by-step mathematical calculations and formulas for Rek'Sai's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Rek'Sai's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.75 (constant across star levels)
-*   **Attack Damage (AD)**: 60 / 90 / 135
-*   **Spell Magic Damage (Base)**: AD Ratio: 2.50 / 2.50 / 2.50
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Rek'Sai Mechanics
-*   **Skill Description**: Furious Bite deals physical damage. If target is below 66% health, deals true damage instead. True damage bite ratio: 2.50x AD. If target is marked by a previous bite, deals bonus true damage: 2.40x AD (Total bite = 4.90x AD).
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base is [0, 0, 0] since there is no flat damage, and spell_ad_ratio is [2.50, 2.50, 2.50]. Overrides assume mark applied for 4.90x AD true damage.
-*   **Mana & Casting**:
-    *   Max Mana: 80
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 8 attacks
-    *   **Cast Lockout**: 0.8 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 60 | 90 | 135 |
+| **Base Spell Damage** | 0 | 0 | 0 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.75 |
+| **Max Mana** | 80 |
+| **Cast Lockout** | 0.8s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Furious Bite deals physical damage. If target is below 66% health, deals true damage instead. True damage bite ratio: 2.50x AD. If target is marked by a previous bite, deals bonus true damage: 2.40x AD (Total bite = 4.90x AD).
+*   **Mechanical Timing & Assumptions**: 
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS) + Base Lockout = (8) / (0.75) + 0.8 = 11.467 seconds`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (8 * AD) / 11.467s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 11.467s`
-
-*   **1★ Rek'Sai**:
-    *   Auto Attack DPS: `(8 Attacks * 60 AD) / 11.467s = 41.9`
-    *   Spell Damage: `60 AD * 4.90 Execute (Target > 66% HP) = 294.0`
-    *   Spell DPS: `294.0 / 11.467s = 25.6`
-    *   Total DPS: `41.9 + 25.6 = 67.5`
-*   **2★ Rek'Sai**:
-    *   Auto Attack DPS: `(8 Attacks * 90 AD) / 11.467s = 62.8`
-    *   Spell Damage: `90 AD * 4.90 Execute (Target > 66% HP) = 441.0`
-    *   Spell DPS: `441.0 / 11.467s = 38.5`
-    *   Total DPS: `62.8 + 38.5 = 101.2`
-*   **3★ Rek'Sai**:
-    *   Auto Attack DPS: `(8 Attacks * 135 AD) / 11.467s = 94.2`
-    *   Spell Damage: `135 AD * 4.90 Execute (Target > 66% HP) = 661.5`
-    *   Spell DPS: `661.5 / 11.467s = 57.7`
-    *   Total DPS: `94.2 + 57.7 = 151.9`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(80 / 10)` | 8 | 8 | 8 |
+| Cycle Duration | `ATC / AS + Lockout` | `8 / 0.75 + 0.8` | 11.467s | 11.467s | 11.467s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(8 × [AD] × 1.10) / 11.467s` | 41.9 | 62.8 | 94.2 |
+| Spell Base (1 Target) | `AD × Bite Ratio` | `[60, 90, 135] × 2.50` | 150.0 | 225.0 | 337.5 |
+| Spell Damage | `AD × Mark Ratio` (Synergy assumes Bite on Marked target below 66% HP) | `[60, 90, 135] × 4.90` (Bite deals true damage, does not crit) | 294.0 | 441.0 | 661.5 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 11.467s` | 25.6 | 38.5 | 57.7 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **67.5** | **101.2** | **151.9** |
 
 ---
 
 ## 🧮 Equipped Calculations (Bloodthirster + Titan's Resolve + Infinity Edge)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: +105% AD (2.05* multiplier)
-*   **Total Equipped AP Modifier**: 150 AP (1.50* spell multiplier)
-*   **Crit Stats**: 60% Crit Chance, 140% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.24*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Bloodthirster** | +20% AD |
+| **Titan's Resolve** | +20% AD, +50 AP |
+| **Infinity Edge** | +35% AD, +35% Crit Chance |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS_equipped) + Base Lockout = (8) / (0.94) + 0.8 = 9.360 seconds`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (8 * AD_equipped) / 9.360s * 1.24 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + [Item AD Percent]` | `1.00 + [AD buffs]` | 2.05× | 2.05× | 2.05× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD Array] × 2.05)` | 123 | 184 | 277 |
+| AS Equipped | `AS_base × (1.00 + AS_bonus)` | `AS_average` | 0.94 | 0.94 | 0.94 |
+| AP Total | `AP_base + AP_items` | `100 + [AP buffs]` | 150 | 150 | 150 |
+| Crit Chance | `Crit_base + Crit_items` | `25% + [Crit buffs]` | 60% | 60% | 60% |
+| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [CritDmg buffs]` | 140% | 140% | 140% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.60 × 0.40` | 1.24 | 1.24 | 1.24 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 9.360s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(80 / 10)` | 8 | 8 | 8 |
+| Cycle Duration | `ATC / AS + Lockout` | `8 / 0.94 + 0.8` (Note: cycle duration is 9.360s) | 9.360s | 9.360s | 9.360s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(8 × [Equipped AD] × 1.35 Crit) / 9.360s` | 130.3 | 195.5 | 293.2 |
+| Spell Base (1 Target) | `AD × Bite Ratio` | `[123, 184, 277] × 2.50` | 150.0 | 225.0 | 337.5 |
+| Spell Damage | `AD_equipped × Mark Ratio` (Bite deals true damage, does not crit) | `[123, 184, 277] × 4.90` (AD mult 2.05: BT + TR + IE) | 602.7 | 906.5 | 1357.3 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 9.360s` | 64.4 | 96.6 | 144.9 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **194.7** | **292.1** | **438.1** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Rek'Sai (Equipped)**:
-    *   Auto Attack DPS: `(8 Attacks * 123 AD) / 9.360s * 1.24 Crit = 130.3`
-    *   Spell Damage: `123 AD * 4.90 Execute (Target < 66% HP, Marked) = 602.8`
-    *   Spell DPS: `602.8 / 9.360s = 64.4`
-    *   Total DPS: `130.3 + 64.4 = 194.7`
-*   **2★ Rek'Sai (Equipped)**:
-    *   Auto Attack DPS: `(8 Attacks * 184 AD) / 9.360s * 1.24 Crit = 195.5`
-    *   Spell Damage: `184 AD * 4.90 Execute (Target < 66% HP, Marked) = 904.2`
-    *   Spell DPS: `904.2 / 9.360s = 96.6`
-    *   Total DPS: `195.5 + 96.6 = 292.1`
-*   **3★ Rek'Sai (Equipped)**:
-    *   Auto Attack DPS: `(8 Attacks * 277 AD) / 9.360s * 1.24 Crit = 293.2`
-    *   Spell Damage: `277 AD * 4.90 Execute (Target < 66% HP, Marked) = 1356.3`
-    *   Spell DPS: `1356.3 / 9.360s = 144.9`
-    *   Total DPS: `293.2 + 144.9 = 438.1`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: ad * 4.90` (represents maximum bite physical/true execution damage).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: ad * 4.90` (bite true damage portion does not scale with crit/items).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Models execution behavior below 66% health.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.75`
-    *   `eq_as`: `0.94` (Titan's/BT AS)
-    *   `eq_ad_mult`: `2.05` (incorporates BT + Titan's Resolve AD stacking)
-    *   `base_cycle`: `11.73` seconds
-    *   `eq_cycle`: `9.36` seconds
-    *   `lockout`: `0.8` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

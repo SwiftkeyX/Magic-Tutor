@@ -1,5 +1,35 @@
 # champion_db.py
-# Contains all carry champion stats, optimal item configurations, and formulas for Set 9 carry analysis.
+#
+# ============================================================
+# WARNING: THIS FILE IS NOT THE SOURCE OF TRUTH
+# ============================================================
+# All base champion stats (ad, as, max_mana, start_mana,
+# lockout) should be driven by the Google Sheets spreadsheet:
+#
+#   Sheet: "TFT Set 9 Analysis"
+#   URL:   https://docs.google.com/spreadsheets/d/1pnbDKR55HxXFUExIXKyksJqaUSrNuw53IfnvBEt9zNY
+#   Tab:   "Hero Data"
+#
+# This file holds FORMULAS, lambdas, item configs, and
+# cycle overrides that cannot live in the sheet.
+# Stat values here are manually synced from the sheet and
+# may drift. Always treat the sheet as authoritative.
+#
+# KNOWN MISMATCHES vs sheet dump (2026-07-06) — awaiting decision:
+#   Jhin     max_mana  Sheet=114   DB=120
+#   Samira   lockout   Sheet=0.8   DB=0.5
+#   Zed      as        Sheet=0.70  DB=0.75
+#   Ekko     max_mana  Sheet=45    DB=50
+#   Kalista  max_mana  Sheet=80    DB=60
+#   Rek'Sai  max_mana  Sheet=75    DB=80
+#
+# Tier 4/5 champions (Aphelios, Azir, Gwen, Kai'Sa, Lux,
+# Yasuo, Zeri, Aatrox, Ahri, Bel'Veth) are NOT in the
+# current sheet dump and cannot be cross-checked.
+# ============================================================
+#
+# Contains all carry champion stats, optimal item configurations,
+# and formulas for Set 9 carry analysis.
 
 ITEMS = {
     "Blue Buff": {
@@ -192,11 +222,11 @@ CHAMPIONS = {
         "skill_desc": "Fires 5 rockets, splitting damage across nearby targets. Spell deals physical damage: AD * 1.50/1.55/1.60 + 15/20/35 per rocket.",
         "formula_explanation": "spell_base represents the flat base damage ([15, 20, 35]) and spell_ad_ratio is the AD ratio ([1.50, 1.55, 1.60]). target_density is 2.0. Overrides match the rocket launch sequence.",
         "tier": 2,
-        "ad": [50, 75, 113], "as": 0.75, "max_mana": 75, "start_mana": 0, "lockout": 0.8,
+        "ad": [50, 75, 113], "as": 0.75, "max_mana": 70, "start_mana": 0, "lockout": 1.0,
         "spell_base": [15, 20, 35],
         "spell_ad_ratio": [1.50, 1.55, 1.60],
         "target_density": 2.0, "nuance": "rocket split",
-        "base_cycle": 10.80, "base_spell": lambda ad, spell, idx, ratio=[1.50, 1.55, 1.60]: (ad * ratio[idx] + spell[idx]) * 2.0,
+        "base_spell": lambda ad, spell, idx, ratio=[1.50, 1.55, 1.60]: (ad * ratio[idx] + spell[idx]) * 2.0,
         "baseline_override": lambda star: [[33.9, 43.5, 77.4], [50.9, 65.2, 116.1], [76.3, 97.9, 174.2]][star-1],
         "equipped_items": ["Guinsoo's Rageblade", "Deathblade", "Runaan's Hurricane"],
         "eq_as": 1.05, "eq_cycle": 8.17,
@@ -436,11 +466,11 @@ CHAMPIONS = {
         "spell_base": [0, 0, 0],
         "spell_ad_ratio": [4.50, 4.50, 4.75],
         "target_density": 2.0, "nuance": "slash physical whirlwind",
-        "base_attacks": 6, "base_cycle": 9.00, "base_spell": lambda ad, spell, idx, ratio=[4.50, 4.50, 4.75]: ad * (7.125 if idx==2 else 6.75),
+        "base_attacks": 11, "base_cycle": 14.95, "base_spell": lambda ad, spell, idx, ratio=[4.50, 4.50, 4.75]: ad * (7.125 if idx==2 else 6.75),
         "equipped_items": ["Infinity Edge", "Deathblade", "Bloodthirster"],
-        "eq_cycle": 9.00,
+        "eq_cycle": 14.95,
         "eq_spell": lambda ad, spell, idx, ap, crit, amp, ratio=[4.50, 4.50, 4.75]: ad * (7.125 if idx==2 else 6.75) * crit,
-        "equipped_override": lambda star: [[137.2, 154.4, 291.6], [205.9, 231.6, 437.5], [308.8, 347.3, 656.1]][star-1]
+        "equipped_override": lambda star: [[151.3, 92.9, 244.2], [227.8, 140.0, 367.8], [339.9, 220.4, 560.3]][star-1]
     },
     "Zeri": {
         "skill_desc": "Lightning active deals physical magic damage. Attacks chain lightning to 3 additional enemies. Chain Lightning Assumptions: Assuming a total of 4 targets hit (1 main target + 3 chain targets). Chain deals 50% damage, increasing auto-attack output multiplier to 2.50x (normal + 1.5x splash).",

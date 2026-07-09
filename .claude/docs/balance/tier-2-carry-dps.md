@@ -13,7 +13,7 @@ Putting baseline and itemized calculations in a single document guarantees that 
 
 | Champion | Star | Base AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Jinx** (5 Rockets Sum) | 1★<br>2★<br>3★ | 50<br>75<br>113 | 0.75 | 33.9<br>50.9<br>76.3 | 43.5<br>65.2<br>97.9 | **77.4**<br>**116.1**<br>**174.2** |
+| **Jinx** (5 Rockets Sum) | 1★<br>2★<br>3★ | 50<br>75<br>113 | 0.75 | 33.9<br>50.9<br>76.6 | 43.5<br>65.9<br>104.4 | **77.4**<br>**116.8**<br>**181.0** |
 | **Teemo** (1.33 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 25.2<br>37.8<br>56.7 | 43.5<br>65.3<br>98.0 | **68.7**<br>**103.1**<br>**154.7** <br>*(1 Target Baseline: **57.9** / **86.9** / **130.3**)* |
 | **Taliyah** (2 Passive Boulders) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 28.0<br>42.0<br>63.0 | 67.7<br>101.6<br>152.3 | **95.7**<br>**143.6**<br>**215.3** <br>*(1 Target Baseline: **61.9** / **92.8** / **139.2**)* |
 | **Zed** (Slash x3, 2 Targets Avg) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.70 | 35.6<br>53.4<br>80.1 | 33.5<br>50.3<br>75.1 | **69.1**<br>**103.7**<br>**155.2** <br>*(1 Target Baseline: **54.5** / **82.1** / **122.9**)* |
@@ -23,8 +23,8 @@ Putting baseline and itemized calculations in a single document guarantees that 
 
 | Champion | Star | AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Jinx** (5 Rockets Sum) | 1★<br>2★<br>3★ | 98<br>147<br>221 | 0.90 | 95.4<br>143.1<br>214.6 | 140.5<br>210.8<br>316.1 | **235.9**<br>**353.9**<br>**530.7** |
-| **Teemo** (1.33 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 29.9<br>44.8<br>67.2 | 129.0<br>193.6<br>290.3 | **158.9**<br>**238.4**<br>**357.5** |
+| **Jinx** (5 Rockets Sum) | 1★<br>2★<br>3★ | 93<br>140<br>210 | 1.05 | 131.5<br>197.9<br>296.9 | 104.0<br>159.5<br>249.8 | **235.5**<br>**357.4**<br>**546.7** |
+| **Teemo** (1.33 Targets Avg) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 29.9<br>44.8<br>67.2 | 129.0<br>193.6<br>290.3 | **158.9**<br>**238.4**<br>**357.5** <br>*(2 Targets Avg: **224.0** / **336.0** / **504.0**)* |
 | **Taliyah** (2 Passive Boulders) | 1★<br>2★<br>3★ | 40<br>60<br>90 | 0.70 | 31.6<br>47.4<br>71.1 | 130.3<br>195.5<br>293.2 | **161.9**<br>**242.9**<br>**364.3** |
 | **Zed** (Slash x3, 2 Targets Avg) | 1★<br>2★<br>3★ | 122<br>183<br>275 | 0.70 | 56.8<br>85.3<br>127.9 | 121.9<br>182.9<br>274.3 | **178.7**<br>**268.2**<br>**402.2** |
 
@@ -75,8 +75,8 @@ Putting baseline and itemized calculations in a single document guarantees that 
 *   **Detailed Math & Formula Proofs**: See [jinx-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/jinx-dps-calculation.md)
 *   **Combat Role & Mechanics**: A semi-AoE cleanup carry. Fires 5 rockets at random enemies within a 2-hex radius of her target, split-targeting physical damage.
 *   **Key DPS Outputs**:
-    *   *Baseline (Unequipped) Total DPS*: **77.4 / 116.1 / 174.6**
-    *   *Well-Equipped (3-Item) Total DPS*: **235.9 / 356.9 / 545.7**
+    *   *Baseline (Unequipped) Total DPS*: **77.4 / 116.8 / 181.0**
+    *   *Well-Equipped (3-Item) Total DPS*: **235.5 / 357.4 / 546.7**
 *   **Aesthetic Balance Note**: Jinx represents the benchmark for Tier 2 backline splash damage, with output scaling safely above Tier 1 carries due to higher baseline ratios.
 
 ---

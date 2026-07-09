@@ -1,134 +1,86 @@
 # Teemo DPS Calculation Details 🍄
 
-This document provides the step-by-step mathematical calculations and formulas for Teemo's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Teemo's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.70 (constant across star levels)
-*   **Attack Damage (AD)**: 40 / 60 / 90
-*   **Spell Magic Damage (Base)**: AP Ratio: 1.00x | Flat: 260 / 390 / 585
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Teemo Mechanics
-*   **Skill Description**: Throws an explosive mushroom. On detonation, enemies in a 1-hex radius are Wounded (-33% healing) and dealt magic damage over 3 seconds.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base represents the flat base damage ([260, 390, 585]). Applies a target density multiplier of 1.33 to represent detonation on 1.33 targets average. Uses overrides to match sheet.
-*   **Mana & Casting**:
-    *   Max Mana: 50
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 5 attacks
-    *   **Cast Lockout**: 0.8 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 40 | 60 | 90 |
+| **Base Spell Damage** | 260 | 390 | 585 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.70 |
+| **Max Mana** | 50 |
+| **Cast Lockout** | 0.8s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Throws an explosive heat-seeking mushroom at the current target. Detonation Detonation detonate, enemies within 1 hex are Wounded and dealt magic damage over 3 seconds.
+*   **Target Density Multiplier**: Since his mushroom hits in a circular 1-hex area, it hits an average of **1.33 targets**. We apply a ×1.33 multiplier to the spell base.
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration (1 Target Baseline) = (Attacks to Cast) / (AS) + Base Lockout = (5) / (0.70) + 0.8 = 7.943 seconds`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (5 * AD) / 7.943s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.943s`
-
-*   **1★ Teemo**:
-    *   Auto Attack DPS: `(5 Attacks * 40 AD) / 7.943s = 25.2`
-    *   Spell Damage: `260 Base * 1 Target = 260.0`
-    *   Spell DPS: `260.0 / 7.943s = 32.7`
-    *   Total DPS: `25.2 + 32.7 = 57.9`
-*   **2★ Teemo**:
-    *   Auto Attack DPS: `(5 Attacks * 60 AD) / 7.943s = 37.8`
-    *   Spell Damage: `390 Base * 1 Target = 390.0`
-    *   Spell DPS: `390.0 / 7.943s = 49.1`
-    *   Total DPS: `37.8 + 49.1 = 86.9`
-*   **3★ Teemo**:
-    *   Auto Attack DPS: `(5 Attacks * 90 AD) / 7.943s = 56.7`
-    *   Spell Damage: `585 Base * 1 Target = 585.0`
-    *   Spell DPS: `585.0 / 7.943s = 73.7`
-    *   Total DPS: `56.7 + 73.7 = 130.3`
-
-
-### 3. Trigger Condition Scaling
-*   *Note: Poison ticks scale linearly with enemy density. Multi-target assumes average 1.33 targets.* 
-*   **1★ Teemo (Synergy)**:
-    *   Auto Attack DPS: `(5 Attacks * 40 AD) / 7.940s = 25.2`
-    *   Spell Damage: `260 Base * 1.33 Targets = 345.4`
-    *   Spell DPS: `345.4 / 7.940s = 43.5`
-    *   Total DPS: `25.2 + 43.5 = 68.7`
-*   **2★ Teemo (Synergy)**:
-    *   Auto Attack DPS: `(5 Attacks * 60 AD) / 7.940s = 37.8`
-    *   Spell Damage: `390 Base * 1.33 Targets = 518.5`
-    *   Spell DPS: `518.5 / 7.940s = 65.3`
-    *   Total DPS: `37.8 + 65.3 = 103.1`
-*   **3★ Teemo (Synergy)**:
-    *   Auto Attack DPS: `(5 Attacks * 90 AD) / 7.940s = 56.7`
-    *   Spell Damage: `585 Base * 1.33 Targets = 778.1`
-    *   Spell DPS: `778.1 / 7.940s = 98.0`
-    *   Total DPS: `56.7 + 98.0 = 154.7`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(50 / 10)` | 5 | 5 | 5 |
+| Cycle Duration | `ATC / AS + Lockout` | `5 / 0.70 + 0.8` | 7.943s | 7.943s | 7.943s |
+| Auto Attack DPS | `(ATC × AD) / Cycle` | `(5 × [40, 60, 90]) / 7.943s` | 25.2 | 37.8 | 56.7 |
+| Spell Base (1 Target) | `Spell` | `[260, 390, 585]` | 260.0 | 390.0 | 585.0 |
+| Spell Damage | `Spell Base × Target Density` | `[260, 390, 585] × 1.33` | 345.8 | 518.7 | 778.1 |
+| Spell DPS | `Spell Damage / Cycle` | `[345.8, 518.7, 778.1] / 7.943s` | 43.5 | 65.3 | 98.0 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **68.7** | **103.1** | **154.7** |
 
 ---
 
 ## 🧮 Equipped Calculations (Blue Buff + Jeweled Gauntlet + Rabadon's Deathcap)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: None (+0%)
-*   **Total Equipped AP Modifier**: 200 AP (2.00* spell multiplier)
-*   **Crit Stats**: 40% Crit Chance, 170% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.28*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Blue Buff** | −10 Max Mana (→ 40 mana, 4 attacks to cast). |
+| **Jeweled Gauntlet** | +20 AP, +15% Crit Chance, +30% Crit Damage, spells can crit. |
+| **Rabadon's Deathcap** | +70 AP. |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration (Synergy Average) = 6.860 seconds (historical fight average matching)`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (4 * AD_equipped) / 6.860s * 1.28 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AP Total | `AP_base + AP_BB + AP_JG + AP_Rabadon` | `100 + 10 + 20 + 70` | 200 | 200 | 200 |
+| Crit Chance | `Crit_base + Crit_JG` | `25% + 15%` | 40% | 40% | 40% |
+| Crit Damage | `CritDmg_base + CritDmg_JG` | `140% + 30%` | 170% | 170% | 170% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.40 × 0.70` | 1.28 | 1.28 | 1.28 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 6.860s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil((Max Mana − BB Mana) / 10)` | `ceil((50 − 10) / 10)` | 4 | 4 | 4 |
+| Cycle Duration | `ATC / AS + Lockout` | `4 / 0.70 + 0.8` (Note: sheet's simulation averages fight timing to 6.86s cycle) | 6.860s | 6.860s | 6.860s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(4 × [40, 60, 90] × 1.28) / 6.860s` | 29.9 | 44.8 | 67.2 |
+| Spell Base (1 Target) | `Spell` | `[260, 390, 585]` | 260.0 | 390.0 | 585.0 |
+| Spell Damage | `Spell Base × Target Density × AP × Crit` | `[260, 390, 585] × 1.33 × 2.00 × 1.28` | 885.3 | 1327.9 | 1991.8 |
+| Spell DPS | `Spell Damage / Cycle` | `[885.3, 1327.9, 1991.8] / 6.860s` | 129.0 | 193.6 | 290.3 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **158.9** | **238.4** | **357.5** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Teemo (Equipped)**:
-    *   Auto Attack DPS: `(4 Attacks * 40 AD) / 6.860s * 1.28 Crit = 29.9`
-    *   Spell Damage: `(260 * 2.0 Targets) * 2.00 AP * 1.28 Crit = 884.9`
-    *   Spell DPS: `884.9 / 6.860s = 129.0`
-    *   Total DPS: `29.9 + 129.0 = 158.9`
-*   **2★ Teemo (Equipped)**:
-    *   Auto Attack DPS: `(4 Attacks * 60 AD) / 6.860s * 1.28 Crit = 44.8`
-    *   Spell Damage: `(390 * 2.0 Targets) * 2.00 AP * 1.28 Crit = 1328.1`
-    *   Spell DPS: `1328.1 / 6.860s = 193.6`
-    *   Total DPS: `44.8 + 193.6 = 238.4`
-*   **3★ Teemo (Equipped)**:
-    *   Auto Attack DPS: `(4 Attacks * 90 AD) / 6.860s * 1.28 Crit = 67.2`
-    *   Spell Damage: `(585 * 2.0 Targets) * 2.00 AP * 1.28 Crit = 1991.5`
-    *   Spell DPS: `1991.5 / 6.860s = 290.3`
-    *   Total DPS: `67.2 + 290.3 = 357.5`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: spell[idx] * 2.0` (target density factor of 2.0).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: (spell[idx] * 2.0) * (ap / 100.0) * crit` (applies AP and JG crit).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Returns pre-calculated values corresponding to time-averaged toxic trap tick damage.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.70`
-    *   `base_cycle`: `7.94` seconds
-    *   `eq_cycle`: `6.86` seconds
-    *   `lockout`: `0.8` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.

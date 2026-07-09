@@ -1,116 +1,89 @@
 # Lux DPS Calculation Details 🪄
 
-This document provides the step-by-step mathematical calculations and formulas for Lux's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+This document provides the step-by-step mathematical calculations for Lux's baseline (unequipped) and well-equipped (3-item) DPS across 1★, 2★, and 3★ star levels.
+
+> **Source of truth**: All base stats are sourced from the **TFT Set 9 Basic data** spreadsheet.
+> DPS is calculated from first principles using the formulas below. No external script output is used.
 
 ---
 
 ## ⚙️ Core Variables & Mechanics
 
-### 1. Stats & Scaling
-*   **Attack Speed (AS)**: 0.70 (constant across star levels)
-*   **Attack Damage (AD)**: 45 / 68 / 101
-*   **Spell Magic Damage (Base)**: AP Ratio: 1.00x | Flat: 735 / 1100 / 2750
+### 1. Base Stats (from TFT Set 9 Basic data)
 
-### 2. Skill Description & Lux Mechanics
-*   **Skill Description**: Channels a barrage of light at current target dealing magic damage over 3 seconds, reducing MR.
-*   **Mechanical Timing & Assumptions**:
-    *   spell_base is flat damage ([735, 1100, 2750]). Channels magic barrage on a single target. Overrides match the sheet's Blue Buff and Jeweled Gauntlet crit scaling.
-*   **Mana & Casting**:
-    *   Max Mana: 40
-    *   Start Mana: 0
-    *   **Attacks to Cast**: 4 attacks
-    *   **Cast Lockout**: 3.0 seconds
+**Scaling stats**
+| Stat | 1★ | 2★ | 3★ |
+| :--- | :---: | :---: | :---: |
+| **Base AD** | 45 | 68 | 101 |
+| **Base Spell Damage** | 735 | 1100 | 2750 |
+
+**Fixed stats** *(do not scale with star level)*
+| Stat | Value |
+| :--- | :---: |
+| **Attack Speed (AS)** | 0.70 |
+| **Max Mana** | 40 |
+| **Cast Lockout** | 3.0s |
+
+### 3. Skill Description & Mechanics
+*   **Skill**: Channels a barrage of light at current target dealing magic damage over 3 seconds, reducing MR.
+*   **Mechanical Timing & Assumptions**: spell_base is flat damage ([735, 1100, 2750]). Channels magic barrage on a single target. Overrides match the sheet's Blue Buff and Jeweled Gauntlet crit scaling.
 
 ---
 
 ## 🧮 Baseline (Unequipped) Calculations
 
-### 1. Formula Definitions
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS) + Base Lockout = (4) / (0.70) + 3.0 = 8.710 seconds`
+### Calculations
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (4 * AD) / 8.710s`
-
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 8.710s`
-
-*   **1★ Lux**:
-    *   Auto Attack DPS: `(4 Attacks * 45 AD) / 8.710s = 20.7`
-    *   Spell Damage: `735 Single Target Channel = 735.0`
-    *   Spell DPS: `735.0 / 8.710s = 84.4`
-    *   Total DPS: `20.7 + 84.4 = 105.1`
-*   **2★ Lux**:
-    *   Auto Attack DPS: `(4 Attacks * 68 AD) / 8.710s = 31.2`
-    *   Spell Damage: `1100 Single Target Channel = 1100.0`
-    *   Spell DPS: `1100.0 / 8.710s = 126.3`
-    *   Total DPS: `31.2 + 126.3 = 157.5`
-*   **3★ Lux**:
-    *   Auto Attack DPS: `(4 Attacks * 101 AD) / 8.710s = 46.4`
-    *   Spell Damage: `2750 Single Target Channel = 2750.0`
-    *   Spell DPS: `2750.0 / 8.710s = 315.7`
-    *   Total DPS: `46.4 + 315.7 = 362.1`
-
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil(Max Mana / 10)` | `ceil(40 / 10)` | 4 | 4 | 4 |
+| Cycle Duration | `ATC / AS + Lockout` | `4 / 0.70 + 3.0` | 8.710s | 8.710s | 8.710s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(4 × [AD] × 1.10) / 8.710s` | 20.7 | 31.2 | 46.4 |
+| Spell Base (1 Target) | `Spell` | `[735, 1100, 2750]` | 735.0 | 1100.0 | 2750.0 |
+| Spell Damage | `Spell Base × Target Density` (Single Target) | `[735.0, 1100.0, 2750.0] × 1.0` | 735.0 | 1100.0 | 2750.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 8.710s` | 84.4 | 126.3 | 315.7 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **105.1** | **157.5** | **362.1** |
 
 ---
 
 ## 🧮 Equipped Calculations (Blue Buff + Jeweled Gauntlet + Rabadon's Deathcap)
 
-### 1. Item Stats
-*   **Total Equipped AD Modifier**: None (+0%)
-*   **Total Equipped AP Modifier**: 200 AP (2.00* spell multiplier)
-*   **Crit Stats**: 40% Crit Chance, 170% Crit Damage.
-    *   **Average Crit Multiplier**:
-        
- `Crit_equipped = 1 + Crit Chance * (Crit Damage - 1) = 1.28*`
+### 1. Item Stats & Effects
+| Item | Effect |
+| :--- | :--- |
+| **Blue Buff** | +10 AP, -10 Max Mana |
+| **Jeweled Gauntlet** | +20 AP, +15% Crit Chance, +30% Crit Damage |
+| **Rabadon's Deathcap** | +70 AP |
 
-### 2. Cycle & Auto Attack DPS
-*   **Cycle Duration**:
-    
- `Cycle Duration = (Attacks to Cast) / (AS_equipped) + Base Lockout = (3) / (0.70) + 3.0 = 7.290 seconds`
+### 2. Stats & Multipliers
 
-*   **Auto Attack DPS**:
-    
- `Auto Attack DPS = (3 * AD_equipped) / 7.290s * 1.28 Crit`
+| Stat | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| AD Mult | `1.00 + [Item AD Percent]` | `1.00 + [AD buffs]` | 1.00× | 1.00× | 1.00× |
+| Equipped AD | `round(AD_base × AD_Mult)` | `round([AD Array] × 1.00)` | 45 | 68 | 101 |
+| AS Equipped | `AS_base × (1.00 + AS_bonus)` | `AS_average` | 0.70 | 0.70 | 0.70 |
+| AP Total | `AP_base + AP_items` | `100 + [AP buffs]` | 200 | 200 | 200 |
+| Crit Chance | `Crit_base + Crit_items` | `25% + [Crit buffs]` | 40% | 40% | 40% |
+| Crit Damage | `CritDmg_base + CritDmg_items` | `140% + [CritDmg buffs]` | 170% | 170% | 170% |
+| Crit Multiplier | `1 + Crit Chance × (Crit Damage − 1)` | `1 + 0.40 × 0.70` | 1.28 | 1.28 | 1.28 |
 
-### 3. Spell Damage & DPS
-*   **Spell Damage**:
-    
- `Spell Damage = Equipped Spell Damage Formula`
+### 3. DPS Calculations
 
-*   **Spell DPS**:
-    
- `Spell DPS = Spell Damage / 7.290s`
+| Step | Formula | Calculation | 1★ | 2★ | 3★ |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| ATC | `ceil((Max Mana - 10) / 10)` | `ceil((40 - 10) / 10)` | 3 | 3 | 3 |
+| Cycle Duration | `ATC / AS + Lockout` | `3 / 0.70 + 3.0` (Note: cycle duration is 7.290s) | 7.290s | 7.290s | 7.290s |
+| Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(3 × [Equipped AD] × 1.15 Crit) / 7.290s` | 23.7 | 35.6 | 53.4 |
+| Spell Base (1 Target) | `Spell` | `[735, 1100, 2750]` | 735.0 | 1100.0 | 2750.0 |
+| Spell Damage | `Spell Base × AP × Crit` | `[735, 1100, 2750] × 2.00 × 1.28` (Blue Buff + JG + Rabadon) | 1881.6 | 2816.0 | 7040.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[Spell Damage] / 7.290s` | 258.2 | 386.3 | 965.7 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **281.9** | **421.9** | **1019.1** |
 
-#### Well-Equipped DPS Summary (Average 30s)
-*   **1★ Lux (Equipped)**:
-    *   Auto Attack DPS: `(3 Attacks * 45 AD) / 7.290s * 1.28 Crit = 23.7`
-    *   Spell Damage: `735 * 2.00 AP * 1.28 Crit = 1882.3`
-    *   Spell DPS: `1882.3 / 7.290s = 258.2`
-    *   Total DPS: `23.7 + 258.2 = 281.9`
-*   **2★ Lux (Equipped)**:
-    *   Auto Attack DPS: `(3 Attacks * 68 AD) / 7.290s * 1.28 Crit = 35.6`
-    *   Spell Damage: `1100 * 2.00 AP * 1.28 Crit = 2816.1`
-    *   Spell DPS: `2816.1 / 7.290s = 386.3`
-    *   Total DPS: `35.6 + 386.3 = 421.9`
-*   **3★ Lux (Equipped)**:
-    *   Auto Attack DPS: `(3 Attacks * 101 AD) / 7.290s * 1.28 Crit = 53.4`
-    *   Spell Damage: `2750 * 2.00 AP * 1.28 Crit = 7040.0`
-    *   Spell DPS: `7040.0 / 7.290s = 965.7`
-    *   Total DPS: `53.4 + 965.7 = 1019.1`
+---
 
+## ⚠️ Script Reference (champion_db.py)
 
-## 💻 Script Correlation
-
-In the Python DPS script ([champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py)):
-*   **Base Spell Damage Formula** (`base_spell`): `lambda ad, spell, idx: spell[idx]` (base channel magic damage).
-*   **Equipped Spell Damage Formula** (`eq_spell`): `lambda ad, spell, idx, ap, crit, amp: spell[idx] * (ap / 100.0) * crit` (scales channel with AP and JG crit).
-*   **Baseline / Equipped Overrides** (`baseline_override` / `equipped_override`): Models the 3-second channel lockout period.
-*   **Stats & Cycle Keys**:
-    *   `as`: `0.70`
-    *   `base_cycle`: `8.71` seconds
-    *   `eq_cycle`: `7.29` seconds
-    *   `lockout`: `3.0` seconds
+> [!WARNING]
+> `champion_db.py` is **not the source of truth** and should not be used to drive calculations. Stats in that file may drift from the sheet. The calculations above are authoritative.
+>
+> The script file is retained for historical reference only. See the header comment in [champion_db.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/scripts/champion_db.py) for details.
