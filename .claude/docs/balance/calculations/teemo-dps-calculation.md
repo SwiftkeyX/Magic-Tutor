@@ -26,7 +26,7 @@ This document provides the step-by-step mathematical calculations for Teemo's ba
 
 ### 3. Skill Description & Mechanics
 *   **Skill**: Throws an explosive heat-seeking mushroom at the current target. Detonation Detonation detonate, enemies within 1 hex are Wounded and dealt magic damage over 3 seconds.
-*   **Target Density Multiplier**: Since his mushroom hits in a circular 1-hex area, it hits an average of **1.33 targets**. We apply a ×1.33 multiplier to the spell base.
+*   **Target Density Multiplier**: Since his mushroom hits in a circular 1-hex area, it hits an average of **2.0 targets**. We apply a ×2.00 multiplier to the spell base.
 
 ---
 
@@ -40,9 +40,9 @@ This document provides the step-by-step mathematical calculations for Teemo's ba
 | Cycle Duration | `ATC / AS + Lockout` | `5 / 0.70 + 0.8` | 7.943s | 7.943s | 7.943s |
 | Auto Attack DPS | `(ATC × AD) / Cycle` | `(5 × [40, 60, 90]) / 7.943s` | 25.2 | 37.8 | 56.7 |
 | Spell Base (1 Target) | `Spell` | `[260, 390, 585]` | 260.0 | 390.0 | 585.0 |
-| Spell Damage | `Spell Base × Target Density` | `[260, 390, 585] × 1.33` | 345.8 | 518.7 | 778.1 |
-| Spell DPS | `Spell Damage / Cycle` | `[345.8, 518.7, 778.1] / 7.943s` | 43.5 | 65.3 | 98.0 |
-| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **68.7** | **103.1** | **154.7** |
+| Spell Damage | `Spell Base × Target Density` | `[260, 390, 585] × 2.0` | 520.0 | 780.0 | 1170.0 |
+| Spell DPS | `Spell Damage / Cycle` | `[520.0, 780.0, 1170.0] / 7.943s` | 65.5 | 98.2 | 147.3 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **90.7** | **136.0** | **204.0** |
 
 ---
 
@@ -72,9 +72,9 @@ This document provides the step-by-step mathematical calculations for Teemo's ba
 | Cycle Duration | `ATC / AS + Lockout` | `4 / 0.70 + 0.8` (Note: sheet's simulation averages fight timing to 6.86s cycle) | 6.860s | 6.860s | 6.860s |
 | Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(4 × [40, 60, 90] × 1.28) / 6.860s` | 29.9 | 44.8 | 67.2 |
 | Spell Base (1 Target) | `Spell` | `[260, 390, 585]` | 260.0 | 390.0 | 585.0 |
-| Spell Damage | `Spell Base × Target Density × AP × Crit` | `[260, 390, 585] × 1.33 × 2.00 × 1.28` | 885.3 | 1327.9 | 1991.8 |
-| Spell DPS | `Spell Damage / Cycle` | `[885.3, 1327.9, 1991.8] / 6.860s` | 129.0 | 193.6 | 290.3 |
-| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **158.9** | **238.4** | **357.5** |
+| Spell Damage | `Spell Base × Target Density × AP × Crit` | `[260, 390, 585] × 2.0 × 2.00 × 1.28` | 1331.2 | 1996.8 | 2995.2 |
+| Spell DPS | `Spell Damage / Cycle` | `[1331.2, 1996.8, 2995.2] / 6.860s` | 194.0 | 291.1 | 436.6 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **223.9** | **335.9** | **503.8** |
 
 ---
 
