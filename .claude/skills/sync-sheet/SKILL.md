@@ -62,6 +62,16 @@ python .claude/scripts/sheet_sync.py --sheet tft-set9 write-range "Meta Comps" A
 
 If the named worksheet doesn't exist yet, it is created automatically (sized to fit the data) before writing — useful for adding a brand-new tab to a spreadsheet. Same `writable: true` guard as `write` applies.
 
+## Steps to Insert a New Column
+
+To insert a brand-new blank column into a worksheet that has no gap to write into (shifting all columns from that position rightward), use the `insert-column` command. It takes a worksheet name, a 1-based column position, and an optional `--header` to write into row 1 of the new column:
+
+```bash
+python .claude/scripts/sheet_sync.py --sheet tft-set10 insert-column "TFT Set 10 Champions - Master Roster Layout" 5 --header "Skill Description"
+```
+
+Same `writable: true` guard as `write`/`write-range` applies. After inserting, use `write-range` to populate the new column's data — always re-read the worksheet fresh immediately before writing to confirm the inserted column is genuinely empty and no adjacent column shifted unexpectedly.
+
 ## Steps to Dump All Sheet Content
 To download all tabs of a sheet into a single local, self-describing JSON file (default name `<sheet>_dump_<date>.json`, embeds a `_meta` block with sheet name/key/timestamp):
 
