@@ -1,0 +1,48 @@
+# TFT Set 11 Ability Audit (tft-set11 vs Community Dragon)
+
+> **Status: authored.** The `tft-set11` Champions tab's Skill Description column previously held pure flavor text with zero numbers for all 60 rows (e.g. Ahri: *"Love Bomb: Deal magic damage to the current target and less damage to adjacent enemies."*). This was **not** a diff-and-correct pass like `tft-set9` — every row's numbers were authored from scratch against Riot's real Set 11 ability data. All 60 rows now carry real `%Attack Damage`/`%Ability Power` scaling numbers in the same natural-prose convention as `tft-set9`.
+
+Authors the `tft-set11` reference sheet's **Champions** tab "Skill Description" column from Riot's real Set 11 ability data (Community Dragon, patch **15.6**), since the sheet had no numeric ability data to begin with.
+
+> **Scope**: ability-text authoring for the `tft-set11` sheet's Champions tab only. Champion base stats (Health/Armor/AS/etc.) were not touched.
+
+## Patch pin
+
+Set 11 ("Inkborn Fables") launched at patch 14.6 and received a mid-set roster expansion (roster jumped from 80 to 86 champions) at patch **14.16** — unlike Set 9, this mid-set update reused the same `TFTSet11` mutator name rather than splitting into a `TFTSet11_Stage2` block, so `fetch_set_data()`'s stage-2 union logic finds nothing to union and simply uses the base block, which is correct here since the base block itself contains the full evolved roster by a late-enough patch. The roster stabilizes at 87 champions from patch 14.24 through patch 15.6 (Set 12 launches at 15.1 but Set 11 data remains present and unchanged in Community Dragon alongside it). **Patch 15.6** was chosen as the pin — the latest patch with a complete, stable Set 11 roster.
+
+## Methodology
+
+1. Every sheet champion name (60/60) matched an exact Community Dragon Set 11 entry — no coverage gaps, no sub-set split to worry about (unlike Set 9's 9.0/9.5 split).
+2. Each ability's `desc` template was rendered by substituting its `variables` array at the 1★/2★/3★ indices (index 1/2/3), tagged with Riot's own scaling markers (`%i:scaleAD%`, `%i:scaleAP%`, etc.).
+3. **The ambiguous-match scan (mandatory per the carried-over Set 9 methodology) found far more silent mis-picks than initially visible.** A first pass only checking for literal leftover `?Var`/`@Var@` placeholders found 16/60 champions with issues. A second, stricter pass — flagging every placeholder resolved via the generic substring/token fallback with more than one candidate raw variable — found **55 additional** ambiguous cases across ~40 champions. A third check — flagging any two placeholders within the same ability that silently resolved to identical values — caught a further class of bug the first two passes missed entirely: single-candidate matches that are still wrong because the real tooltip value is a **computed formula** over two raw variables (e.g. Tahm Kench's "if more Health" bonus damage = `Damage × BonusPercentDamage`, not a raw variable lookup at all).
+4. All confirmed silent mis-picks and previously-unresolved placeholders were added to `COMPUTED_OVERRIDES` in `.claude/scripts/audit_tft_abilities.py` (32 new entries for Set 11, each with a comment explaining what it was matching incorrectly and why). 4 combined-formula cases (Ornn, Rek'Sai, Tahm Kench, Qiyana) can't be represented as a simple override and are documented as a derivation comment in the script instead, with the computed numbers spliced into the composed text by hand.
+5. **Wiki spot-checks confirmed the methodology but revealed the plan's original "unreliable at scale" caveat about the LoL Wiki actually undersold the problem for rotated-out sets**: the wiki's *default* champion pages only show the *current live set's* ability (Caitlyn and Kobuko fetches both returned Set 17 data, not Set 11, despite being explicitly asked for "Set 11"). The wiki *does* retain historical per-set numbers, but only via its patch-history sections, which had to be explicitly prompted for. Once found, spot-checks against Ornn, Galio, Sett, and Rek'Sai showed the extraction methodology and index[1,2,3]=star1/2/3 assumption were sound — Ornn and Galio matched **exactly** across all components; Sett and Rek'Sai matched in structure and order of magnitude with 2-3 percentage-point drift attributable to comparing a late patch (15.6) against whatever patch the wiki's archived table reflects (not necessarily the same one). The Sett check also caught a real completeness bug: the initial resolution only found one of three terms in a combined AD+AP+%maxHP formula.
+6. A data quirk specific to Set 11: many "Fated"-origin champions' raw variable arrays carry 7 elements instead of 4, with indices 4-6 holding a constant triplet (commonly `160/200/240`) that is **unrelated to the specific variable** — confirmed by Udyr's `HexDistance` variable showing `160/200/240` at those indices, which would be nonsensical as an actual hex range. This is Community Dragon padding, not real per-variable data; indices 1/2/3 remain the correct star1/2/3 triplet universally.
+7. Several champions' Community Dragon data shows a very large jump at 3-star (e.g. Sett's AoE `%AD` term jumping from 270% to 9001%, Lissandra's damage jumping to 8888, Galio's shield jumping to 2000). The wiki spot-check for Sett **confirmed the 9001% number is real and intentional** — Riot puts deliberately absurd "reward" numbers on some champions' 3-star tooltips as a rarely-seen treat, not a data error. These are presented as-is, matching the wiki-verified pattern, rather than treated as bugs.
+8. Prose composed following the `tft-set9` convention: numbers inline in normal sentences with spelled-out `Ability Power`/`Attack Damage` (not `%AP`/`%AD` shorthand), keyword definitions (`Wound:`, `Shred:`, `Sunder:`, `Taunt:`, `Mana Reave:`) appended as trailing sentences, and combined `%AD`+`%AP` (or `%AP`+`%maxHP`) abilities always written as two explicit terms, never merged into one number.
+9. 5 champions (Kobuko, Gnar, Yone, Ashe, Sett) reference a live in-game runtime counter (Community Dragon's `TFTUnitProperty` reference, e.g. "current arrow count") that has no fixed star-level value — these are described qualitatively ("current total scales with gold gained") rather than assigned a fabricated number, matching the `tft-set9` precedent for Cho'Gath's "(Current Bonus: scales with each enemy devoured)".
+
+Reusable script: **`.claude/scripts/audit_tft_abilities.py`**, extended with a Set 11 section in `COMPUTED_OVERRIDES` (see inline comments for the reasoning behind each entry) and a derivation-comment block for the 4 formula-computed cases that can't be represented as a simple override.
+
+```bash
+python .claude/scripts/audit_tft_abilities.py --set 11 --sheet tft-set11 --patch 15.6
+```
+
+Note: since tft-set11 had no existing numbers to diff against, the script's *generation* half (`fetch_set_data` + `render_ability`) was used directly rather than its *diff* half (`audit_champion`/`find_matching_triplet`) — there was nothing to diff.
+
+## Bugs found and fixed in the shared script
+
+These fixes benefit any future re-run for Set 9, 10, or 11:
+- 9 confirmed **silent duplicate-value mis-picks**, where a second placeholder in the same ability (e.g. a "secondary damage" or "AoE damage" number) silently resolved to the *same* raw variable as an unrelated first placeholder, because the generic substring fallback matched on a shared `"Damage"`/`"Shield"` substring before ever reaching the correct variable later in the dict (Ahri, Darius, Jax, Kindred, Soraka, Zoe, Sylas, Udyr, Lillia).
+- 2 confirmed **computed-formula placeholders masquerading as single-candidate matches** (Tahm Kench's `BonusModifiedDamage`, Qiyana's `SecondaryDamage`) — these passed the "only one substring candidate" check but were still wrong, because the real answer is `raw_variable × multiplier`, not a raw variable at all. This class of bug is invisible to an ambiguous-*candidate-count* scan; it was only caught by cross-checking for two placeholders resolving to identical values within one ability.
+- 1 case (Yasuo's `ModifiedShield`) where the fallback matched a **`Duration` variable as a damage/shield amount** — the most severe category of silent mis-pick, since the two values aren't even the same kind of stat.
+
+## Anomalies flagged for human review (not corrected — presented as extracted)
+
+- **Sett, Udyr, Irelia, Wukong, Lissandra, Galio**: very large 3-star jumps in Community Dragon's raw data (confirmed intentional for at least Sett via wiki spot-check, see Methodology §7). Recommend a final human sanity pass before treating these numbers as tuning-relevant for balance work, even though they're extracted faithfully.
+- **Caitlyn, Kha'Zix**: `TotalDamage` resolves to a constant (non-star-scaling) `%AD` ratio with a same-named-but-unused `APDamage`/leftover variable present in the raw data that isn't referenced anywhere in the desc template. Treated as leftover/unused data, not a second scaling term — flag if this looks wrong on manual review.
+- **Xayah**: the "damage to all enemies hit by Rakan's ability" proc genuinely has no `%AD`/`%AP` scaling marker anywhere in Riot's own data — the fixed 200/300/800 numbers are shown without a stat suffix because there isn't one, not because of unresolved data.
+
+## Full data source
+
+All 60 champions' final composed Skill Description text is live in the `tft-set11` sheet's Champions tab (verified via a full re-read/diff after write, 0 mismatches). This doc is the audit trail, not a mirror of the sheet content — see the sheet itself for current text.

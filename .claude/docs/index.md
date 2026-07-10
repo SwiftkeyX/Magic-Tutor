@@ -42,6 +42,9 @@ Bug tracking, build notes, and release checklist for Phase 3.
 ## Balance (`balance/`)
 Game-balance framework, TFT reference data/math, and the research roadmap. Cross-phase, ongoing.
 * [Data Sources](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/data-sources.md)
+* [TFT Set 9 Ability Audit](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-set9-ability-audit.md)
+* [TFT Set 10 Ability Audit](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-set10-ability-audit.md)
+* [TFT Set 11 Ability Audit](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-set11-ability-audit.md)
 * [Balance Framework](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/balance-framework.md)
 * [TFT Balancing & Stat Analysis](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-analysis.md)
 * [TFT Balancing Rules & Reference Guidelines](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-rules.md)
