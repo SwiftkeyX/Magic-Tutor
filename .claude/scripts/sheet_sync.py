@@ -116,6 +116,32 @@ def cmd_write(args):
         sys.exit(1)
 
 
+def cmd_insert_column(args):
+    entry = get_sheet_entry(args.sheet)
+    if not entry.get("writable", False):
+        print(f"Sheet '{args.sheet}' is marked read-only (role={entry.get('role')}) in sheets_config.json — refusing to write.")
+        print("This is a reference sheet we don't own. Edit sheets_config.json only if that has changed.")
+        sys.exit(1)
+
+    client = get_client()
+    sh = get_spreadsheet(client, args.sheet)
+    try:
+        ws = sh.worksheet(args.worksheet)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Worksheet '{args.worksheet}' not found. Available: {[w.title for w in sh.worksheets()]}")
+        sys.exit(1)
+
+    try:
+        ws.insert_cols([[]], col=args.index)
+        if args.header:
+            ws.update_cell(1, args.index, args.header)
+        print(f"Inserted a new column at position {args.index} in '{args.worksheet}'"
+              + (f" with header '{args.header}'." if args.header else "."))
+    except Exception as e:
+        print(f"Error inserting column: {e}")
+        sys.exit(1)
+
+
 def cmd_dump(args):
     client = get_client()
     entry = get_sheet_entry(args.sheet)
@@ -155,6 +181,13 @@ def main():
     parser_write.add_argument("cell", help="Cell coordinates (e.g., A1, B2)")
     parser_write.add_argument("value", help="Value to write")
     parser_write.set_defaults(func=cmd_write)
+
+    # Insert-column subcommand
+    parser_insert_col = subparsers.add_parser("insert-column", help="Insert a new blank column at a given position, shifting existing columns right")
+    parser_insert_col.add_argument("worksheet", help="Name of the worksheet")
+    parser_insert_col.add_argument("index", type=int, help="1-based column position to insert at (e.g. 5 for column E)")
+    parser_insert_col.add_argument("--header", default=None, help="Optional header text to write into row 1 of the new column")
+    parser_insert_col.set_defaults(func=cmd_insert_column)
 
     # Dump subcommand
     parser_dump = subparsers.add_parser("dump", help="Dump all worksheets to a local JSON file")
