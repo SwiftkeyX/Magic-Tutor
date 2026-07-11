@@ -111,6 +111,22 @@
 
 ---
 
+## Review Heuristics
+
+> Unlike Project-Critical Patterns above, these are **soft signals**, not hard constraints. They don't block anything on their own — they flag candidates for closer SRP review during `technical-director` / `architecture-reviewer` passes.
+
+---
+
+### Class length as an SRP signal
+
+**Guideline**: A class exceeding ~400 lines is not automatically a violation, but is a trigger to re-check whether it still has a single responsibility.
+
+**Why**: Line count alone is a blunt proxy — a cohesive class doing one complex job (e.g. a tick-engine) can legitimately run long, while a much shorter class can still mix unrelated concerns. The real signal is whether the class owns logic that another established pattern already owns (e.g. `AutoBattleResolver.cs` hardcoding trait-ability logic that `Skills/SkillArchetypeExecutor` already owns).
+
+**Instead**: When a class crosses ~400 lines, check whether every method belongs to the class's stated responsibility and whether any logic duplicates or bypasses an existing pattern elsewhere in the codebase — then decide whether to split it.
+
+---
+
 ## Unity 6 LTS — Current Patterns
 
 **Last verified:** 2026-05-30
