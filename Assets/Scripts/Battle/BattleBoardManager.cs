@@ -60,6 +60,8 @@ namespace MagicSchool.Battle
         {
             _grid = GetComponent<HexGrid>();
             if (_grid == null) { Debug.LogError("[BattleBoardManager] HexGrid missing", this); enabled = false; return; }
+            // H2: Register with RunManager so it can reach us without FindObjectOfType.
+            RunManager.Instance?.RegisterBattleBoardManager(this);
         }
 
         private void Start()
@@ -489,16 +491,6 @@ namespace MagicSchool.Battle
             _startBattleButton.style.display = UnityEngine.UIElements.DisplayStyle.None;
             _benchScrollView.style.display = UnityEngine.UIElements.DisplayStyle.None;
 
-            // Apply trait bonuses registered via TraitTracker during Placement Phase.
-            // _championDataLookup is keyed by each placed unit's own ID (StudentId GUID in
-            // production, champion slug in standalone) — see Core Rule 5 in BattleBoardManager.md.
-            if (_traitTracker != null && _championRoster != null)
-                TraitEffectApplier.Apply(
-                    _traitTracker.GetActiveBreakpoints(),
-                    _championDataLookup,
-                    _pendingPlacements,
-                    _resolver);
-
             // Snapshot enemy data BEFORE RunManager may re-call SetCombatants with the filtered squad.
             // Both paths spawn enemy GOs here (visual layer — BattleBoardManager's job).
             var enemyPlacements = _resolver.GetAutoEnemyPlacements();
@@ -523,20 +515,40 @@ namespace MagicSchool.Battle
             if (RunManager.Instance != null)
             {
                 // Production: hand off fielded IDs + positions to RunManager, which filters combatants
-                // to only the placed subset and calls resolver.BeginBattle(). SetUnitPositions and
-                // BeginBattle responsibility moves to RunManager.ConfirmSquadPlacement().
+                // to only the placed subset, applies trait modifiers via ApplyTraitModifiers(), and
+                // calls resolver.BeginBattle(). Trait application must happen AFTER RunManager's final
+                // SetCombatants() call — see GDD Core Rule 4 and RunManager.ConfirmSquadPlacement().
                 var fieldedStudentIds = _pendingPlacements.Keys.ToList();
                 RunManager.Instance.ConfirmSquadPlacement(fieldedStudentIds, _pendingPlacements);
             }
             else
             {
-                // Standalone (BattleTest.unity): call resolver directly, unchanged from original.
+                // Standalone (BattleTest.unity): call resolver directly.
+                // Trait application happens here because there is no RunManager to own the sequencing.
                 _resolver.SetUnitPositions(_pendingPlacements);
+                ApplyTraitModifiers(_resolver, _pendingPlacements);
 #if UNITY_EDITOR
                 if (_debugPlayerStartHpPct < 1f) _resolver.DebugSetAllPlayerHp(_debugPlayerStartHpPct);
 #endif
                 _resolver.BeginBattle();
             }
+        }
+
+        /// <summary>
+        /// Applies trait-derived stat modifiers to the resolver's current combatant list.
+        /// Must be called after SetCombatants() and SetUnitPositions(), before BeginBattle().
+        /// On the RunManager path this is called by RunManager.ConfirmSquadPlacement() after
+        /// its final SetCombatants() — see GDD Core Rule 4 (TraitSystem before AutoBattleResolver).
+        /// On the standalone path it is called directly from OnStartBattle()'s else branch.
+        /// </summary>
+        public void ApplyTraitModifiers(AutoBattleResolver resolver, Dictionary<string, HexCoord> placements)
+        {
+            if (_traitTracker == null || _championRoster == null) return;
+            TraitEffectApplier.Apply(
+                _traitTracker.GetActiveBreakpoints(),
+                _championDataLookup,
+                placements,
+                resolver);
         }
 
         // ── Event handlers ───────────────────────────────────────────────────

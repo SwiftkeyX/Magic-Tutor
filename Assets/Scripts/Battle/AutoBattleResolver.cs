@@ -114,6 +114,13 @@ namespace MagicSchool.Battle
             public string           CurrentTargetId;        // last basic-attack target; used by the "Current Target" priority sort
         }
 
+        // ── Lifecycle ────────────────────────────────────────────────────────
+        private void Awake()
+        {
+            // H2: Register with RunManager so it can reach us without FindObjectOfType.
+            RunManager.Instance?.RegisterAutoBattleResolver(this);
+        }
+
         // ── Setup API ────────────────────────────────────────────────────────
         public void SetCombatants(List<StudentCombatData> students, List<EnemyCombatData> enemies)
         {

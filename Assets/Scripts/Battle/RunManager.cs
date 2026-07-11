@@ -18,7 +18,6 @@ namespace MagicSchool.Battle
     public class RunManager : MonoBehaviour
     {
         public static RunManager Instance { get; private set; }
-        public static bool EnableTeacherSystem = false; // Disabled by default for stability
 
         [SerializeField] private RunConfig _config;
         [SerializeField] private EnemyDatabase _enemyDatabase;
@@ -33,6 +32,19 @@ namespace MagicSchool.Battle
             if (trainingConfig != null) _trainingConfig = trainingConfig;
         }
 
+        // ── L1: Tuning knob — delegates to RunConfig so designers can flip it per asset ──
+        /// <summary>
+        /// Whether the teacher promotion/roster system is active this run.
+        /// Controlled by <see cref="RunConfig.EnableTeacherSystem"/> (default: false).
+        /// Setter writes through to the live RunConfig so DebugHUD and test runners can
+        /// toggle the value at runtime without touching the ScriptableObject on disk.
+        /// </summary>
+        public bool EnableTeacherSystem
+        {
+            get => _config != null && _config.EnableTeacherSystem;
+            set { if (_config != null) _config.EnableTeacherSystem = value; }
+        }
+
         public int CurrentYear { get; private set; } = 1;
         public RunPhase CurrentPhase { get; private set; } = RunPhase.None;
         public bool IsPaused { get; private set; } = false;
@@ -40,6 +52,22 @@ namespace MagicSchool.Battle
         public event Action<RunPhase> OnPhaseChanged;
         public event Action<int> OnYearChanged;
         public event Action<bool> OnPauseChanged;
+        /// <summary>
+        /// Fired once in <see cref="Start"/>, after all dependent systems have initialized.
+        /// GDD Core Rule 6. StudentRoster is the GDD-specified subscriber.
+        /// </summary>
+        public event Action OnRunStarted;
+
+        // ── H2: Scene-side manager cache — populated by each component's Awake() via Register* ──
+        // New scene components call Register* in their own Awake(); Unity's destroyed-object
+        // null check keeps stale inter-scene refs safe without explicit clearing.
+        private AutoBattleResolver _autoResolver;
+        private BattleBoardManager _battleBoard;
+        private PromotionSystem    _promotionSystemCached;
+
+        public void RegisterAutoBattleResolver(AutoBattleResolver resolver) => _autoResolver          = resolver;
+        public void RegisterBattleBoardManager(BattleBoardManager board)    => _battleBoard            = board;
+        public void RegisterPromotionSystem(PromotionSystem promo)          => _promotionSystemCached  = promo;
 
         private void Awake()
         {
@@ -51,7 +79,10 @@ namespace MagicSchool.Battle
             }
 
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Persist across scene loads
+            // H1: DontDestroyOnLoad intentionally omitted — RunManager is scene-scoped.
+            // GDD Core Rule 7: "RunManager is not a persistent singleton. It is destroyed when
+            // the School scene is unloaded." Persistence across scenes is achieved via Bootstrap
+            // scene architecture, not DontDestroyOnLoad. See unity-editor.md rule.
         }
 
         private void Start()
@@ -87,6 +118,11 @@ namespace MagicSchool.Battle
             }
 
             StartRun();
+
+            // L4: GDD Core Rule 6 — fire OnRunStarted once after all initialization is done.
+            // StudentRoster is the GDD-specified subscriber (subscribes in its Start() when
+            // co-located with RunManager). See StudentRoster dependency row in RunManager.md.
+            OnRunStarted?.Invoke();
         }
 
         private void OnDestroy()
@@ -212,7 +248,8 @@ namespace MagicSchool.Battle
             }
             else if (newScene == SceneName.Battle && CurrentPhase == RunPhase.Battle)
             {
-                var resolver = FindObjectOfType<AutoBattleResolver>();
+                // H2: Use registered reference — AutoBattleResolver.Awake() called RegisterAutoBattleResolver.
+                var resolver = _autoResolver;
                 if (resolver != null)
                 {
                     resolver.OnBattleComplete += HandleBattleComplete;
@@ -235,7 +272,8 @@ namespace MagicSchool.Battle
                     resolver.SetCombatants(students, enemies);
 
                     // Begin Placement Phase — player selects up to MaxSquadSize students to field.
-                    var board = FindObjectOfType<BattleBoardManager>();
+                    // H2: Use registered reference — BattleBoardManager.Awake() called RegisterBattleBoardManager.
+                    var board = _battleBoard;
                     if (board != null)
                     {
                         int maxSquadSize = StudentRoster.Instance != null
@@ -246,26 +284,31 @@ namespace MagicSchool.Battle
                     }
                     else
                     {
-                        Debug.LogError("[RunManager] BattleBoardManager not found in Battle scene.");
+                        Debug.LogError("[RunManager] BattleBoardManager not registered for Battle scene.");
                     }
                 }
                 else
                 {
-                    Debug.LogError("[RunManager] AutoBattleResolver not found in Battle scene.");
+                    Debug.LogError("[RunManager] AutoBattleResolver not registered for Battle scene.");
                 }
             }
             else if (newScene == SceneName.YearEnd && CurrentPhase == RunPhase.YearEnd)
             {
-                var promo = FindObjectOfType<PromotionSystem>();
-                if (promo == null)
+                // H2: Use registered reference — PromotionSystem.Awake() calls RegisterPromotionSystem.
+                // If PromotionSystem is not in the scene, create it dynamically; AddComponent triggers
+                // its Awake(), which self-registers via RegisterPromotionSystem.
+                if (_promotionSystemCached == null)
                 {
                     Debug.Log("[RunManager] PromotionSystem not found in scene. Instantiating dynamically.");
-                    var promoGO = new GameObject("PromotionSystem");
-                    promo = promoGO.AddComponent<PromotionSystem>();
-                    promo.Initialize(_promotionConfig);
+                    var promoGO  = new GameObject("PromotionSystem");
+                    var newPromo = promoGO.AddComponent<PromotionSystem>(); // Awake fires → _promotionSystemCached set
+                    newPromo.Initialize(_promotionConfig);
                 }
-                
-                promo.OnPromotionComplete += HandlePromotionComplete;
+
+                if (_promotionSystemCached != null)
+                    _promotionSystemCached.OnPromotionComplete += HandlePromotionComplete;
+                else
+                    Debug.LogError("[RunManager] PromotionSystem registration failed after dynamic instantiation.");
             }
         }
 
@@ -278,11 +321,10 @@ namespace MagicSchool.Battle
 
         private void HandleBattleComplete(BattleResult result)
         {
-            var resolver = FindObjectOfType<AutoBattleResolver>();
-            if (resolver != null)
-            {
-                resolver.OnBattleComplete -= HandleBattleComplete;
-            }
+            // H2: Use registered reference — no FindObjectOfType.
+            // Note: null-conditional (?.) cannot be used with event -= from outside the
+            // declaring type (CS0070), so use an explicit null guard.
+            if (_autoResolver != null) _autoResolver.OnBattleComplete -= HandleBattleComplete;
 
             // Do not advance yet — BattleHUD shows the outcome overlay and calls
             // CompleteBattlePhase() when the player clicks "Continue".
@@ -318,10 +360,11 @@ namespace MagicSchool.Battle
 
             _awaitingSquadConfirmation = false;
 
-            var resolver = FindObjectOfType<AutoBattleResolver>();
+            // H2: Use registered reference — no FindObjectOfType.
+            var resolver = _autoResolver;
             if (resolver == null)
             {
-                Debug.LogError("[RunManager] AutoBattleResolver not found during ConfirmSquadPlacement.");
+                Debug.LogError("[RunManager] AutoBattleResolver not registered during ConfirmSquadPlacement.");
                 return;
             }
 
@@ -333,11 +376,19 @@ namespace MagicSchool.Battle
             Debug.Log($"[RunManager] ConfirmSquadPlacement: {filteredStudents.Count} fielded students, {_pendingEnemies.Count} enemies.");
 
             // Re-establish resolver with only the fielded subset (clears the full-pool data set earlier).
-            // Ordering invariant: SetCombatants → SetUnitPositions → BeginBattle.
+            // Ordering invariant: SetCombatants → SetUnitPositions → TraitSystem resolves → BeginBattle
+            // (GDD Core Rule 4; best-practices.md "TraitSystem resolves before AutoBattleResolver runs").
             resolver.SetCombatants(filteredStudents, _pendingEnemies);
             resolver.SetUnitPositions(positions);
 
-            // TraitSystem.ResolveBattleBuffs() — wire here when TraitSystem is implemented.
+            // Apply trait buffs after the final SetCombatants() — trait mods must survive into BeginBattle().
+            // BattleBoardManager owns TraitTracker and _championDataLookup so it encapsulates the call.
+            // H2: Use registered reference — no FindObjectOfType.
+            var board = _battleBoard;
+            if (board != null)
+                board.ApplyTraitModifiers(resolver, positions);
+            else
+                Debug.LogWarning("[RunManager] BattleBoardManager not registered during ConfirmSquadPlacement; trait buffs skipped.");
 
             resolver.BeginBattle();
         }
@@ -398,11 +449,8 @@ namespace MagicSchool.Battle
 
         private void HandlePromotionComplete()
         {
-            var promo = FindObjectOfType<PromotionSystem>();
-            if (promo != null)
-            {
-                promo.OnPromotionComplete -= HandlePromotionComplete;
-            }
+            // H2: Use registered reference — no FindObjectOfType.
+            if (_promotionSystemCached != null) _promotionSystemCached.OnPromotionComplete -= HandlePromotionComplete;
 
             if (StudentRoster.Instance != null)
             {
