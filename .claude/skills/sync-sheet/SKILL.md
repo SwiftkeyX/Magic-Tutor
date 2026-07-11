@@ -1,13 +1,13 @@
 ---
 name: sync-sheet
-description: Read and write data to/from any of the project's 3 Google Sheets (Custom Auto-Battler, TFT Set 9, TFT Set 10) using the background sheet_sync.py script.
+description: Read and write data to/from any of the project's 5 Google Sheets (Custom Auto-Battler, TFT Set 9, TFT Set 9 Analysis, TFT Set 10, TFT Set 11) using the background sheet_sync.py script.
 ---
 
 # Google Sheet Sync Skill (Background API)
 
 This skill allows the agent to read and write to the project's Google Sheets directly in the background using the [sheet_sync.py](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/scripts/sheet_sync.py) command-line utility. This avoids launching a browser and interrupting the user.
 
-There are **3 registered sheets** (see [`sheets_config.json`](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/scripts/sheets_config.json) and [`data-sources.md`](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/data-sources.md) for the full registry): `auto-battler` (default — ours, writable), `tft-set9` and `tft-set10` (external references, read-only — `write` is refused against them). Select a non-default sheet with `--sheet <name>` before the subcommand, e.g. `python .claude/scripts/sheet_sync.py --sheet tft-set9 read <TabName>`.
+There are **5 registered sheets** (see [`sheets_config.json`](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/scripts/sheets_config.json) and [`data-sources.md`](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/data-sources.md) for the full registry): `auto-battler` (default — ours, canonical), `tft-set9`, `tft-set9-analysis`, `tft-set10`, and `tft-set11` (external references). All five are marked `writable: true` — there is no read-only guard on any registered sheet. Select a non-default sheet with `--sheet <name>` before the subcommand, e.g. `python .claude/scripts/sheet_sync.py --sheet tft-set9 read <TabName>`.
 
 ## Purpose of the Google Sheet (`auto-battler`, the default)
 This Google Sheet acts as the **design database** for the game. It contains the source of truth for:
