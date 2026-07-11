@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MagicSchool.Battle
 {
@@ -15,15 +16,15 @@ namespace MagicSchool.Battle
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(2))
+            if (Mouse.current.middleButton.wasPressedThisFrame)
             {
                 _panning        = true;
-                _panOriginWorld = ScreenToWorld(Input.mousePosition);
+                _panOriginWorld = ScreenToWorld(Mouse.current.position.ReadValue());
             }
 
-            if (_panning && Input.GetMouseButton(2))
+            if (_panning && Mouse.current.middleButton.isPressed)
             {
-                Vector3 current = ScreenToWorld(Input.mousePosition);
+                Vector3 current = ScreenToWorld(Mouse.current.position.ReadValue());
                 Vector3 delta   = _panOriginWorld - current;
                 Vector3 newPos  = transform.position + delta;
                 newPos.x = Mathf.Clamp(newPos.x, _minBounds.x, _maxBounds.x);
@@ -32,7 +33,7 @@ namespace MagicSchool.Battle
                 transform.position = newPos;
             }
 
-            if (Input.GetMouseButtonUp(2))
+            if (Mouse.current.middleButton.wasReleasedThisFrame)
                 _panning = false;
         }
 
