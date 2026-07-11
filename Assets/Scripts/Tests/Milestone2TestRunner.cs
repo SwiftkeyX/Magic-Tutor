@@ -69,9 +69,6 @@ namespace MagicSchool.Tests
         {
             Debug.Log("[TestRunner] Starting Milestone 2 Automated Play Mode Test...");
 
-            // Temporarily enable teacher system for play mode test
-            RunManager.EnableTeacherSystem = true;
-
             try
             {
                 // 1. Wipe Save Data first to ensure clean state
@@ -105,6 +102,11 @@ namespace MagicSchool.Tests
                     Debug.LogError("[TestRunner] RunManager.Instance is null after scene load!");
                     yield break;
                 }
+
+                // L1: EnableTeacherSystem is now an instance property on RunManager (backed by RunConfig).
+                // Enable here, after RunManager.Instance is confirmed non-null, rather than pre-run.
+                RunManager.Instance.EnableTeacherSystem = true;
+                Debug.Log("[TestRunner] EnableTeacherSystem set to true on live RunManager.");
 
                 if (RunManager.Instance.CurrentPhase != RunPhase.Recruit || RunManager.Instance.CurrentYear != 1)
                 {
@@ -321,8 +323,10 @@ namespace MagicSchool.Tests
             }
             finally
             {
-                RunManager.EnableTeacherSystem = false;
-                Debug.Log("[TestRunner] Restored EnableTeacherSystem to false.");
+                // L1: EnableTeacherSystem is now an instance property — guard for null in finally block
+                // (RunManager may have been destroyed by the time we reach here on failure paths).
+                if (RunManager.Instance != null) RunManager.Instance.EnableTeacherSystem = false;
+                Debug.Log("[TestRunner] Restored EnableTeacherSystem to false (if RunManager was active).");
 
 #if UNITY_EDITOR
                 // Clean up temporary runner

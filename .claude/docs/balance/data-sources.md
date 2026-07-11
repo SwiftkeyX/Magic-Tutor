@@ -15,7 +15,7 @@ Sheet identity and access rules live in `.claude/scripts/sheets_config.json` —
 | `auto-battler` | Canonical | ✅ Yes | Our own design database — the 30-champion roster | Heroes, Origin, Class, Dashboard | `ChampionRoster.cs` (canonical stats), `balance_report.py`, `push_stats_to_sheet.py`, `balance-framework.md` |
 | `tft-set9` | Reference | ✅ Yes | TFT Set 9 Champions — basic reference roster (clean, with dashboard). Now includes the Set 9.5 "Horizonbound" additions (9 champions, 3 traits) and a `Sub-Set` column on both Champions and Meta Comps tagging each champion/comp `9.0`/`9.5` | Champions, Origins, Classes, TFT Balancing Rules, Meta Comps, Dashboard | `tft-balancing-analysis.md`, `tft-balancing-rules.md`, `tft-trait-synergy-patterns.md` |
 | `tft-set9-analysis` | Reference Analysis | ✅ Yes | TFT Set 9 Carry and Combat Efficiency Analysis sheet (separated) | Hero Data, CE Analysis, Carry DPS Analysis | `tft-balancing-analysis.md`, `tft-set9-dps-analysis.md`, `tier-1-carry-dps.md`, `tier-2-carry-dps.md`, `tier-3-carry-dps.md`, `tier-4-carry-dps.md`, `tier-5-carry-dps.md` |
-| `tft-set10` | Reference | ✅ Yes | TFT Set 10 Champions — external reference, used to cross-check that TFT math (EHP, mana, star scaling) holds across sets | TFT Set 10 Champions - Master Roster Layout, TFT Balancing Rules, CE Analysis, Meta Comps, Origins, Classes | `tft-balancing-research-plan.md` (Topic cross-set validation), `tft-trait-synergy-patterns.md` |
+| `tft-set10` | Reference | ✅ Yes | TFT Set 10 Champions — external reference, used to cross-check that TFT math (EHP, mana, star scaling) holds across sets | Champions, TFT Balancing Rules, CE Analysis, Meta Comps, Origins, Classes | `tft-balancing-research-plan.md` (Topic cross-set validation), `tft-trait-synergy-patterns.md` |
 | `tft-set11` | Reference | ✅ Yes | TFT Set 11 Champions — external reference, basic roster confirmed live (60 champions), mirroring Set 9's layout, for cross-set validation alongside Set 9/Set 10 | Champions, Origins, Classes, Meta Comps | `tft-trait-synergy-patterns.md` |
 
 All four reference sheets (`tft-set9`, `tft-set9-analysis`, `tft-set10`, `tft-set11`) are now marked `writable: true` in `sheets_config.json` — the previous hard rail in `sheet_sync.py write` (which refused writes against `tft-set9`/`tft-set10`) no longer applies to any registered sheet. Only `auto-battler` is truly ours; the others are external/reference sheets now opened up for writes at the user's request.
@@ -53,7 +53,7 @@ python .claude/scripts/sheet_sync.py --sheet tft-set11 dump
 
 - `.claude/reference/json/tft-set9_dump_20260707.json`
 - `.claude/reference/json/tft-set9-analysis_dump_20260706.json`
-- `.claude/reference/json/tft-set10_dump_20260707.json`
+- `.claude/reference/json/tft-set10_dump_20260711.json`
 - `.claude/reference/json/tft-set11_dump_20260707.json`
 - `.claude/reference/json/tft_14.1.json` — a separate, unrelated Riot Data-Dragon-style API export (items/traits/champions for Sets 1, 9, 10), not a sheet dump. Kept as a cross-check source for Pillar B research (see `tft-balancing-research-plan.md`).
 

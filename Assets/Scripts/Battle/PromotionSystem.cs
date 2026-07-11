@@ -36,6 +36,10 @@ namespace MagicSchool.Battle
             }
 
             Instance = this;
+            // H2: Register with RunManager so it can reach us without FindObjectOfType.
+            // Also covers dynamic instantiation: AddComponent triggers this Awake synchronously,
+            // so _promotionSystemCached in RunManager is set before AddComponent returns.
+            RunManager.Instance?.RegisterPromotionSystem(this);
         }
 
         private void Start()

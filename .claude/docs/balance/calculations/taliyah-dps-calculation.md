@@ -38,12 +38,12 @@ This document provides the step-by-step mathematical calculations for Taliyah's 
 | Step | Formula | Calculation | 1★ | 2★ | 3★ |
 | :--- | :--- | :--- | :---: | :---: | :---: |
 | ATC | `ceil(Max Mana / 10)` | `ceil(60 / 10)` | 6 | 6 | 6 |
-| Cycle Duration | `ATC / AS + Lockout` | `6 / 0.70 + 0.8` (Note: simulation averages combat timing to 9.370s) | 9.370s | 9.370s | 9.370s |
-| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(6 × [40, 60, 90] × 1.10) / 9.370s` | 28.0 | 42.0 | 63.0 |
+| Cycle Duration | `ATC / AS + Lockout` | `6 / 0.70 + 0.8` | 9.371s | 9.371s | 9.371s |
+| Auto Attack DPS | `(ATC × AD × Crit) / Cycle` | `(6 × [40, 60, 90] × 1.10) / 9.371s` | 28.2 | 42.3 | 63.4 |
 | Spell Base (Active) | `Spell` | `[150.0, 225.0, 340.0]` | 150.0 | 225.0 | 340.0 |
-| Spell Damage (Synergy) | `(Active + 2 × Passive) × Crit` | `([150.0, 225.0, 340.0] × 2.50) × 1.10` | 634.3 | 952.0 | 1427.1 |
-| Spell DPS | `Spell Damage / Cycle` | `[634.3, 952.0, 1427.1] / 9.370s` | 67.7 | 101.6 | 152.3 |
-| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **95.7** | **143.6** | **215.3** |
+| Spell Damage (Synergy) | `Active + 2 × Passive` (Passive = `0.75 × Active`) | `[150.0, 225.0, 340.0] × (1 + 2 × 0.75) × 1.10` | 634.3 | 952.0 | 1427.1 |
+| Spell DPS | `Spell Damage / Cycle` | `[634.3, 952.0, 1427.1] / 9.371s` | 67.7 | 101.6 | 152.3 |
+| **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **95.9** | **143.9** | **215.7** |
 
 ---
 
@@ -73,10 +73,10 @@ This document provides the step-by-step mathematical calculations for Taliyah's 
 | Step | Formula | Calculation | 1★ | 2★ | 3★ |
 | :--- | :--- | :--- | :---: | :---: | :---: |
 | ATC | `ceil(Max Mana / 10)` | `ceil(60 / 10)` | 6 | 6 | 6 |
-| Cycle Duration | `ATC / AS + Lockout` | `6 / 0.70 + 0.8` (Note: simulation averages combat timing to 9.710s) | 9.710s | 9.710s | 9.710s |
+| Cycle Duration | `ATC / AS + Lockout` | `6 / 0.70 + 0.8` (Note: averages to 9.710s in simulation due to passive boulder lockouts) | 9.710s | 9.710s | 9.710s |
 | Auto Attack DPS | `(ATC × AD_equipped × Crit) / Cycle` | `(6 × [44, 66, 99] × 1.28) / 9.710s` | 31.6 | 47.4 | 71.1 |
 | Spell Base (Active) | `Spell` | `[150.0, 225.0, 340.0]` | 150.0 | 225.0 | 340.0 |
-| Spell Damage (Synergy) | `(Active + 2 × Passive) × AP × Crit` | `([150.0, 225.0, 340.0] × 2.50) × 2.15 × 1.28` | 1265.2 | 1898.3 | 2847.0 |
+| Spell Damage (Synergy) | `Active + 2 × Passive` (Passive = `0.75 × Active`) | `[150.0, 225.0, 340.0] × (1 + 2 × 0.75) × 2.15 × 1.28` | 1265.2 | 1898.3 | 2847.0 |
 | Spell DPS | `Spell Damage / Cycle` | `[1265.2, 1898.3, 2847.0] / 9.710s` | 130.3 | 195.5 | 293.2 |
 | **Total DPS** | `Auto DPS + Spell DPS` | `Auto DPS + Spell DPS` | **161.9** | **242.9** | **364.3** |
 

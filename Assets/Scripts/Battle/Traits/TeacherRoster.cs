@@ -108,7 +108,8 @@ namespace MagicSchool.Battle
 
         public int GetTrainingBuff(StatType stat)
         {
-            if (!RunManager.EnableTeacherSystem) return 0;
+            // L1: EnableTeacherSystem moved to RunConfig; read via RunManager instance property.
+            if (RunManager.Instance == null || !RunManager.Instance.EnableTeacherSystem) return 0;
 
             int total = 0;
             foreach (var t in _teachers)

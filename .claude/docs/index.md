@@ -15,6 +15,7 @@ Cross-system specifications, guidelines, and rules for Phase 1.
 
 ## Production (`production/gdd/`)
 Game Design Documents (GDD) for individual gameplay and meta systems.
+* [Active Skill System](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/production/gdd/ActiveSkillSystem.md)
 * [Audio System](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/production/gdd/AudioSystem.md)
 * [Auto-Battle Resolver](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/production/gdd/AutoBattleResolver.md)
 * [Battle Board Manager](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/production/gdd/BattleBoardManager.md)

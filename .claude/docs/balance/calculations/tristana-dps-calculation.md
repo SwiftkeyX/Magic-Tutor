@@ -54,7 +54,7 @@ This document provides the step-by-step mathematical calculations for Tristana's
 ### 1. Item Stats & Effects
 | Item | Effect |
 | :--- | :--- |
-| **Guinsoo's Rageblade** | Ramps AS (average equipped AS is 1.63, steroid AS is 2.63). See [Guinsoo's Rageblade AS Ramp Calculations](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/guinsoo-dps-calculation.md). |
+| **Guinsoo's Rageblade** | Ramps AS (average equipped AS is 1.26 [15s] / 1.63 [30s], steroid AS is 2.26 [15s] / 2.63 [30s]). See [Guinsoo's Rageblade AS Ramp Calculations](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/guinsoo-dps-calculation.md). |
 | **Last Whisper** | +10% AD, +10% AS, +10% Crit Chance. |
 | **Infinity Edge** | +35% AD, +15% Crit Chance, spells can crit. |
 

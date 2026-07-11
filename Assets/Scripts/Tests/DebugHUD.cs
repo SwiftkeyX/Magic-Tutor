@@ -35,7 +35,7 @@ namespace MagicSchool.Tests
             {
                 GUILayout.Label($"<b>Run Year:</b> {run.CurrentYear} / 3");
                 GUILayout.Label($"<b>Run Phase:</b> {run.CurrentPhase}");
-                RunManager.EnableTeacherSystem = GUILayout.Toggle(RunManager.EnableTeacherSystem, "Enable Teacher System (Milestone 2)");
+                run.EnableTeacherSystem = GUILayout.Toggle(run.EnableTeacherSystem, "Enable Teacher System (Milestone 2)");
             }
             else
             {

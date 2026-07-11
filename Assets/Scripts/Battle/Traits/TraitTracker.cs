@@ -6,25 +6,6 @@ namespace MagicSchool.Battle
 {
     public class TraitTracker : MonoBehaviour
     {
-        private static readonly Dictionary<TraitType, int[]> Breakpoints = new Dictionary<TraitType, int[]>
-        {
-            { TraitType.Vanguard,     new[] { 2, 4, 6, 8 } },
-            { TraitType.Striker,      new[] { 2, 4, 6, 8 } },
-            { TraitType.Elementalist, new[] { 2, 4, 6, 8 } },
-            { TraitType.Ranger,       new[] { 2, 4, 6    } },
-            { TraitType.Kinetic,      new[] { 2, 4       } },
-            { TraitType.Dreadknight,  new[] { 2, 4       } },
-            { TraitType.Warden,       new[] { 2, 3, 4    } },
-            { TraitType.Trickster,    new[] { 2, 4       } },
-            { TraitType.Astral,       new[] { 2, 4, 6    } },
-            { TraitType.Wild,         new[] { 2, 4, 6    } },
-            { TraitType.Shadow,       new[] { 2, 4, 6    } },
-            { TraitType.Oracle,       new[] { 2, 3       } },
-            { TraitType.Guardian,     new[] { 2, 4       } },
-            { TraitType.Tech,         new[] { 2, 4       } },
-            { TraitType.Void,         new[] { 2, 4       } },
-        };
-
         private readonly Dictionary<string, ChampionData> _placed           = new Dictionary<string, ChampionData>();
         private readonly Dictionary<TraitType, int>       _counts            = new Dictionary<TraitType, int>();
         private readonly Dictionary<TraitType, int>       _activeBreakpoints = new Dictionary<TraitType, int>();
@@ -75,7 +56,7 @@ namespace MagicSchool.Battle
 
         private static int HighestBreakpoint(TraitType t, int count)
         {
-            if (!Breakpoints.TryGetValue(t, out var pts)) return 0;
+            if (!TraitBreakpoints.All.TryGetValue(t, out var pts)) return 0;
             int best = 0;
             foreach (int pt in pts) if (count >= pt) best = pt;
             return best;

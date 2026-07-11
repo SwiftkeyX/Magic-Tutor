@@ -194,8 +194,9 @@ isRunComplete = (CurrentYear == MaxYears) AND (yearEndComplete == true)
 |---|---|---|---|---|
 | `MaxYears` | 3 | 2–5 | Longer runs, more teacher accumulation per run | Shorter, more intense runs |
 | `TrainingActionsPerSemester` | 5 | 3–8 | More student improvement per semester; reduces tension | Harder to fully develop students |
+| `EnableTeacherSystem` | `false` | n/a (boolean) | YearEnd promotion phase is active; battle wins route to YearEnd where students graduate to teachers | YearEnd skipped; run advances directly to next Recruit year (or ends) after battle wins |
 
-> `MaxYears` and `TrainingActionsPerSemester` are defined on a `RunConfig` ScriptableObject asset, not hardcoded.
+> `MaxYears`, `TrainingActionsPerSemester`, and `EnableTeacherSystem` are defined on a `RunConfig` ScriptableObject asset, not hardcoded.
 
 ---
 
