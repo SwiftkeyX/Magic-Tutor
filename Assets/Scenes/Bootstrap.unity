@@ -163,6 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44139648e9bf4e44ab4fd86c34a9cd31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.GameManager
+  _runConfig: {fileID: 11400000, guid: b7c346930ee32554e903a763e2864e4b, type: 2}
+  _enemyDatabase: {fileID: 11400000, guid: 4f92b5b223b61a741ba47f00e1cabb0e, type: 2}
+  _promotionConfig: {fileID: 11400000, guid: 6ae3380f6ad961a4eb5aa66d968d9d03, type: 2}
+  _studentConfig: {fileID: 11400000, guid: 5f806ece88386e84bb655328cf0b683b, type: 2}
 --- !u!114 &1270316928
 MonoBehaviour:
   m_ObjectHideFlags: 0

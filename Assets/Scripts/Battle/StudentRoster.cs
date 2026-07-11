@@ -52,6 +52,11 @@ namespace MagicSchool.Battle
         public event Action OnRosterChanged;
         public event Action<StudentData> OnStudentStatChanged;
 
+        public void Initialize(StudentConfig config)
+        {
+            if (config != null) _config = config;
+        }
+
         private void Awake()
         {
             Debug.Log($"[StudentRoster] Awake called on GameObject: {gameObject.name}. Existing Instance: {Instance != null}");
@@ -74,14 +79,11 @@ namespace MagicSchool.Battle
                 return;
             }
 
+            // Config is normally supplied by GameManager.Initialize(); this is a last-resort safety net.
             if (_config == null)
             {
-                _config = Resources.Load<StudentConfig>("StudentConfig");
-                if (_config == null)
-                {
-                    _config = ScriptableObject.CreateInstance<StudentConfig>();
-                    Debug.LogWarning("[StudentRoster] StudentConfig not found. Using default scriptable object.");
-                }
+                _config = ScriptableObject.CreateInstance<StudentConfig>();
+                Debug.LogWarning("[StudentRoster] StudentConfig not assigned via GameManager or Inspector. Using in-memory defaults.");
             }
 
             var allChampions = ChampionRoster.GetAllChampions();
