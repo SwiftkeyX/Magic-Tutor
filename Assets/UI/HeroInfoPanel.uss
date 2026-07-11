@@ -1,0 +1,43 @@
+/* ── HeroInfoPanel.uss ─────────────────────────────────────────────────────────
+   Right-docked hero inspector (UI Toolkit migration of the legacy uGUI panel).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.hero-info-root {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 260px;
+    height: 460px;
+    flex-direction: column;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.header {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    margin-bottom: 6px;
+    white-space: normal;
+}
+
+.stats {
+    font-size: 13px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 6px;
+    white-space: normal;
+}
+
+.skill {
+    font-size: 13px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 6px;
+    white-space: normal;
+}
+
+.traits {
+    font-size: 13px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 6px;
+    white-space: normal;
+}

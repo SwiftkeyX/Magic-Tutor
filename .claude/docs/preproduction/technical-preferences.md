@@ -64,7 +64,7 @@ Keyboard/Mouse is the only supported input method. No gameplay-critical actions 
 
 ## Architecture Decisions Log
 
-- No ADRs yet — create `.claude/docs/other/adr/adr-001-*.md` for the first significant technical decision
+- [ADR-001: UI Toolkit as the Standard UI Framework](../other/adr/adr-001-ui-framework-standard.md) — UI Toolkit is standard for all screen-space UI; uGUI is legacy/exception-only (world-space anchoring, or `SceneLoader`'s fade `CanvasGroup`)
 
 ## Agent / Specialist Routing
 
@@ -84,6 +84,7 @@ Keyboard/Mouse is the only supported input method. No gameplay-critical actions 
 |---|---|
 | `.cs` game scripts | `gameplay-programmer` |
 | `.shader`, `.shadergraph`, `.mat` | `gameplay-programmer` (simple) / manual (complex) |
-| `.uxml`, `.uss`, Canvas prefabs | `ui-programmer` |
+| `.uxml`, `.uss` (standard, see ADR-001) | `ui-programmer` |
+| Canvas prefabs (legacy/exception-only, see ADR-001) | `ui-programmer` |
 | `.unity`, `.prefab` | `gameplay-programmer` (via coplay MCP) |
 | Architecture review | `technical-director` |

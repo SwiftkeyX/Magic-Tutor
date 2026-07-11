@@ -26,7 +26,7 @@ namespace MagicSchool.Battle
 
             return new StudentCombatData
             {
-                Id = Id, DisplayName = DisplayName,
+                Id = Id, ChampionId = Id, DisplayName = DisplayName,
                 MaxHP = MaxHP, ATK = ATK, DEF = DEF,
                 MG = MG, MR = MR, AttackSpeed = AttackSpeed, CRIT = CRIT,
                 Range = Range, MaxMana = MaxMana, StartingMana = StartingMana,

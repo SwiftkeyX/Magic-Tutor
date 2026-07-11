@@ -50,4 +50,5 @@ Game-balance framework, TFT reference data/math, and the research roadmap. Cross
 ## Other (`other/`)
 Cross-phase frameworks, onboarding resources, and general references.
 * [Architecture Overview](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/architecture-overview.md)
+* [ADR-001: UI Toolkit as the Standard UI Framework](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/adr/adr-001-ui-framework-standard.md)
 

@@ -1,7 +1,7 @@
 # StudentRoster
 
 > **Status**: Draft
-> **Last Updated**: 2026-06-29
+> **Last Updated**: 2026-07-03
 > **Implements Pillar**: Strategic — the randomly drawn student roster each semester is the primary source of roguelite variance; players adapt their training strategy to whoever shows up
 
 ## Summary
@@ -16,6 +16,8 @@ StudentRoster manages the active list of students for the current semester. It g
 
 StudentRoster is a MonoBehaviour in the School scene, alive for the duration of one run. When RunManager fires `OnPhaseChanged(Recruit)`, StudentRoster calls `GenerateStudents()` to populate the active roster with N randomly generated `StudentData` objects, each assigned random base stats and 1–2 traits from the available trait pool (sourced from a `StudentConfig` ScriptableObject). TrainingSystem writes stat bonuses directly into `StudentData`. PromotionSystem calls `RemoveStudent(id)` for each student it processes. At run end, `Clear()` removes any remaining students. StudentRoster never persists beyond the current run.
 
+The full roster is the **selection pool**, not the fielded squad — not every recruited student fights every battle. `GetStudentsForBattle()` converts the entire pool to `StudentCombatData` for `RunManager` to hand to `AutoBattleResolver.SetCombatants()`; the player then chooses up to `MaxSquadSize` of them to actually place on the board during `BattleBoardManager`'s Placement Phase (see `BattleBoardManager.md`, `RunManager.md`). StudentRoster itself has no concept of "fielded" vs "benched" — that distinction lives entirely in the Placement Phase hand-off.
+
 ## Player Fantasy
 
 The player looks at each new class of students and immediately starts theorycrafting: "I have two Fire traits and one Healer — if I train the Fire students hard I can hit the 2-trait threshold." The randomness is the puzzle; the player's training decisions are the solution.
@@ -29,7 +31,14 @@ The player looks at each new class of students and immediately starts theorycraf
 ```csharp
 [Serializable]
 public class StudentData {
-    public string StudentId;        // GUID assigned at generation
+    public string StudentId;        // GUID assigned at generation — the student's own combat/board identity
+    public string ChampionId;       // Bridge field: links this student back to the ChampionData template
+                                     // it was rolled from (ChampionRoster's fixed archetype slug, e.g. "ironclad").
+                                     // StudentId and ChampionId are deliberately different ID spaces — StudentId
+                                     // is per-recruit and unique, ChampionId is shared by every student rolled
+                                     // from the same template. Anything that needs to resolve a student's
+                                     // ChampionData (trait bookkeeping, Hero Info Panel) must go through
+                                     // ChampionId, never assume StudentId doubles as a champion slug.
     public string Name;             // drawn from name pool
     public List<TraitType> Traits;  // 1–2 traits assigned at generation
 
@@ -73,6 +82,7 @@ All stat values are **integers** — no floats. This eliminates floating-point d
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `RecruitCountPerSemester` | int | 5 | How many students are generated each Recruit phase |
+| `MaxSquadSize` | int | 3 | Max students the player may field in a single battle (of the `RecruitCountPerSemester` pool) — enforced by `BattleBoardManager` during Placement Phase, not by StudentRoster itself |
 | `BaseHPRange` | Vector2Int | (40, 80) | Min/max base HP on generation |
 | `BaseATKRange` | Vector2Int | (5, 15) | Min/max base physical attack on generation |
 | `BaseDEFRange` | Vector2Int | (0, 10) | Min/max base armor on generation |
@@ -87,7 +97,7 @@ All stat values are **integers** — no floats. This eliminates floating-point d
 ### Core Rules
 
 1. `GenerateStudents()` is called exactly once per Recruit phase, triggered by `OnPhaseChanged(Recruit)`.
-2. Each generated student receives a unique GUID `StudentId`.
+2. Each generated student receives a unique GUID `StudentId`, and its `ChampionId` is set to the `ChampionData.Id` slug of the template it was rolled from — this is the only place `ChampionId` is assigned.
 3. Base stats are drawn uniformly at random within their configured ranges (`StudentConfig`).
 4. Traits are drawn without replacement within a single student: one student cannot hold two copies of the same trait. Across students, duplicates are allowed.
 5. Names are drawn with replacement from the name pool (duplicates possible in a run — acceptable).
@@ -123,6 +133,14 @@ void RemoveStudent(string studentId)
 
 // Called by RunManager at run end (after PromotionSystem completes)
 void Clear()
+
+// Called by RunManager when entering the Battle phase — converts the full
+// roster (the selection pool) to combat-ready data. NOT the fielded squad;
+// see MaxSquadSize / BattleBoardManager Placement Phase. Each returned
+// StudentCombatData.Id is the student's StudentId (GUID); StudentCombatData.ChampionId
+// carries the bridge field through so BattleBoardManager/TraitTracker/HeroInfoPanel
+// can resolve the corresponding ChampionData without ever reading StudentRoster directly.
+List<StudentCombatData> GetStudentsForBattle()
 ```
 
 ### Interactions with Other Systems
@@ -202,6 +220,7 @@ All knobs are on `StudentConfig.asset` (ScriptableObject) — no hardcoded value
 | Parameter | Default | Safe Range | Effect of Increase | Effect of Decrease |
 |---|---|---|---|---|
 | `RecruitCountPerSemester` | 5 | 3–8 | Larger team; more trait synergy options; harder to fully train all | Smaller team; easier to train deeply; fewer trait combos |
+| `MaxSquadSize` | 3 | 2–5 | More trait breakpoints reachable at once; less benching tension | Sharper squad-selection decisions; more recruits sit out each battle |
 | `BaseHPRange` | (40, 80) | (10, 200) | Students survive longer; battles last more ticks | Squishier; high ATK one-shots more often |
 | `BaseATKRange` | (5, 15) | (1, 50) | Higher physical damage output | Lower physical damage; battles last longer |
 | `BaseDEFRange` | (0, 10) | (0, 50) | Students tank more physical hits at base | Students are fragile before DEF training |
@@ -308,7 +327,7 @@ All knobs are on `StudentConfig.asset` (ScriptableObject) — no hardcoded value
 
 | Question | Owner | Deadline | Resolution |
 |---|---|---|---|
-| How many students are on the roster vs. how many fight in battle? (Are all recruited students fielded, or is there a bench?) | Designer | Before code-system | Pending — recommend all recruited students fight (no bench) to keep it simple in v1 |
+| How many students are on the roster vs. how many fight in battle? (Are all recruited students fielded, or is there a bench?) | Designer | Before code-system | **Resolved (2026-07-03)** — real bench: up to `MaxSquadSize` (default 3) of the `RecruitCountPerSemester` (default 5) roster fight each battle; the rest sit out. Selected via `BattleBoardManager`'s Placement Phase. |
 | Should the player see the incoming students before confirming the Recruit phase, or are they revealed all at once? | Designer | Before code-system | Pending |
 | Should the name pool be hard-coded in `StudentConfig`, or loaded from a separate text file for easier editing? | Engineer | Before code-system | Pending — recommend hard-coded list for v1 |
 | Can a student have 0 traits if `TraitsPerStudent.x = 0`? (Recommend: minimum 1 always.) | Designer | Before code-system | Pending — recommend minimum 1 trait always |

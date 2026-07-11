@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace MagicSchool.Battle
 {
+    [RequireComponent(typeof(UIDocument))]
     public class TraitHUDController : MonoBehaviour
     {
-        [SerializeField] private TraitTracker  _tracker;
-        [SerializeField] private RectTransform _panel;
+        [SerializeField] private TraitTracker _tracker;
 
         private static readonly Dictionary<TraitType, int[]> Thresholds = new Dictionary<TraitType, int[]>
         {
@@ -20,39 +20,42 @@ namespace MagicSchool.Battle
             { TraitType.Dreadknight,  new[] { 2, 4       } },
             { TraitType.Warden,       new[] { 2, 3, 4    } },
             { TraitType.Trickster,    new[] { 2, 4       } },
+            { TraitType.Astral,       new[] { 2, 4, 6    } },
+            { TraitType.Wild,         new[] { 2, 4, 6    } },
+            { TraitType.Shadow,       new[] { 2, 4, 6    } },
+            { TraitType.Oracle,       new[] { 2, 3       } },
+            { TraitType.Guardian,     new[] { 2, 4       } },
+            { TraitType.Tech,         new[] { 2, 4       } },
+            { TraitType.Void,         new[] { 2, 4       } },
         };
 
-        private readonly Dictionary<TraitType, Text> _labels = new Dictionary<TraitType, Text>();
+        private readonly Dictionary<TraitType, Label> _labels = new Dictionary<TraitType, Label>();
 
-        private void Awake()     { BuildLabels(); }
+        private UIDocument    _document;
+        private VisualElement _root;
+
+        private void Awake()
+        {
+            _document = GetComponent<UIDocument>();
+            _document.sortingOrder = BattleUISortOrder.TraitHUD;
+            _root = _document.rootVisualElement;
+            BuildLabels();
+        }
+
         private void OnEnable()  { if (_tracker != null) _tracker.OnTraitCountsChanged += OnCountsChanged; }
         private void OnDisable() { if (_tracker != null) _tracker.OnTraitCountsChanged -= OnCountsChanged; }
 
         private void BuildLabels()
         {
-            if (_panel == null) return;
-            var lg = _panel.GetComponent<VerticalLayoutGroup>();
-            if (lg == null)
-            {
-                lg = _panel.gameObject.AddComponent<VerticalLayoutGroup>();
-                lg.spacing                = 4f;
-                lg.childAlignment         = TextAnchor.UpperLeft;
-                lg.childForceExpandWidth  = true;
-                lg.childForceExpandHeight = false;
-            }
+            var root = _root.Q<VisualElement>("trait-hud-root") ?? _root;
 
             foreach (TraitType t in Enum.GetValues(typeof(TraitType)))
             {
-                var go  = new GameObject($"TraitLabel_{t}");
-                go.transform.SetParent(_panel, false);
-                var txt       = go.AddComponent<Text>();
-                txt.font      = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                txt.fontSize  = 14;
-                txt.color     = Color.gray;
-                txt.text      = FormatLabel(t, 0, 0);
-                var csf = go.AddComponent<ContentSizeFitter>();
-                csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-                _labels[t] = txt;
+                var label = new Label(FormatLabel(t, 0, 0));
+                label.AddToClassList("trait-label");
+                label.style.display = DisplayStyle.None; // hidden until this trait has at least one placed unit
+                root.Add(label);
+                _labels[t] = label;
             }
         }
 
@@ -65,10 +68,11 @@ namespace MagicSchool.Battle
                 var t = kv.Key;
                 counts.TryGetValue(t, out int count);
                 breakpoints.TryGetValue(t, out int bp);
-                kv.Value.text  = FormatLabel(t, count, bp);
-                kv.Value.color = bp > 0
-                    ? new Color(1f, 0.85f, 0.2f)
-                    : count > 0 ? Color.white : Color.gray;
+                kv.Value.style.display = count > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+                kv.Value.text = FormatLabel(t, count, bp);
+                kv.Value.style.color = bp > 0
+                    ? new StyleColor(new Color(1f, 0.85f, 0.2f))
+                    : new StyleColor(count > 0 ? Color.white : Color.gray);
             }
         }
 

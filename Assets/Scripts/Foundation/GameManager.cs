@@ -18,6 +18,7 @@ namespace MagicSchool.Battle
         [SerializeField] private EnemyDatabase _enemyDatabase;
         [SerializeField] private PromotionConfig _promotionConfig;
         [SerializeField] private StudentConfig _studentConfig;
+        [SerializeField] private TrainingConfig _trainingConfig;
 
         public GameState CurrentState { get; private set; } = GameState.MainMenu;
         public RunSnapshot LastRunResult { get; private set; }
@@ -108,7 +109,7 @@ namespace MagicSchool.Battle
             // Instantiate dynamic RunManager to orchestrate the active gameplay run
             var runManagerGO = new GameObject("RunManager");
             var runManager = runManagerGO.AddComponent<RunManager>();
-            runManager.Initialize(_runConfig, _enemyDatabase, _promotionConfig);
+            runManager.Initialize(_runConfig, _enemyDatabase, _promotionConfig, _trainingConfig);
         }
 
         public void EndRun(bool won, int yearReached)

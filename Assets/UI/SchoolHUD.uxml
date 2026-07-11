@@ -1,0 +1,58 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="SchoolHUD.uss" />
+
+    <!-- Root: fills the entire screen -->
+    <ui:VisualElement name="school-root" class="school-root">
+
+        <!-- ── Header ──────────────────────────────────────────────────── -->
+        <ui:VisualElement name="header" class="school-header">
+            <ui:Label name="year-label"  text="Year 1 of 3" class="header-year"  />
+            <ui:Label name="phase-label" text="Recruit"     class="header-phase" />
+        </ui:VisualElement>
+
+        <!-- ── Main content (student grid + trait panel) ──────────────── -->
+        <ui:VisualElement name="content" class="school-content">
+
+            <!-- Student card grid (scrollable) -->
+            <ui:ScrollView name="student-scroll" class="student-scroll"
+                           horizontal-scroller-visibility="Hidden">
+                <ui:VisualElement name="student-grid" class="student-grid" />
+            </ui:ScrollView>
+
+            <!-- Trait synergy panel -->
+            <ui:VisualElement name="trait-panel" class="trait-panel">
+                <ui:Label text="Trait Synergies" class="trait-panel-title" />
+                <ui:ScrollView name="trait-scroll" horizontal-scroller-visibility="Hidden"
+                               class="trait-scroll">
+                    <ui:VisualElement name="trait-list" class="trait-list" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+        <!-- ── Training action area (Train phase only) ─────────────────── -->
+        <ui:VisualElement name="training-area" class="training-area">
+            <ui:Label name="actions-label" text="Actions: --" class="actions-label" />
+            <ui:Label name="select-hint"   text="Select a student to train"
+                      class="select-hint" />
+            <ui:VisualElement name="stat-buttons" class="stat-buttons">
+                <ui:Button name="train-hp"   text="+ HP"   class="stat-button" />
+                <ui:Button name="train-atk"  text="+ ATK"  class="stat-button" />
+                <ui:Button name="train-def"  text="+ DEF"  class="stat-button" />
+                <ui:Button name="train-mg"   text="+ MG"   class="stat-button" />
+                <ui:Button name="train-mr"   text="+ MR"   class="stat-button" />
+                <ui:Button name="train-spd"  text="+ SPD"  class="stat-button" />
+                <ui:Button name="train-crit" text="+ CRIT" class="stat-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- ── Action bar ─────────────────────────────────────────────── -->
+        <ui:VisualElement name="action-bar" class="action-bar">
+            <ui:Button name="begin-training-button" text="Begin Training"
+                       class="action-button begin-button" />
+            <ui:Button name="proceed-battle-button" text="Proceed to Battle"
+                       class="action-button proceed-button" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

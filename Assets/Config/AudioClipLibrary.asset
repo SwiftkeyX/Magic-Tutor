@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aefde4c90bdfb0349a4d67b8ed8e8be2, type: 3}
+  m_Name: AudioClipLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Audio.AudioClipLibrary
+  MenuMusic: {fileID: 0}
+  TrainingMusic: {fileID: 0}
+  BattleMusic: {fileID: 0}
+  YearEndMusic: {fileID: 0}
+  VictoryMusic: {fileID: 0}
+  DefeatMusic: {fileID: 0}
+  BattleWinSting: {fileID: 0}
+  BattleLoseSting: {fileID: 0}
+  PromotionFanfare: {fileID: 0}
+  RecruitChime: {fileID: 0}

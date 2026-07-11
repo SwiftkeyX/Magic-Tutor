@@ -76,10 +76,10 @@ Rapid prototype on feature branches to validate the core loop before committing 
 - [x] 🧪 Test Gate 2 — One full 3-year run completes without errors
 
 #### Tier 3 — Supporting Systems
-- [ ] Code `AudioSystem`
-- [ ] Code `MainMenuController`
-- [ ] Code `SchoolHUD`
-- [ ] Code `BattleHUD`
+- [x] Code `AudioSystem`
+- [x] Code `MainMenuController`
+- [x] Code `SchoolHUD`
+- [x] Code `BattleHUD`
 - [ ] Code `YearEndHUD`
 - [ ] Code `MetaProgressionHUD`
 - [ ] Milestone 3 — all features in, content complete

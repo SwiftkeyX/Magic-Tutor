@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="HeroInfoPanel.uss" />
+
+    <ui:VisualElement name="hero-info-root" class="hero-info-root" picking-mode="Ignore">
+        <ui:Label name="header" text="No hero selected" class="header" picking-mode="Ignore" />
+        <ui:Label name="stats" class="stats" picking-mode="Ignore" />
+        <ui:Label name="skill" class="skill" picking-mode="Ignore" />
+        <ui:Label name="traits" class="traits" picking-mode="Ignore" />
+    </ui:VisualElement>
+</ui:UXML>

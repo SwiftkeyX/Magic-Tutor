@@ -1,0 +1,57 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="MainMenu.uss" />
+
+    <!-- Root: fills the entire panel -->
+    <ui:VisualElement name="root"
+        style="flex-grow: 1; flex-direction: column; align-items: center; justify-content: center;
+               background-color: rgba(10, 10, 30, 1);">
+
+        <!-- Main button stack -->
+        <ui:VisualElement name="main-panel"
+            style="align-items: center; justify-content: center; flex-direction: column;">
+
+            <ui:Label name="title-label" text="Magic School"
+                style="font-size: 56px; color: rgb(255, 220, 100);
+                       -unity-font-style: bold; -unity-text-align: middle-center;
+                       margin-bottom: 40px;" />
+
+            <ui:Button name="new-run-button"  text="New Run"  class="menu-button" />
+            <ui:Button name="continue-button" text="Continue" class="menu-button" />
+            <ui:Button name="settings-button" text="Settings" class="menu-button" />
+            <ui:Button name="quit-button"     text="Quit"     class="menu-button" />
+
+        </ui:VisualElement>
+
+        <!-- Settings overlay — toggled by MainMenuController.SetSettingsPanelVisible() -->
+        <ui:VisualElement name="settings-panel"
+            style="position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+                   background-color: rgba(0, 0, 0, 0.88);
+                   align-items: center; justify-content: center; flex-direction: column;">
+
+            <ui:Label text="Settings"
+                style="font-size: 36px; color: rgb(255, 220, 100);
+                       -unity-font-style: bold; margin-bottom: 24px;" />
+
+            <ui:Label text="Music Volume"
+                style="font-size: 18px; color: white; margin-bottom: 6px;" />
+            <ui:Slider name="music-slider" low-value="0" high-value="1" value="1"
+                style="width: 320px; margin-bottom: 20px;" />
+
+            <ui:Label text="SFX Volume"
+                style="font-size: 18px; color: white; margin-bottom: 6px;" />
+            <ui:Slider name="sfx-slider" low-value="0" high-value="1" value="1"
+                style="width: 320px; margin-bottom: 32px;" />
+
+            <ui:Button name="settings-close-button" text="Close" class="menu-button" />
+
+        </ui:VisualElement>
+
+        <!-- Footer: teacher count -->
+        <ui:VisualElement name="footer"
+            style="position: absolute; bottom: 20px; left: 24px; right: 24px;">
+            <ui:Label name="teacher-count-label" text="Teachers: 0"
+                style="font-size: 15px; color: rgba(200, 200, 200, 0.75);" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

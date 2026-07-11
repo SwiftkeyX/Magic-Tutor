@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="BattleBoardHUD.uss" />
+
+    <ui:VisualElement name="battle-board-hud-root" class="battle-board-hud-root" picking-mode="Ignore">
+        <ui:Button name="start-battle-button" text="Start Battle" class="start-battle-button" />
+        <ui:Label name="placement-count-label" class="placement-count-label" picking-mode="Ignore" />
+        <ui:ScrollView name="bench-scroll" mode="Horizontal" horizontal-scroller-visibility="Hidden" class="bench-scroll" />
+    </ui:VisualElement>
+</ui:UXML>

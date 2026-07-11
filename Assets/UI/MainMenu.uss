@@ -1,0 +1,37 @@
+/* ── MainMenu.uss ──────────────────────────────────────────────────────────
+   Styles for the Main Menu UI (UI Toolkit).
+   All layout is driven by UXML inline styles; this file adds the shared
+   .menu-button class used by every button on the menu and settings overlay.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.menu-button {
+    width: 220px;
+    height: 52px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: white;
+    background-color: rgba(40, 40, 70, 0.92);
+    border-color: rgba(255, 220, 100, 0.55);
+    border-width: 1px;
+    border-radius: 5px;
+    -unity-text-align: middle-center;
+    transition-property: background-color, border-color;
+    transition-duration: 0.12s;
+}
+
+.menu-button:hover {
+    background-color: rgba(70, 70, 120, 0.95);
+    border-color: rgba(255, 220, 100, 1);
+}
+
+.menu-button:active {
+    background-color: rgba(25, 25, 55, 0.97);
+}
+
+.menu-button:disabled {
+    color: rgba(180, 180, 180, 0.5);
+    border-color: rgba(180, 180, 180, 0.25);
+    background-color: rgba(30, 30, 50, 0.6);
+}

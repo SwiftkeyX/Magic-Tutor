@@ -27,6 +27,7 @@ namespace MagicSchool.Battle
     public class StudentCombatData
     {
         public string Id;
+        public string ChampionId;       // Bridge to ChampionData.Id — see StudentRoster.md
         public string DisplayName;
         public int MaxHP;
         public int ATK;
@@ -67,6 +68,7 @@ namespace MagicSchool.Battle
     public class CombatantSnapshot
     {
         public string Id;
+        public string ChampionId;       // Players only — bridge to ChampionData.Id, see BattleBoardManager.md
         public string DisplayName;
         public bool IsStudent;
         public int MaxHP;

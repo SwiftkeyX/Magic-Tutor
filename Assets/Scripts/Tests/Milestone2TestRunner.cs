@@ -166,6 +166,7 @@ namespace MagicSchool.Tests
                 // Mock battle complete - Won = true
                 Debug.Log("[TestRunner] Intercepting AutoBattleResolver to force a WIN for Year 1.");
                 MockBattleWin(50);
+                RunManager.Instance.CompleteBattlePhase(); // Simulates BattleHUD's "Continue" click
 
                 yield return new WaitForSeconds(1.5f);
 
@@ -228,6 +229,7 @@ namespace MagicSchool.Tests
 
                 // Mock battle complete - Won = true for Year 2
                 MockBattleWin(60);
+                RunManager.Instance.CompleteBattlePhase(); // Simulates BattleHUD's "Continue" click
                 yield return new WaitForSeconds(1.5f);
 
                 // YearEnd 2 - confirm promotions with 0 selected (valid case!)
@@ -264,6 +266,7 @@ namespace MagicSchool.Tests
 
                 // Mock battle complete - Won = true for Year 3 (Final Year)
                 MockBattleWin(70);
+                RunManager.Instance.CompleteBattlePhase(); // Simulates BattleHUD's "Continue" click
                 yield return new WaitForSeconds(1.5f);
 
                 // YearEnd 3 - promote one more student

@@ -9,6 +9,12 @@ namespace MagicSchool.Battle
     public class AutoBattleResolver : MonoBehaviour
     {
         // ── Events ──────────────────────────────────────────────────────────
+        // Setup event — fires at the end of SetCombatants(); subscribers call
+        // GetCombatantSnapshots() themselves to get data (no payload per GDD).
+        // May fire more than once before BeginBattle() if RunManager narrows the
+        // roster (full roster first, then fielded squad after ConfirmSquadPlacement).
+        public event Action                                     OnCombatantsSet;
+
         public event Action<string, string, int, List<string>> OnCombatantActed;
         public event Action<string, HexCoord, HexCoord>        OnCombatantMoved;
         public event Action<string>                             OnCombatantDefeated;
@@ -16,6 +22,10 @@ namespace MagicSchool.Battle
         public event Action<string, string>                     OnSkillCast;  // (casterId, skillName)
         public event Action<string, int, int>                   OnManaChanged;  // (id, current, max)
         public event Action<string, CastState>                  OnCastStateChanged;
+
+        // Static forwarding event — AudioSystem subscribes here so it does not need
+        // FindObjectOfType to reach a non-singleton AutoBattleResolver instance.
+        public static event Action<BattleResult>                OnAnyBattleComplete;
 
         // ── Constants ────────────────────────────────────────────────────────
         private const float TickDelay      = 0.1f;   // 10 ticks/second — matches TFT resolution
@@ -49,6 +59,7 @@ namespace MagicSchool.Battle
         internal class Combatant
         {
             public string   Id;
+            public string   ChampionId;     // Players only — bridge to ChampionData.Id
             public string   DisplayName;
             public bool     IsPlayer;
             public int      MaxHP;
@@ -113,6 +124,7 @@ namespace MagicSchool.Battle
                 _combatants.Add(new Combatant
                 {
                     Id          = s.Id,
+                    ChampionId  = s.ChampionId,
                     DisplayName = s.DisplayName,
                     IsPlayer    = true,
                     MaxHP       = s.MaxHP,
@@ -148,6 +160,12 @@ namespace MagicSchool.Battle
                     Flags       = e.Flags ?? new List<BattleBehaviorFlag>(),
                     Skill       = e.Skill ?? new SkillDefinition(),
                 });
+
+            // Signal subscribers (e.g. BattleHUD) that GetCombatantSnapshots() now
+            // reflects real data. No payload — callers pull snapshots themselves.
+            Debug.Log($"[AutoBattleResolver] SetCombatants complete ({_combatants.Count(c => c.IsPlayer)} students, " +
+                      $"{_combatants.Count(c => !c.IsPlayer)} enemies) — firing OnCombatantsSet.");
+            OnCombatantsSet?.Invoke();
         }
 
         public void SetUnitPositions(Dictionary<string, HexCoord> placements)
@@ -192,6 +210,7 @@ namespace MagicSchool.Battle
             return _combatants.Select(c => new CombatantSnapshot
             {
                 Id          = c.Id,
+                ChampionId  = c.ChampionId,
                 DisplayName = c.DisplayName,
                 IsStudent   = c.IsPlayer,
                 MaxHP       = c.MaxHP,
@@ -200,6 +219,9 @@ namespace MagicSchool.Battle
                 Range       = c.Range,
                 Mana        = c.Mana,
                 MaxMana     = c.MaxMana,
+                Flags       = c.Flags != null
+                                  ? new List<BattleBehaviorFlag>(c.Flags)
+                                  : new List<BattleBehaviorFlag>(),
             }).ToList();
         }
 
@@ -483,6 +505,7 @@ namespace MagicSchool.Battle
                     var result = new BattleResult { Won = pCount > eCount, TicksElapsed = ticks, TimedOut = true };
                     Debug.Log($"[AutoBattle] TIMEOUT — {(result.Won ? "PLAYERS WIN" : "PLAYERS LOSE")}");
                     OnBattleComplete?.Invoke(result);
+                    OnAnyBattleComplete?.Invoke(result);
                     _battleRunning = false;
                     yield break;
                 }
@@ -497,6 +520,7 @@ namespace MagicSchool.Battle
                 var res = new BattleResult { Won = won, TicksElapsed = finalTicks, TimedOut = false };
                 Debug.Log($"[AutoBattle] END — {(won ? "PLAYERS WIN" : "PLAYERS LOSE")} in {finalTicks} ticks");
                 OnBattleComplete?.Invoke(res);
+                OnAnyBattleComplete?.Invoke(res);
                 _battleRunning = false;
             }
         }

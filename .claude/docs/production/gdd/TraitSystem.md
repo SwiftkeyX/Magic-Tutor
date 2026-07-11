@@ -199,7 +199,7 @@ public struct CombatantTraitModifiers
 ## Core Rules
 
 1. Each champion contributes to **exactly two** trait counts: its Vertical trait and its Horizontal trait.
-2. Trait counts are rebuilt from scratch on every `RegisterPlacement` / `UnregisterPlacement` — no incremental updates.
+2. Trait counts are rebuilt from scratch on every `RegisterPlacement` / `UnregisterPlacement` — no incremental updates. `RegisterPlacement`'s caller (`BattleBoardManager`) is responsible for resolving the placed unit's `ChampionData` before calling it — in production this identity is a `StudentId` GUID bridged via `StudentData.ChampionId` (see `StudentRoster.md`), not the champion's own slug; in the standalone/prototype context (`BattleTest.unity`) the two coincide. `TraitTracker` itself is agnostic to which ID space it's given, as long as the same key is used consistently for register/unregister — see `BattleBoardManager.md` Core Rule 5 for the `_championDataLookup` keying this depends on.
 3. `TraitEffectApplier.Apply()` must be called **after** `SetUnitPositions()` and **before** `BeginBattle()`. Calling it after battle starts logs an error and no-ops.
 4. Action speed bonuses multiply `AttackSpeed` directly. 
 5. Warden front/back split is determined by the player's chosen row at the moment `OnStartBattle` fires.
@@ -247,7 +247,10 @@ SplashDamage = Target.MaxHP * 0.20  (Bypasses Armor & MR)
 
 ## Acceptance Criteria
 
-- [ ] Dragging any of the 30 champions onto the board increments their corresponding Horizontal and Vertical trait count.
+- [x] Dragging any of the 30 champions onto the board increments their corresponding Horizontal and Vertical trait count — `TraitTracker.VerticalToTraitType`/`HorizontalToTraitType` and the `Breakpoints` dictionary now cover all 15 traits (fixed a crash where placing any Astral/Wild/Shadow/Oracle/Guardian/Tech/Void champion threw `ArgumentOutOfRangeException`, previously masked because `RegisterPlacement` never ran in production — see `BattleBoardManager.md` Core Rule 5).
+- [ ] In production (`Battle.unity` with `RunManager`), dragging a recruited/trained student (`StudentId` GUID) onto the board increments the same trait counts identically to the standalone champion-ID case.
+
+**Note — implementation status**: counting/breakpoint-detection (`TraitTracker`) is now wired for all 15 traits. `TraitEffectApplier` (the actual combat-effect application — shields, evasion%, execute threshold, etc. for Astral/Wild/Shadow/Oracle/Guardian/Tech/Void) remains unimplemented; those 7 traits will show correct counts and gold breakpoint highlighting in the HUD, but produce no in-battle mechanical effect yet. This is a known follow-up, not a regression from this fix.
 - [ ] Placing Aegis and Sun Warden increments Guardian and Astral traits in the HUD.
 - [ ] Stun durations and Silence pulses resolve in the C# log using the exact tick values (e.g., 2 ticks = 0.2 seconds, 3 ticks = 0.3 seconds).
 - [ ] Dodged physical attacks from Shadow evasion print `DODGE` and deal $0$ damage.

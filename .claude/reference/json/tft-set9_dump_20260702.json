@@ -2,7 +2,7 @@
   "_meta": {
     "sheet": "tft-set9",
     "key": "1xj6em5XlvIN1gWHTKOPDsssmkgnS3jIsaLnAMjYyPUA",
-    "dumped_at": "2026-07-02T14:08:44"
+    "dumped_at": "2026-07-04T11:36:24"
   },
   "TFT Set 9 Champions - Master Roster Layout": [
     [
@@ -27,7 +27,8 @@
       "2-Star Health",
       "3-Star Health",
       "2-Star AD",
-      "3-Star AD"
+      "3-Star AD",
+      "Skill Description"
     ],
     [
       "",
@@ -51,7 +52,8 @@
       "900",
       "1620",
       "72",
-      "129.6"
+      "129.6",
+      "Deal 160/240/360 (%i:scaleAP%) magic damage to the current target and Wound them for 5 seconds. If they are already Wounded, deal @BonusDamage@ (%i:scaleAP%) bonus magic damage.Wound: Reduce healing received by 33%"
     ],
     [
       "",
@@ -75,7 +77,8 @@
       "1260",
       "2268",
       "117",
-      "210.6"
+      "210.6",
+      "Deal @TotalDamage@ (%i:scaleHealth%%i:scaleAP%) magic damage to the lowest Health enemy in range. If this kills them, devour them and permanently gain 35 maximum Health (doubled in Hyper Roll). (Current Bonus: +@TFTUnitProperty.:TFT9_ChoGathBonusHealth@ Health)"
     ],
     [
       "",
@@ -99,7 +102,8 @@
       "1260",
       "2268",
       "90",
-      "162"
+      "162",
+      "Enter a defensive stance and gain 3 (%i:scaleAP%) Shield that rapidly decays over 3 seconds. When it expires, deal @ModifiedBaseStrikeDamage@ (%i:scaleAP%) magic damage + 0% of the damage absorbed to enemies around and in front of Irelia.Ionia Bonus: +25 Armor and Magic Resist"
     ],
     [
       "",
@@ -123,7 +127,8 @@
       "907.2",
       "1632.96",
       "97.2",
-      "174.96"
+      "174.96",
+      "Take aim at the current target and deal 60/90/135 (%i:scaleAD%%i:scaleAP%) physical damage to enemies in a line; each hit reduces this damage by 100%.Ionia Bonus: +25% Attack Damage"
     ],
     [
       "",
@@ -147,7 +152,8 @@
       "900",
       "1620",
       "54",
-      "97.2"
+      "97.2",
+      "Passive: Gains new Passive effects as your Tactician levels up.Level 1: Attacks deal 30/45/70 (%i:scaleAP%) bonus magic damage.Level 6: Every 3rd attack launches a wave that deals 30/45/70 (%i:scaleAP%) magic damage and 20% Shreds enemies for 3 seconds.Level 9: Every attack launches a wave and they travel farther.Shred: Reduce Magic Resist"
     ],
     [
       "",
@@ -171,7 +177,8 @@
       "900",
       "1620",
       "72",
-      "129.6"
+      "129.6",
+      "Open two portals near the current target. Destroy 0% of Shields and deal 220/330/500 (%i:scaleAP%) magic damage to all enemies caught between the portals."
     ],
     [
       "",
@@ -195,7 +202,8 @@
       "900",
       "1620",
       "63",
-      "113.4"
+      "113.4",
+      "Grant the lowest Health ally @ModifiedShielding@ (%i:scaleAP%) Shield for 4 seconds and empowers Orianna's next attack to deal 290/435/650 (%i:scaleAP%) bonus magic damage."
     ],
     [
       "",
@@ -219,7 +227,8 @@
       "1260",
       "2268",
       "99",
-      "178.2"
+      "178.2",
+      "Gain 250/325/400 (%i:scaleAP%) Shield for 4 seconds. Deal 160/240/360 (%i:scaleAP%) magic damage to the current target."
     ],
     [
       "",
@@ -243,7 +252,8 @@
       "1170",
       "2106",
       "90",
-      "162"
+      "162",
+      "Deal 180/270/400 (%i:scaleAP%) magic damage to adjacent enemies. Heal 220/270/320 (%i:scaleAP%) for the first enemy hit and another 30 (%i:scaleAP%) for each additional one."
     ],
     [
       "",
@@ -267,7 +277,8 @@
       "900",
       "1620",
       "81",
-      "145.8"
+      "145.8",
+      "Shoot at the current target and deal @TotalDamage@ (%i:scaleAD%) to the first enemy hit. Reduce their Armor by 10/15/20 (%i:scaleAP%) for the rest of combat."
     ],
     [
       "",
@@ -291,7 +302,8 @@
       "720",
       "1296",
       "81",
-      "145.8"
+      "145.8",
+      "Gain 1 (%i:scaleAP%) Attack Speed for 4 seconds. For the duration, attacks explode on impact and deal @BonusDamage@ (%i:scaleAD%) physical damage to enemies within 1 hex.4-Star Upgrade: Every 10th attack deals @4StarShotDamage@ (%i:scaleAD%) bonus physical damage and ricochets to the largest clump of enemies, dealing @ExplosionDamage@ (%i:scaleAD%) physical damage to enemies within 1 hex."
     ],
     [
       "",
@@ -315,7 +327,8 @@
       "1080",
       "1944",
       "81",
-      "145.8"
+      "145.8",
+      "Deal 110/165/250 (%i:scaleAP%) magic damage to the current target. For the rest of combat, Viego's attacks deal 20/30/45 (%i:scaleAP%) bonus stacking magic damage.(Current Bonus: +@TFTUnitProperty.:TFT9_ViegoBonusDamage@ magic damage)"
     ],
     [
       "",
@@ -339,7 +352,8 @@
       "1080",
       "1944",
       "99",
-      "178.2"
+      "178.2",
+      "Fire 8 arrows in a cone, each dealing @ArrowDamage@ (%i:scaleAD%) physical damage to the first enemy hit and Chilling them for 2 (%i:scaleAP%) seconds.Chill: Reduce Attack Speed by 30%"
     ],
     [
       "",
@@ -363,7 +377,8 @@
       "1440",
       "2592",
       "126",
-      "226.8"
+      "226.8",
+      "Reduce damage taken by 0/0/0% and heal for 300/350/400 (%i:scaleAP%) over 2 seconds. After, deal 0/0/0 (%i:scaleAP%) magic damage to adjacent enemies."
     ],
     [
       "",
@@ -387,7 +402,8 @@
       "1080",
       "1944",
       "90",
-      "162"
+      "162",
+      "Fire 5 rockets at random enemies within 2 hexes of the current target. Each rocket deals @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage."
     ],
     [
       "",
@@ -411,7 +427,8 @@
       "1440",
       "2592",
       "90",
-      "162"
+      "162",
+      "Gain 250/300/400 (%i:scaleAP%) Shield for 4 seconds. Deal 160/240/360 (%i:scaleAP%) magic damage to enemies in a cone and Disarm them for 2/2/2 seconds.Disarm: Cannot move or attack, but CAN cast spells"
     ],
     [
       "",
@@ -435,7 +452,8 @@
       "990",
       "1782",
       "104.4",
-      "187.92"
+      "187.92",
+      "Passive: Start combat with 0 (%i:scaleHealth%) Shield. When it expires, dismount and gain 1/1/1 (%i:scaleAP%) stacking Attack Speed for the rest of combat.Active: Remount and gain 0 (%i:scaleHealth%) Shield.4-Star Upgrade: Execute enemies under 25% Health."
     ],
     [
       "",
@@ -459,7 +477,8 @@
       "1440",
       "2592",
       "108",
-      "194.4"
+      "194.4",
+      "Grab an enemy from either side and slam them together, knocking them up. Deals 180/270/420 (%i:scaleAP%) magic damage and Stuns them for 1/2/2 seconds. If only one enemy is grabbed, the damage and Stun duration are increased by 0%.Ionia Bonus: +180 max Health"
     ],
     [
       "",
@@ -483,7 +502,8 @@
       "1260",
       "2268",
       "99",
-      "178.2"
+      "178.2",
+      "Heal the lowest health ally for 140/160/180 (%i:scaleAP%). If the ally is below 140/160/180% Health, heal them for an additional 140/160/180 (%i:scaleAP%). Over the next 5 seconds, 5 stars hit the enemy closest to them. Each deals 120/180/280 (%i:scaleAP%) magic damage."
     ],
     [
       "",
@@ -507,7 +527,8 @@
       "1440",
       "2592",
       "81",
-      "145.8"
+      "145.8",
+      "Transform and gain @ModifiedBonusHealth@ (%i:scaleAP%) max Health. While transformed, deal 25/40/60 (%i:scaleAP%) magic damage to enemies within 2 hexes every second.If already transformed, gain an additional @ModifiedSecondaryBonusHealth@ (%i:scaleAP%) max Health and deal 100/160/300 (%i:scaleAP%) magic damage to enemies within."
     ],
     [
       "",
@@ -531,7 +552,8 @@
       "900",
       "1620",
       "72",
-      "129.6"
+      "129.6",
+      "Hurl an explosive heat-seeking mushroom at the current target. When it detonates, enemies within 1 hex are Wounded and dealt 260/390/585 (%i:scaleAP%) magic damage over 3 seconds.4-Star Upgrade: Increase the explosion radius by 1 hex.Wound: Reduce healing received by 33%"
     ],
     [
       "",
@@ -555,7 +577,8 @@
       "990",
       "1782",
       "72",
-      "129.6"
+      "129.6",
+      "Passive: Whenever an enemy is knocked up or back by anything, throw a boulder towards them. It deals 120/180/270 (%i:scaleAP%) magic damage to the first enemy hit.Active: Deal 220/330/495 (%i:scaleAP%) magic damage to the current target and knock them up, Stunning them for 2 seconds."
     ],
     [
       "",
@@ -579,7 +602,8 @@
       "1440",
       "2592",
       "108",
-      "194.4"
+      "194.4",
+      "Gain 350/400/450 (%i:scaleAP%) Shield for 4 seconds. Deal @TotalDamage@ (%i:scaleAD%) physical damage to enemies within 1 hex of the current target and 0% Sunder them for 4 seconds.Sunder: Reduce Armor"
     ],
     [
       "",
@@ -603,7 +627,8 @@
       "1440",
       "2592",
       "72",
-      "129.6"
+      "129.6",
+      "Passive: Attacks heal for 30/35/40 (%i:scaleAP%).Active: Gain 100% Attack Speed for 2 seconds. Then, Stun adjacent enemies for 2 seconds."
     ],
     [
       "",
@@ -627,7 +652,8 @@
       "1080",
       "1944",
       "99",
-      "178.2"
+      "178.2",
+      "Create a shadow at the furthest enemy within @SpellRangeTooltip@ (%i:scaleRange%) hexes. Zed and his shadow slash adjacent enemies, dealing @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage. Ionia Bonus: +15% Critical Strike Chance and Critical Strike Damage"
     ],
     [
       "",
@@ -651,7 +677,8 @@
       "1260",
       "2268",
       "108",
-      "194.4"
+      "194.4",
+      "Lock on to the farthest enemy and unleash a hail of 6 shots toward them. Each deals@TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage to the first enemy hit."
     ],
     [
       "",
@@ -675,7 +702,8 @@
       "1350",
       "2430",
       "117",
-      "210.6"
+      "210.6",
+      "Deal @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage to the current target. If they die, immediately cast this again with 1/1/1% damage."
     ],
     [
       "",
@@ -699,7 +727,8 @@
       "1440",
       "2592",
       "90",
-      "162"
+      "162",
+      "Heal 0% of damage taken in the last 4 seconds and deal 255/380/570 (%i:scaleAP%) magic damage to the current target."
     ],
     [
       "",
@@ -723,7 +752,8 @@
       "1530",
       "2754",
       "126",
-      "226.8"
+      "226.8",
+      "Spin 3 (%i:scaleAS%) times every second for the next 4 (%i:scaleAP%) seconds. Each spin deals @TotalDamage@ (%i:scaleAD%) physical damage to adjacent enemies."
     ],
     [
       "",
@@ -747,7 +777,8 @@
       "1260",
       "2268",
       "108",
-      "194.4"
+      "194.4",
+      "Grant @ModifiedEnhancedAttackSpeed@ (%i:scaleAP%) Attack Speed to Jayce and 0 (%i:scaleAP%) to the allies on his left and right for 3 seconds. Fire a blast at the current target that explodes on the first enemy hit. It deals @TotalDamage@ (%i:scaleAD%) physical damage to enemies near the blast."
     ],
     [
       "",
@@ -771,7 +802,8 @@
       "1170",
       "2106",
       "81",
-      "145.8"
+      "145.8",
+      "Passive: Attacks impale a spear in the target, which deals 18/27/45 (%i:scaleAP%) true damage when removed. Kalista rips the spears out if it would kill the target.Active: Impale 6 spears in the current target."
     ],
     [
       "",
@@ -795,7 +827,8 @@
       "1260",
       "2268",
       "81",
-      "145.8"
+      "145.8",
+      "Fire a burst of energy that explodes upon impact, dealing 200/300/470 (%i:scaleAP%) magic damage to adjacent enemies. Every third cast launches 3 bursts.Ionia Bonus: +25 Ability Power"
     ],
     [
       "",
@@ -819,7 +852,8 @@
       "1440",
       "2592",
       "90",
-      "162"
+      "162",
+      "Throw three daggers that land next to enemies within 1 (%i:scaleRange%) hexes. Then, teleport to each and deal 145/220/350 (%i:scaleAP%) magic damage to adjacent enemies and Wound them for 6 seconds.Wound: Reduce healing received by 0%"
     ],
     [
       "",
@@ -843,7 +877,8 @@
       "1440",
       "2592",
       "90",
-      "162"
+      "162",
+      "Stun the current target for 2 seconds and deal 160/240/400 (%i:scaleAP%) magic damage to enemies within 2 hexes of them. They take 160/240/400% more damage for the next 4 seconds."
     ],
     [
       "",
@@ -867,7 +902,8 @@
       "1440",
       "2592",
       "108",
-      "194.4"
+      "194.4",
+      "Deal @TotalDamage@ (%i:scaleAD%) physical damage to the current target and mark them. If they are below 100% max Health, deal true damage instead. If the target is marked, deal @MarkDamage@ (%i:scaleAD%) bonus true damage.If this kills the target, rip through them 1 hex and heal for @HealAmount@ (%i:scaleAP%%i:scaleHealth%)."
     ],
     [
       "",
@@ -891,7 +927,8 @@
       "1260",
       "2268",
       "81",
-      "145.8"
+      "145.8",
+      "Send a wave of sound at the largest clump of enemies and deal 170/255/420 (%i:scaleAP%) magic damage to enemies hit; each hit reduces this damage by 0%. Allies hit by the wave gain 20/25/35% Attack Speed for the rest of combat."
     ],
     [
       "",
@@ -915,7 +952,8 @@
       "1440",
       "2592",
       "108",
-      "194.4"
+      "194.4",
+      "Gain 500/580/680 (%i:scaleAP%) Shield for 4 seconds. It redirects 0% of the damage received by adjacent allies."
     ],
     [
       "",
@@ -939,7 +977,8 @@
       "1260",
       "2268",
       "72",
-      "129.6"
+      "129.6",
+      "Fire a plasma bolt towards the current target that deals 220/330/550 (%i:scaleAP%) magic damage to the first enemy hit. It then splits in two, dealing 0% less damage whenever it passes through an enemy."
     ],
     [
       "",
@@ -963,7 +1002,8 @@
       "1350",
       "2430",
       "117",
-      "210.6"
+      "210.6",
+      "Fire a moon blast at the largest group of enemies that deals @TotalBlastDamage@ (%i:scaleAD%) physical damage to enemies within 2 hexes. For 7 seconds, equip 3 Chakram, plus 1 more for each enemy hit by the blast. Attacks deal @TotalChakramDamage@ (%i:scaleAD%) bonus physical damage for each Chakram equipped. Aphelios heals for 1 (%i:scaleAP%) of damage dealt by Chakrams."
     ],
     [
       "",
@@ -987,7 +1027,8 @@
       "1350",
       "2430",
       "54",
-      "97.2"
+      "97.2",
+      "Passive: Every third attack, a Sand Soldier deals 110/160/500 (%i:scaleAP%) magic damage to their target.Active: Summon a Sand Soldier to attack your target. If Azir already has 3 Soldiers, they all immediately deal @MaxSoldierStrike@ (%i:scaleAP%) magic damage instead."
     ],
     [
       "",
@@ -1011,7 +1052,8 @@
       "1800",
       "3240",
       "99",
-      "178.2"
+      "178.2",
+      "Dash around the current target and snip 3 times in a cone, each dealing 100/150/400 (%i:scaleAP%) magic damage to enemies hit.Every 3 casts, gain 120/120/300 Armor and Magic Resist for 3/3/5 seconds."
     ],
     [
       "",
@@ -1035,7 +1077,8 @@
       "1800",
       "3240",
       "108",
-      "194.4"
+      "194.4",
+      "Leap on a nearby enemy. Deal 140/210/800 (%i:scaleAP%) magic damage to enemies within 2 hexes and Stun them for 2/2/8 seconds."
     ],
     [
       "",
@@ -1059,7 +1102,8 @@
       "1530",
       "2754",
       "81",
-      "145.8"
+      "145.8",
+      "Dash away from all enemies, then fire 15/15/25 missiles split across the 4 nearest enemies. Each missile deals @TotalDamage@ (%i:scaleAP%) magic damage."
     ],
     [
       "",
@@ -1083,7 +1127,8 @@
       "1350",
       "2430",
       "81",
-      "145.8"
+      "145.8",
+      "Channel a barrage of light at the current target that deals 735/1100/2750 (%i:scaleAP%) magic damage over 3 seconds, reducing their Magic Resist by 15/15/40 every second. If they die, shift to a new target."
     ],
     [
       "",
@@ -1107,7 +1152,8 @@
       "1800",
       "3240",
       "108",
-      "194.4"
+      "194.4",
+      "Steal 0/0/0% maximum Health, 0% Attack Damage, 4/4/20 Armor, and 4/4/20 Magic Resist from the nearest 4/5/7 enemies for 8 (%i:scaleAP%) seconds.While empowered, every third attack deals 4/4/7 (%i:scaleAD%) physical damage."
     ],
     [
       "",
@@ -1131,7 +1177,8 @@
       "1980",
       "3564",
       "108",
-      "194.4"
+      "194.4",
+      "Passive: Whenever an ally attacks a Chilled enemy, they deal 160/240/1200 (%i:scaleHealth%) bonus true damage.Active: Gain 600/700/2000 (%i:scaleAP%) Shield for 600/700/2000 seconds. Deal 160/240/1200 (%i:scaleAP%) magic damage to nearby enemies and Chill them for 600/700/2000 seconds.Chill: Reduce Attack Speed by 30%"
     ],
     [
       "",
@@ -1155,7 +1202,8 @@
       "1800",
       "3240",
       "108",
-      "194.4"
+      "194.4",
+      "Gain 350/450/2000 (%i:scaleAP%) Shield and grant 225/275/1500 (%i:scaleAP%) Shield to the 2 lowest-Health allies for 4 seconds. After shielding his allies, Shen's Shield refreshes with a burst, dealing 240/360/2500 (%i:scaleAP%) magic damage to adjacent enemies.Ionia Bonus: +8% Damage Reduction"
     ],
     [
       "",
@@ -1179,7 +1227,8 @@
       "1800",
       "3240",
       "135",
-      "243"
+      "243",
+      "Passive: Whenever an enemy enters Attack Range, fire a blast from the leg facing that direction that deals @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage. Each of Urgot's 6 legs has a 4/4/1 second cooldown.Active: Gain 350/450/1200 (%i:scaleAP%) Shield for 5 seconds and dash behind the current target. Reset all leg cooldowns."
     ],
     [
       "",
@@ -1203,7 +1252,8 @@
       "1800",
       "3240",
       "135",
-      "243"
+      "243",
+      "Send a whirlwind at the furthest enemy within @SpellRangeTooltip@ hexes, knocking up and Stunning all enemies hit. Dash to and slash the original target, dealing @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage to them. Slam them into the ground and deal @ModifiedAOEDamage@ (%i:scaleAD%) physical damage to enemies within 1 hex.Ionia Bonus: +15% OmnivampOmnivamp: Heal for percentage of damage dealt"
     ],
     [
       "",
@@ -1227,7 +1277,8 @@
       "1350",
       "2430",
       "117",
-      "210.6"
+      "210.6",
+      "Passive: Execute enemies below 0 (%i:scaleAP%) Health. Active: For the next 8/8/15 seconds, attacks chain lightning to 3/3/5 additional enemies, dealing @TotalChainDamage@ (%i:scaleAD%) physical damage."
     ],
     [
       "",
@@ -1251,7 +1302,8 @@
       "1530",
       "2754",
       "90",
-      "162"
+      "162",
+      "Steal essence from enemies around the current target, dealing 105/150/1000 (%i:scaleAP%) magic damage and 20% Mana Reaving them. Every 2/2/0 casts, unleash a wave that deals 260/390/1999 (%i:scaleAP%) magic damage to all enemies hit. This deals 0% more damage to enemies whose essence has been stolen.Ionia Bonus: +3 Mana per secondMana Reave: Increase max Mana until the next cast"
     ],
     [
       "",
@@ -1275,7 +1327,8 @@
       "1620",
       "2916",
       "144",
-      "259.2"
+      "259.2",
+      "Transform for 12/12/30 seconds, gaining 0 (%i:scaleAP%) Omnivamp and converting 100% of bonus Attack Speed to Attack Damage. While transformed, attacks deal @GreatswordDamage@ (%i:scaleAD%) physical damage in an area.Omnivamp: Heal for percentage of damage dealt"
     ],
     [
       "",
@@ -1299,7 +1352,8 @@
       "1980",
       "3564",
       "144",
-      "259.2"
+      "259.2",
+      "Lash out at the lowest Health enemy in range 6/6/25 (%i:scaleAS%) times. Each lash deals @TotalDamage@ (%i:scaleAD%%i:scaleAP%) physical damage and 0% of the target's max Health as true damage."
     ],
     [
       "",
@@ -1323,7 +1377,8 @@
       "1350",
       "2430",
       "72",
-      "129.6"
+      "129.6",
+      "Hurl a grenade towards the largest group of enemies, dealing 150/225/3141 (%i:scaleAP%) magic damage to enemies in a large area and Stunning them for 2/2/15 seconds."
     ],
     [
       "",
@@ -1347,7 +1402,8 @@
       "1800",
       "3240",
       "108",
-      "194.4"
+      "194.4",
+      "Heal for @HealAmount@ (%i:scaleHealth%), then knock up the current target before smashing them to the edge of the battlefield. Deal 250/400/1000 (%i:scaleAP%) magic damage and Stun them for 2/2/10 seconds. Deal 250/400/1000 (%i:scaleAP%) magic damage to enemies the target collides with and Stun them for 2/2/10 seconds.If the target can't be pushed back any further, knock them off the battlefield. Otherwise, chase after them."
     ],
     [
       "",
@@ -1371,7 +1427,8 @@
       "1999.8",
       "3599.64",
       "90",
-      "162"
+      "162",
+      "Create 5/8/25 portals to Zaun, causing hired guns to fire at nearby enemies. Deals 125/230/2006 (%i:scaleAP%) magic damage and Wounds, 30% Shreds, and 30% Sunders for 6 seconds. The more gold you have, the more powerful the portals become.25 Gold: +1 portal. Portals fire a rocket that deals 125/230/2006% damage in a one-hex radius.50 Gold: Double the portals. Summon 1 additional portals for every 20 Gold more.Wound: Reduce healing received by 50%Shred: Reduce Magic ResistSunder: Reduce Armor"
     ],
     [
       "",
@@ -1395,7 +1452,8 @@
       "1620",
       "2916",
       "126",
-      "226.8"
+      "226.8",
+      "Passive: Upon death, reanimate with 100% Health, decaying at 0/0/0% maximum Health per second. Sion can no longer use his Ability, but is immune to crowd control and gains 2/2/10 (%i:scaleAP%) Attack Speed.Active: Charge towards the most enemies within 3 (%i:scaleRange%) hexes. Deal @ModifiedDamage@ (%i:scaleAD%) physical damage to any enemies along the way and knock them up, Stunning them for 1/2/15 seconds."
     ],
     [
       "",
@@ -1419,7 +1477,8 @@
       "1620",
       "2916",
       "117",
-      "210.6"
+      "210.6",
+      "Fire a massive beam at the furthest enemy, dealing @TotalDamage@ (%i:scaleAD%) physical damage to all enemies hit. Any allies hit gain 200/275/4000 (%i:scaleAP%) Shield for 4/4/15 seconds."
     ]
   ],
   "TFT Balancing Rules": [
