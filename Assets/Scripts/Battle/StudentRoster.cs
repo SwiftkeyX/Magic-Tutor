@@ -46,6 +46,9 @@ namespace MagicSchool.Battle
     {
         public static StudentRoster Instance { get; private set; }
 
+        // 5% attack speed gain per point of total Speed stat (GDD: student stat scaling)
+        private const float SpeedToAttackSpeedScalingPct = 0.05f;
+
         [SerializeField] private StudentConfig _config;
         private readonly List<StudentData> _students = new List<StudentData>();
 
@@ -215,7 +218,7 @@ namespace MagicSchool.Battle
                     DEF = s.TotalDEF,
                     MG = s.TotalMG,
                     MR = s.TotalMR,
-                    AttackSpeed = champion.AttackSpeed * (1f + s.TotalSPD * 0.05f), // Scale AS by 5% per point of total speed
+                    AttackSpeed = champion.AttackSpeed * (1f + s.TotalSPD * SpeedToAttackSpeedScalingPct), // Scale AS by 5% per point of total speed
                     CRIT = s.TotalCRIT,
                     Range = champion.Range,
                     MaxMana = champion.MaxMana,

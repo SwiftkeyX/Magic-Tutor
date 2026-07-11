@@ -7,6 +7,9 @@ namespace MagicSchool.Battle
     [Serializable]
     public class EnemyData
     {
+        // 5% attack speed gain per point of Speed stat above the 0.4 base rate (GDD: enemy stat scaling)
+        private const float SpeedToAttackSpeedScalingPct = 0.05f;
+
         public string EnemyId;                      // Designer-authored unique identifier
         public string DisplayName;                  // Shown in HUD
         public int BaseHP;
@@ -50,7 +53,7 @@ namespace MagicSchool.Battle
                 DEF = BaseDEF,
                 MG = BaseMG,
                 MR = BaseMR,
-                AttackSpeed = 0.4f + BaseSPD * 0.05f, // Base 0.4 attacks/sec + 5% per SPD point
+                AttackSpeed = 0.4f + BaseSPD * SpeedToAttackSpeedScalingPct, // Base 0.4 attacks/sec + 5% per SPD point
                 CRIT = BaseCRIT,
                 Range = Range,
                 MaxMana = 100,

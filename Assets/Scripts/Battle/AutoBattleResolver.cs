@@ -31,6 +31,10 @@ namespace MagicSchool.Battle
         private const float TickDelay      = 0.1f;   // 10 ticks/second — matches TFT resolution
         private const int   MaxBattleTicks = 1200;   // 120s max (was 200 × 0.6s)
 
+        // Trait HP thresholds — values must match the GDD (TraitSystem.md)
+        private const float DreadknightShieldHpThresholdPct = 0.40f;  // Dreadknight BP4: shield granted below 40% HP
+        private const float TricksterDashHpThresholdPct     = 0.50f;  // Trickster BP2: dash triggered below 50% HP
+
         // ── State ────────────────────────────────────────────────────────────
         private readonly List<Combatant>              _combatants       = new List<Combatant>();
         private readonly Dictionary<string, HexCoord> _playerPlacements = new Dictionary<string, HexCoord>();
@@ -391,7 +395,7 @@ namespace MagicSchool.Battle
 
                 // Phase 2 — Dreadknight low-HP shield
                 foreach (var c in _combatants)
-                    if (!c.IsDefeated && c.DreadknightShieldEnabled && !c.DreadknightShieldGranted && c.CurrentHP < c.MaxHP * 0.40f)
+                    if (!c.IsDefeated && c.DreadknightShieldEnabled && !c.DreadknightShieldGranted && c.CurrentHP < c.MaxHP * DreadknightShieldHpThresholdPct)
                     {
                         c.Shield += (int)(c.MaxHP * 0.25f);
                         c.DreadknightShieldGranted = true;
@@ -401,7 +405,7 @@ namespace MagicSchool.Battle
                 // Phase 3 — Trickster dash trigger
                 var dashCandidates = new List<Combatant>();
                 foreach (var c in _combatants)
-                    if (!c.IsDefeated && c.TricksterDashEnabled && !c.TricksterDashTriggered && c.CurrentHP < c.MaxHP * 0.50f)
+                    if (!c.IsDefeated && c.TricksterDashEnabled && !c.TricksterDashTriggered && c.CurrentHP < c.MaxHP * TricksterDashHpThresholdPct)
                         dashCandidates.Add(c);
                 foreach (var c in dashCandidates) TraitAbilityExecutor.ExecuteTricksterDash(this, c);
 
