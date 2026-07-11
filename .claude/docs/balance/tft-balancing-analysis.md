@@ -75,7 +75,7 @@ In TFT, auto-attack DPS (before mitigation) is represented by:
 
 $$\text{Base Attack DPS} = \text{AD} \times \text{AS}$$
 
-*   **AD** is a flat number representing damage per attack. It multiplies by exactly **1.8×** per star-level upgrade (1-star to 2-star, and 2-star to 3-star).
+*   **AD** is a flat number representing damage per attack. It multiplies by exactly **1.5×** per star-level upgrade (2-star = 1.5×, 3-star = 2.25× of the 1-star value). Note this is a *lower* rate than HP's 1.8×/3.24× — star-ups buy proportionally more durability than auto-attack damage.
 *   **AS** is a float representing attacks per second. Attack Speed does not scale with star level. When an item or trait grants a percentage bonus, it is always an additive bonus calculated on the *base* AS:
     $$\text{Current AS} = \text{Base AS} \times (1 + \text{Bonus AS}\%)$$
 
@@ -85,13 +85,13 @@ For physical damage carries and tanks, their base damage scales primarily throug
 
 | Champion | Cost | Role | AD (1-Star) | AS | 1-Star DPS | 2-Star DPS | 3-Star DPS |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Cho'Gath** | 1-Gold | Tank | 65 | 0.50 | 32.5 | 58.5 | 105.3 |
-| **Sett** | 2-Gold | Tank | 60 | 0.60 | 36.0 | 64.8 | 116.6 |
-| **Jinx** | 2-Gold | Carry | 50 | 0.75 | 37.5 | 67.5 | 121.5 |
-| **Taric** | 3-Gold | Tank | 60 | 0.60 | 36.0 | 64.8 | 116.6 |
-| **Sejuani** | 4-Gold | Tank | 60 | 0.60 | 36.0 | 64.8 | 116.6 |
-| **Zeri** | 4-Gold | Carry | 65 | 0.80 | 52.0 | 93.6 | 168.5 |
-| **K'Sante** | 5-Gold | Tank | 60 | 0.70 | 42.0 | 75.6 | 136.1 |
+| **Cho'Gath** | 1-Gold | Tank | 65 | 0.50 | 32.5 | 48.8 | 73.1 |
+| **Sett** | 2-Gold | Tank | 60 | 0.60 | 36.0 | 54.0 | 81.0 |
+| **Jinx** | 2-Gold | Carry | 50 | 0.75 | 37.5 | 56.3 | 84.4 |
+| **Taric** | 3-Gold | Tank | 60 | 0.60 | 36.0 | 54.0 | 81.0 |
+| **Sejuani** | 4-Gold | Tank | 60 | 0.60 | 36.0 | 54.0 | 81.0 |
+| **Zeri** | 4-Gold | Carry | 65 | 0.80 | 52.0 | 78.0 | 117.0 |
+| **K'Sante** | 5-Gold | Tank | 60 | 0.70 | 42.0 | 63.0 | 94.5 |
 
 ### Real TFT Champion Spell-Cycle DPS Examples (AP & Magic Units)
 
@@ -104,9 +104,11 @@ $$\text{Spell-Cycle DPS} = (\text{AD} \times \text{AS}) + \frac{\text{Spell Dama
 
 | Champion | Cost | Role | AD (1c) | AS | Max Mana | Base Spell Dmg (1 / 2 / 3-Star) | 1-Star DPS | 2-Star DPS | 3-Star DPS |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Cassiopeia** | 1-Gold | Carry | 40 | 0.70 | 30 | 160 / 240 / 360 *(Base)*<br>208 / 312 / 468 *(Wounded)* | 65.3 *(Base)*<br>76.5 *(Wounded)* | 106.4 *(Base)*<br>123.2 *(Wounded)* | 174.7 *(Base)*<br>199.9 *(Wounded)* |
-| **Sona** | 3-Gold | Support/Carry | 45 | 0.65 | 80 | 170 / 255 / 420 | 43.1 | 73.4 | 128.9 |
-| **Ahri** | 5-Gold | Carry | 50 | 0.85 | 50 | 105 / 150 / 1,000 *(Essence)*<br>156.7 / 230 / 1,333 *(Cycle Avg)* | 69.1 | 115.6 | 364.3 |
+| **Cassiopeia** | 1-Gold | Carry | 40 | 0.70 | 30 | 160 / 240 / 360 *(Base)*<br>208 / 312 / 468 *(Wounded)* | 58.5 *(Base)*<br>68.5 *(Wounded)* | 87.8 *(Base)*<br>102.8 *(Wounded)* | 131.6 *(Base)*<br>154.2 *(Wounded)* |
+| **Sona** | 3-Gold | Support/Carry | 45 | 0.65 | 80 | 170 / 255 / 420 | 43.1 | 64.6 | 99.9 |
+| **Ahri** | 5-Gold | Carry | 50 | 0.85 | 50 | 105 / 150 / 1,000 *(Essence)*<br>156.7 / 230 / 1,333 *(Cycle Avg)* | 69.1 | 102.8 | 322.2 |
+
+> **Methodology note**: Cassiopeia's row includes her 0.5s cast lockout (hence 58.5 rather than the no-lockout 65.3); the Sona and Ahri rows use the simplified no-lockout formula above. Neither applies crit — this table isolates the raw spell-cycle formula. The Tier 1 summary table below instead mirrors the unified tier docs, which do include baseline crit.
 
 ### TFT Set 9 Tier 1 Carry DPS Analysis Summary
 
@@ -114,13 +116,14 @@ Below is a summary table comparing the Normal auto-attack DPS and Spell-Cycle DP
 
 | Champion | Spell Type | 1★ Normal / Spell DPS | 2★ Normal / Spell DPS | 3★ Normal / Spell DPS | 1★ / 2★ / 3★ Total DPS |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **Cassiopeia** | AP Caster (Wounded) | 28.0 / 48.5 | 50.4 / 72.8 | 90.7 / 109.2 | **76.5 / 123.2 / 199.9** |
-| **Jhin** | Physical Line Caster | 34.6 / 24.6 | 62.2 / 43.4 | 112.0 / 76.7 | **59.2 / 105.6 / 188.7** |
-| **Kayle (Lvl 6-8)** | Passive Hybrid Ascent | 22.5 / 30.0 | 40.5 / 43.8 | 72.9 / 67.5 | **52.5 / 84.3 / 140.4** |
-| **Malzahar** | AP AoE Portal Caster | 28.0 / 30.8 | 50.4 / 46.2 | 90.7 / 70.0 | **58.8 / 96.6 / 160.7** |
-| **Samira** | AD Shred Caster | 31.5 / 20.0 | 56.7 / 35.9 | 102.1 / 68.0 | **51.5 / 92.6 / 170.1** |
-| **Tristana** | AD AS-Steroid | 31.5 / 9.1 | 56.7 / 16.4 | 102.1 / 29.4 | **40.6 / 73.1 / 131.5** |
-| **Viego (1 Stack)** | AP Stacking Melee | 33.8 / 31.5 | 60.8 / 47.3 | 109.4 / 71.3 | **65.3 / 108.1 / 180.7** |
+| **Cassiopeia** (Wounded) | AP Caster | 26.4 / 45.8 | 39.6 / 68.6 | 59.4 / 103.0 | **72.2 / 108.2 / 162.4** |
+| **Jhin** (2 Targets Avg) | Physical Line Caster | 36.7 / 37.6 | 55.0 / 56.5 | 82.6 / 84.7 | **74.3 / 111.5 / 167.3** |
+| **Malzahar** (2 Targets Avg) | AP AoE Portal Caster | 27.2 / 49.8 | 40.8 / 74.7 | 61.2 / 113.2 | **77.0 / 115.5 / 174.4** |
+| **Samira** | AD Shred Caster | 27.4 / 19.0 | 41.0 / 28.5 | 61.5 / 42.7 | **46.4 / 69.5 / 104.2** |
+| **Tristana** (1 Splash Target) | AD AS-Steroid | 20.4 / 38.8 | 30.6 / 58.2 | 45.9 / 87.3 | **59.2 / 88.8 / 133.2** |
+| **Viego (2 Stacks)** | AP Stacking Melee | 32.0 / 21.3 | 48.0 / 32.0 | 72.0 / 48.4 | **53.3 / 80.0 / 120.4** |
+
+> These rows mirror `tier-1-carry-dps.md` (unified convention: AS-scaled cast lockouts, 1.10x baseline crit applied to autos and spells, target counts as labeled).
 
 ### TFT Set 9 Reference Spell Descriptions & Combat Nuances
 
@@ -154,7 +157,7 @@ TFT champions gain mana through active participation in combat:
 2. **Defending (Mana-on-Hit)**: **7% of pre-mitigation damage taken** is converted into mana.
    * **What is pre-mitigation damage?** This is the raw damage of the attack *before* it is reduced by Armor, MR, or active shields.
      - *Why use pre-mitigation?* If mana gain scaled with *post-mitigation* (actual HP lost) damage, a heavily-armored tank with 300 Armor (75% damage reduction) would gain 4× less mana than a squishy carry when hit by the same attack. This would prevent tanks from ever casting their abilities. By using pre-mitigation damage, both tanks and carries gain the exact same amount of mana when struck by a specific enemy attack.
-   * **The Cap per Instance of Damage**: To prevent a champion from immediately reaching maximum mana from a single massive hit (e.g. taking 1,500 damage from a high-tier spell, which would translate to $1,500 \times 0.07 = 105$ mana), Riot caps the maximum mana gained from a single instance of damage to exactly **42.5 mana** (which is hit when taking 607 or more raw damage). This prevents runaway cast loops and prevents hyper-tanks with shields from spamming abilities infinitely.
+   * **The Cap per Instance of Damage**: To prevent a champion from immediately reaching maximum mana from a single massive hit (e.g. taking 1,500 damage from a high-tier spell, which would translate to $1,500 \times 0.07 = 105$ mana), Riot caps the maximum mana gained from a single instance of damage to exactly **42.5 mana** (which is hit when taking 608 or more raw damage, since 42.5 / 0.07 ≈ 607.1). This prevents runaway cast loops and prevents hyper-tanks with shields from spamming abilities infinitely.
 3. **Traits/Items**: E.g., Scholar, Invoker, Blue Buff, Shojin.
 
 When mana reaches the Max Mana threshold, the champion halts auto-attacking to cast their ability, and their mana resets to 0.
@@ -181,7 +184,7 @@ When a unit is upgraded to 2-star and 3-star, only a few stats scale:
 | Stat Type | 1-Star | 2-Star | 3-Star | Scaling Rule |
 | :--- | :---: | :---: | :---: | :--- |
 | **Health (HP)** | 1.0x | 1.8x | 3.24x | Compounding 1.8x multiplier |
-| **Attack Damage (AD)** | 1.0x | 1.8x | 3.24x | Compounding 1.8x multiplier |
+| **Attack Damage (AD)** | 1.0x | 1.5x | 2.25x | Compounding 1.5x multiplier |
 | **Armor & MR** | Flat | Flat | Flat | Does NOT scale with star level |
 | **Attack Speed (AS)** | Flat | Flat | Flat | Does NOT scale with star level |
 | **Range** | Flat | Flat | Flat | Does NOT scale with star level |

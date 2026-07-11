@@ -46,6 +46,13 @@ Game-balance framework, TFT reference data/math, and the research roadmap. Cross
 * [TFT Balancing & Stat Analysis](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-analysis.md)
 * [TFT Balancing Rules & Reference Guidelines](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-rules.md)
 * [TFT Balancing Research Roadmap](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-research-plan.md)
+* [Game Balance Hub (README)](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/README.md)
+* [TFT Set 9 Carry DPS Analysis Index](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-set9-dps-analysis.md)
+* [Tier 1 Carry DPS (Unified)](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tier-1-carry-dps.md)
+* [Tier 2 Carry DPS (Unified)](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tier-2-carry-dps.md)
+* [Tier 3 Carry DPS (Unified)](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tier-3-carry-dps.md)
+* [Tier 4 Carry DPS (Unified)](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tier-4-carry-dps.md)
+* [Tier 5 Carry DPS (Unified)](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tier-5-carry-dps.md)
 
 ## Other (`other/`)
 Cross-phase frameworks, onboarding resources, and general references.

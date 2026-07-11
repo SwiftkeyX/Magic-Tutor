@@ -22,8 +22,8 @@ Tanks consistently possess **$50\%$ to $65\%$ more base EHP** than carries of th
 | **1-Gold** | 910 - 980 | 570 - 600 | Baseline starting durability (e.g. Cho'Gath vs Cassiopeia) |
 | **2-Gold** | 1,200 | 720 | 20% - 30% jump from Tier 1 (e.g. Sett vs Jinx) |
 | **3-Gold** | 1,200 | 875 | Taric gains shields, Sona support/AP carry scales |
-| **4-Gold** | 1,600 | 937 - 975 | Hyper-carries and primary frontlines (e.g. Sejuani vs Zeri) |
-| **5-Gold** | 1,600 | 1,190 | Ahri carry gains 25% EHP; tanks gain revives/knock-aways |
+| **4-Gold** | 1,760 | 937 - 975 | Hyper-carries and primary frontlines (e.g. Sejuani vs Zeri) |
+| **5-Gold** | 1,500 | 1,190 | Ahri carry gains 25% EHP; tanks gain revives/knock-aways |
 
 > [!NOTE]
 > For a comparison table of these real champion EHP values across star levels, see [Real TFT Champion Durability (EHP) Examples](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tft-balancing-analysis.md#real-tft-champion-durability-ehp-examples) in the analysis document.
@@ -39,7 +39,7 @@ AD is kept flat between **$40\text{ and }80\text{ AD}$** across all tiers (at 1-
 
 | Role | Base AS (attacks/s) | Mana Generation Note | Examples |
 | :--- | :---: | :--- | :--- |
-| **Tanks** | 0.60 | Slow attacks, slower base mana generation | Cho'Gath, Sejuani, Sett |
+| **Tanks** | 0.50 - 0.60 | Slow attacks, slower base mana generation | Cho'Gath (0.50), Sejuani, Sett (0.60) |
 | **AP Carries** | 0.70 | Medium attacks, standard mana cycle | Karma, Lux, Cassiopeia |
 | **AD/Hyper Carries** | 0.75 - 0.85 | Fast attacks, rapid mana accumulation | Jinx, Zeri, Ahri |
 

@@ -61,7 +61,7 @@ All units gain mana through combat. When `Mana >= MaxMana`, the unit casts its a
 | Source | Amount |
 |---|---|
 | Per auto-attack (attacker) | +10 flat |
-| Per hit received (defender) | +`min(42, round(rawOffense × 0.07))` |
+| Per hit received (defender) | +`clamp(round(preMitDamage × 0.08 / MaxHP × 100), 1, 40)` — 8% of pre-mitigation damage measured as a % of the defender's MaxHP, clamped to 1–40 mana per hit (see `ActiveSkillSystem.md`, `ManaDamageMultiplier = 0.08`) |
 | Kinetic trait tick (every 3s) | +5 or +15 depending on BP |
 | Kinetic BP4 starting bonus | +30 starting mana at battle start |
 
@@ -107,10 +107,12 @@ Offense = MG   (Elementalists and Supports where MG > ATK)
 | Tier | Score range |
 |---|---|
 | 1c | 900 – 1100 |
-| 2c | 950 – 1450 |
-| 3c | 1200 – 1350 |
+| 2c | 950 – 1300 |
+| 3c | 1200 – 1450 |
 | 4c | ~2200 |
-| 5c | ~2100 |
+| 5c | ~2500 |
+
+> Bands are **monotonic**: each tier's floor and ceiling sit above the previous tier's, so a balanced higher-cost unit always outscores a balanced lower-cost one. (Fixed 2026-07-06 — previously 2c's ceiling (1450) exceeded 3c's (1350) and the 5c target (~2100) sat below 4c's (~2200).)
 
 ### Current Scores (all 30 champions)
 
@@ -129,11 +131,11 @@ Offense = MG   (Elementalists and Supports where MG > ATK)
 | Wildcat | 1c | Carry | 42 | ❌ legacy scale |
 | Forest Sentinel | 2c | Tank | 26 | ❌ legacy scale |
 | Grove Keeper | 2c | Support | 979 | ✅ |
-| Shadowblade | 2c | Carry | 1400 | ✅ |
+| Shadowblade | 2c | Carry | 1400 | ❌ above new 2c band (≤1300) |
 | Sun Warden | 2c | Tank | 28 | ❌ legacy scale |
 | Venom Stalker | 2c | Carry | 56 | ❌ legacy scale |
 | Void Mage | 2c | Carry | 57 | ❌ legacy scale |
-| Windrunner | 2c | Carry | 1395 | ✅ |
+| Windrunner | 2c | Carry | 1395 | ❌ above new 2c band (≤1300) |
 | Night Stalker | 3c | Carry | 80 | ❌ legacy scale |
 | Phalanx | 3c | Tank | 1247 | ✅ |
 | Rust Colossus | 3c | Tank | 45 | ❌ legacy scale |
@@ -147,7 +149,7 @@ Offense = MG   (Elementalists and Supports where MG > ATK)
 | Void Ranger | 4c | Carry | 100 | ❌ legacy scale |
 | Beastmaster | 5c | Tank | 87 | ❌ legacy scale |
 | Cosmic Leviathan | 5c | Tank | 134 | ❌ legacy scale |
-| Dread Overlord | 5c | Tank | 2080 | ✅ |
+| Dread Overlord | 5c | Tank | 2080 | ❌ below new 5c target (~2500 ±10%) |
 | Reaper | 5c | Carry | 203 | ❌ legacy scale |
 
 > **Known roster split**: the original 10 champions are TFT-aligned; the 20 batch
