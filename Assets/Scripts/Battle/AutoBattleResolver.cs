@@ -41,6 +41,8 @@ namespace MagicSchool.Battle
         private          HexGrid                      _grid;
         private          bool                         _battleRunning;
 
+        [SerializeField] private ChampionRoster        _championRoster;
+
         // ── Kinetic trait state ──────────────────────────────────────────────
         private bool _kineticEnabled;
         private int  _kineticManaPerInterval;
@@ -206,9 +208,8 @@ namespace MagicSchool.Battle
             // populate from components on the same GameObject.
             if (_combatants.Count == 0)
             {
-                var roster = GetComponent<ChampionRoster>();
-                if (roster != null)
-                    SetCombatants(roster.GetStudents(), GetComponent<EnemyDatabaseStub>()?.GetEnemies() ?? new List<EnemyCombatData>());
+                if (_championRoster != null)
+                    SetCombatants(_championRoster.GetStudents(), GetComponent<EnemyDatabaseStub>()?.GetEnemies() ?? new List<EnemyCombatData>());
                 else
                 {
                     var stub     = GetComponent<StudentRosterStub>();

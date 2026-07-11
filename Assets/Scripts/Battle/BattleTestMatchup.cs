@@ -14,10 +14,16 @@ namespace MagicSchool.Battle
         [Header("Team B — Enemy side (auto-placed as usual)")]
         public List<string> EnemyChampionIds = new List<string>();
 
+        [SerializeField] private ChampionRoster _championRoster;
+
         private void OnValidate()
         {
+            // Editor-time validation only; an unassigned asset skips the check silently
+            // rather than throwing.
+            if (_championRoster == null) return;
+
             var allIds = new HashSet<string>();
-            foreach (var c in ChampionRoster.GetAllChampions()) allIds.Add(c.Id);
+            foreach (var c in _championRoster.GetAllChampions()) allIds.Add(c.Id);
 
             CheckIds(PlayerChampionIds, "PlayerChampionIds", allIds);
             CheckIds(EnemyChampionIds, "EnemyChampionIds", allIds);

@@ -19,6 +19,7 @@ namespace MagicSchool.Battle
         [SerializeField] private PromotionConfig _promotionConfig;
         [SerializeField] private StudentConfig _studentConfig;
         [SerializeField] private TrainingConfig _trainingConfig;
+        [SerializeField] private ChampionRoster _championRoster;
 
         public GameState CurrentState { get; private set; } = GameState.MainMenu;
         public RunSnapshot LastRunResult { get; private set; }
@@ -48,7 +49,7 @@ namespace MagicSchool.Battle
             {
                 var rosterGO = new GameObject("StudentRoster");
                 var comp = rosterGO.AddComponent<StudentRoster>();
-                comp.Initialize(_studentConfig);
+                comp.Initialize(_studentConfig, _championRoster);
                 Debug.Log($"[GameManager] Dynamically created StudentRoster. Component Null: {comp == null}");
                 DontDestroyOnLoad(rosterGO);
             }

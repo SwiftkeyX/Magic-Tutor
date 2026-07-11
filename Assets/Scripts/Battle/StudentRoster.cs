@@ -50,6 +50,7 @@ namespace MagicSchool.Battle
         private const float SpeedToAttackSpeedScalingPct = 0.05f;
 
         [SerializeField] private StudentConfig _config;
+        [SerializeField] private ChampionRoster _championRoster;
         private readonly List<StudentData> _students = new List<StudentData>();
 
         /// <summary>Max students the player may field per battle. Sourced from StudentConfig so RunManager
@@ -59,9 +60,10 @@ namespace MagicSchool.Battle
         public event Action OnRosterChanged;
         public event Action<StudentData> OnStudentStatChanged;
 
-        public void Initialize(StudentConfig config)
+        public void Initialize(StudentConfig config, ChampionRoster championRoster)
         {
             if (config != null) _config = config;
+            if (championRoster != null) _championRoster = championRoster;
         }
 
         private void Awake()
@@ -93,7 +95,7 @@ namespace MagicSchool.Battle
                 Debug.LogWarning("[StudentRoster] StudentConfig not assigned via GameManager or Inspector. Using in-memory defaults.");
             }
 
-            var allChampions = ChampionRoster.GetAllChampions();
+            var allChampions = _championRoster != null ? _championRoster.GetAllChampions() : null;
             if (allChampions == null || allChampions.Count == 0)
             {
                 Debug.LogError("[StudentRoster] No champions found in ChampionRoster.");
@@ -201,7 +203,7 @@ namespace MagicSchool.Battle
         public List<StudentCombatData> GetStudentsForBattle()
         {
             var list = new List<StudentCombatData>();
-            var allChampions = ChampionRoster.GetAllChampions();
+            var allChampions = _championRoster != null ? _championRoster.GetAllChampions() : new List<ChampionData>();
 
             foreach (var s in _students)
             {
