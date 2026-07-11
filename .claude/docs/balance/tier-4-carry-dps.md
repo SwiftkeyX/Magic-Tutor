@@ -6,33 +6,32 @@ Putting baseline and itemized calculations in a single document guarantees that 
 
 ---
 
-## 📊 Master DPS Summary Tables
+### 📊 Master DPS Summary Tables
 
 ### 📘 Table 1: Baseline (Unequipped) DPS Summary
-*Consolidated comparison across 1★, 2★, and 3★ star levels with NO items equipped. AoE/multi-target spells are shown using typical combat averages (3 targets for Aphelios, 2 targets for Azir/Gwen/Yasuo, and 4 targets for Zeri).*
+*Consolidated comparison across 1★, 2★, and 3★ star levels with NO items equipped.*
 
-| Champion | Star | Base AD | AS | Normal DPS | Spell DPS | Total DPS |
+| Champion | Star | Base AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Aphelios** (3 Targets, 6 Chakrams) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.75 | 48.8<br>73.2<br>109.8 | 41.5<br>62.3<br>93.4 | **90.3**<br>**135.5**<br>**203.2** |
-| **Azir** (2 Soldiers Avg) | 1★<br>2★<br>3★ | 30<br>45<br>68 | 0.75 | 21.3<br>32.0<br>48.0 | 52.2<br>78.2<br>239.6 | **73.5**<br>**110.2**<br>**287.6** |
-| **Gwen** (2 Targets Avg) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.80 | 38.7<br>58.1<br>87.1 | 105.6<br>158.4<br>422.4 | **144.3**<br>**216.5**<br>**509.5** |
-| **Kai'Sa** (15 Missiles Split) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.80 | 35.2<br>52.8<br>79.2 | 73.3<br>110.0<br>305.5 | **108.5**<br>**162.8**<br>**384.7** |
-| **Lux** (Single Target Channel) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 22.7<br>34.1<br>51.1 | 92.8<br>138.9<br>347.3 | **115.5**<br>**173.0**<br>**398.4** |
-| **Yasuo** (2 Targets Avg) | 1★<br>2★<br>3★ | 75<br>113<br>169 | 0.80 | 55.0<br>82.6<br>123.9 | 61.9<br>92.9<br>139.3 | **116.9**<br>**175.5**<br>**263.2** |
-| **Zeri** (4 Targets Avg Chain) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.80 | 49.3<br>74.0<br>111.0 | 73.8<br>110.7<br>166.0 | **123.1**<br>**184.7**<br>**277.0** |
+| **Aphelios** (3 Targets, 6 Chakrams) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.75 | 44.3<br>66.8<br>99.5 | 37.8<br>57.0<br>99.7 | **82.1**<br>**123.8**<br>**199.2** |
+| **Azir** (Max 3 Soldiers + Direct Cast) | 1★<br>2★<br>3★ | 30<br>45<br>68 | 0.75 | 19.4<br>29.1<br>44.0 | 56.4<br>83.1<br>640.4 | **75.8**<br>**112.2**<br>**684.4** |
+| **Gwen** (2 Targets Avg) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.80 | 35.2<br>53.1<br>79.4 | 96.0<br>144.0<br>384.0 | **131.2**<br>**197.1**<br>**463.4** |
+| **Kai'Sa** (15 Missiles Split) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.80 | 32.0<br>48.3<br>71.8 | 66.7<br>98.6<br>266.6 | **98.7**<br>**146.9**<br>**338.4** |
+| **Lux** (Single Target Channel) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 20.7<br>31.2<br>46.4 | 84.3<br>126.2<br>315.6| **Yasuo** (2 Targets Avg) | 1★<br>2★<br>3★ | 75<br>113<br>169 | 0.80 | 55.2<br>83.1<br>124.4 | 45.2<br>68.0<br>107.4 | **89.0**<br>**134.2**<br>**204.9** |
+| **Zeri** (4 Targets Avg Chain) | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.80 | 44.8<br>67.6<br>100.7 | 67.2<br>101.4<br>151.0 | **112.0**<br>**169.0**<br>**251.7** |
 
 ### ⚔️ Table 2: Well-Equipped (3-Item) DPS Summary
-*Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped.*
+*Consolidated comparison across 1★, 2★, and 3★ star levels with 3 core optimal items equipped. Shows average outputs over a 30s fight.*
 
-| Champion | Star | AD (Equipped) | AS (Equipped) | Normal DPS | Spell DPS | Total DPS |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Aphelios** (3 Targets, 6 Chakrams) | 1★<br>2★<br>3★ | 137<br>206<br>308 | 0.825 | 131.6<br>197.4<br>296.1 | 115.4<br>173.1<br>259.7 | **247.0**<br>**370.5**<br>**555.8** |
-| **Azir** (2 Soldiers Avg) | 1★<br>2★<br>3★ | 30<br>45<br>68 | 1.30 | 43.0<br>64.6<br>97.7 | 157.8<br>229.6<br>717.5 | **200.8**<br>**294.2**<br>**815.2** |
-| **Gwen** (2 Targets Avg) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.80 | 52.8<br>79.7<br>118.9 | 288.0<br>432.0<br>1152.0 | **340.8**<br>**511.7**<br>**1270.9** |
+| Champion | Star | AD | AS | Auto Attack DPS | Spell DPS | Total DPS |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Aphelios** (3 Targets, 6 Chakrams) | 1★<br>2★<br>3★ | 130<br>197<br>293 | 1.40 | 198.5<br>300.8<br>447.3 | 212.4<br>321.8<br>545.7 | **410.9**<br>**622.6**<br>**993.0** |
+| **Azir** (Max 3 Soldiers + Direct Cast) | 1★<br>2★<br>3★ | 30<br>45<br>68 | 1.10 | 36.4<br>54.6<br>82.6 | 281.1<br>416.7<br>2844.7 | **317.5**<br>**471.3**<br>**2927.3** |
+| **Gwen** (2 Targets Avg) | 1★<br>2★<br>3★ | 55<br>83<br>124 | 0.80 | 42.2<br>63.7<br>95.2 | 307.2<br>460.8<br>1228.8 | **349.4**<br>**524.5**<br>**1324.0** |
 | **Kai'Sa** (15 Missiles Split) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.92 | 44.6<br>67.0<br>100.4 | 299.8<br>449.7<br>1249.0 | **344.4**<br>**516.7**<br>**1349.4** |
 | **Lux** (Single Target Channel) | 1★<br>2★<br>3★ | 45<br>68<br>101 | 0.70 | 23.7<br>35.6<br>53.4 | 258.2<br>386.3<br>965.7 | **281.9**<br>**421.9**<br>**1019.1** |
-| **Yasuo** (2 Targets Avg) | 1★<br>2★<br>3★ | 166<br>249<br>374 | 0.80 | 137.2<br>205.9<br>308.8 | 154.4<br>231.6<br>347.3 | **291.6**<br>**437.5**<br>**656.1** |
-| **Zeri** (4 Targets Avg Chain) | 1★<br>2★<br>3★ | 94<br>141<br>212 | 1.00 | 129.7<br>194.5<br>291.8 | 194.5<br>291.7<br>437.6 | **324.2**<br>**486.2**<br>**729.4** |
+| **Yasuo** (2 Targets Avg) | 1★<br>2★<br>3★ | 166<br>250<br>373 | 0.80 | 151.3<br>227.8<br>339.9 | 92.9<br>140.0<br>220.4 | **244.2**<br>**367.8**<br>**560.3** |
+| **Zeri** (4 Targets Avg Chain) | 1★<br>2★<br>3★ | 137<br>207<br>308 | 1.00 | 151.2<br>228.4<br>339.9 | 226.8<br>342.6<br>509.8 | **377.9**<br>**571.0**<br>**849.7** |
 
 ---
 
@@ -43,21 +42,33 @@ Putting baseline and itemized calculations in a single document guarantees that 
 *   **AP (Ability Power)**: The scaling multiplier applied to base spell damage (base is 100 AP / 1.0x).
 *   **Attacks to Cast**: The number of basic attacks required to generate the mana pool needed for a cast (each attack generates 10 mana by default, except with Shojin).
 *   **Cast Lockout (s)**: The duration spent executing the spell cast animation, during which basic attacks are paused. **Lockout time scales with Attack Speed**, modeled as:
-    $$\text{Lockout}(\text{AS}) = \frac{\text{Base Lockout}}{\text{AS}}$$
+    
+ `Lockout(AS) = (Base Lockout) / (AS)`
+
 *   **Cycle Duration (s)**: The total time of one full combat loop:
-    $$\text{Cycle Duration} = \frac{\text{Attacks to Cast} + \text{Base Lockout}}{\text{AS}}$$
-*   **Normal DPS**: The average damage per second contributed strictly by basic auto-attacks over a cycle:
-    $$\text{Normal DPS} = \frac{\text{Attacks to Cast} \times \text{AD}}{\text{Cycle Duration}} \times \text{Crit} \times \text{Amp}$$
+    
+ `Cycle Duration = (Attacks to Cast + Base Lockout) / (AS)`
+
+*   **Auto Attack DPS**: The average damage per second contributed strictly by basic auto-attacks over a cycle:
+    
+ `Auto Attack DPS = (Attacks to Cast * AD) / (Cycle Duration) * Crit * Amp`
+
 *   **Spell DPS**: The average damage per second contributed strictly by the spell over a cycle:
-    $$\text{Spell DPS} = \frac{\text{Spell Damage}}{\text{Cycle Duration}} \times \text{Crit} \times \text{Amp}$$
+    
+ `Spell DPS = (Spell Damage) / (Cycle Duration) * Crit * Amp`
+
 *   **Total DPS**: The combined damage output over a cycle:
-    $$\text{Total DPS} = \text{Normal DPS} + \text{Spell DPS}$$
+    
+ `Total DPS = Auto Attack DPS + Spell DPS`
+
 *   **Crit Multiplier (Crit)**: The average multiplier applied by Critical strike chance and damage:
-    $$\text{Average Crit Multiplier} = 1 + \text{Crit Chance} \times (\text{Crit Damage} - 1)$$
-    *   *Baseline (No Crit Items)*: 25% Crit Chance, 140% Crit Damage (\(1.10\text{x}\) multiplier) — TFT base crit damage is 140%.
-    *   *Jeweled Gauntlet (JG)*: 40% Crit Chance, 170% Crit Damage (\(1.28\text{x}\) multiplier). Spells can crit.
-    *   *Infinity Edge (IE)*: 60% Crit Chance, 140% Crit Damage (\(1.24\text{x}\) multiplier). Spells can crit.
-    *   *IE + Last Whisper (LW)*: 70% Crit Chance, 140% Crit Damage (\(1.28\text{x}\) multiplier).
+    
+ `Average Crit Multiplier = 1 + Crit Chance * (Crit Damage - 1)`
+
+    *   *Baseline (No Crit Items)*: 25% Crit Chance, 140% Crit Damage (`1.10x` multiplier) — TFT base crit damage is 140%.
+    *   *Jeweled Gauntlet (JG)*: 40% Crit Chance, 170% Crit Damage (`1.28x` multiplier). Spells can crit.
+    *   *Infinity Edge (IE)*: 60% Crit Chance, 140% Crit Damage (`1.24x` multiplier). Spells can crit.
+    *   *IE + Last Whisper (LW)*: 70% Crit Chance, 140% Crit Damage (`1.28x` multiplier).
     *   *Modeling note*: as a simplification, these docs apply the average crit multiplier to spell damage in baseline rows too (strictly, TFT abilities only crit with JG/IE equipped).
 *   **AP vs. AD-ratio spells**: AP multiplies a spell's flat/base damage component only. Pure AD-ratio components do not scale with AP — matching TFT's per-star ability data.
 
@@ -66,178 +77,70 @@ Putting baseline and itemized calculations in a single document guarantees that 
 ## 🔍 Detailed Champion Breakdowns
 
 ### 1. Aphelios 🌙
-
-#### ⚙️ Mechanics & Combat Nuance
-*   **Ability**: Fires a blast dealing AD physical damage in an area. For 7 seconds, equips Chakrams (+3 base, +1 per enemy hit). Attacks deal bonus physical damage per Chakram, and he heals.
-*   **Cast Lockout**: 1.0s base.
-*   **Attacks to Cast**: 10 attacks (mana is 50 / 100).
-*   **Chakram Stacking**: Assuming blast hits 3 enemies avg, equipping 6 Chakrams (+48% AD scaling) for 7s.
-
-#### 🧮 Baseline (Unequipped) Calculations
-*   **Stats**: AD = 65 | AS = 0.75 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((10 + 1.0) / 0.75 = \mathbf{14.67\text{ seconds}}\)
-    *   Normal DPS = \((10 \times 65) / 14.67 \times 1.10 = \mathbf{48.8}\)
-    *   Spell DPS = \((5.25 \text{ attacks} \times 0.48 \text{ Chakram AD} + 6.00 \text{ blast AD}) \times 65 \text{ AD} \times 1.10 / 14.67 = \mathbf{41.5}\)
-    *   Total DPS = \(48.8 + 41.5 = \mathbf{90.3}\)
-
-#### 🧮 Equipped Calculations (Deathblade + Infinity Edge + Last Whisper)
-*   **Stats**: AD = 137 (+111% AD) | AS = 0.825 | Crit Chance = 70% (1.28x avg multiplier)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((10 + 1.0) / 0.825 = \mathbf{13.33\text{ seconds}}\)
-    *   Normal DPS = \((10 \times 137) / 13.33 \times 1.28 = \mathbf{131.6}\)
-    *   Spell DPS = \((5.77 \text{ attacks} \times 0.48 \text{ Chakram AD} + 6.00 \text{ blast AD}) \times 137 \text{ AD} \times 1.28 / 13.33 = \mathbf{115.4}\)
-    *   Total DPS = \(131.6 + 115.4 = \mathbf{247.0}\)
+*   **Detailed Math & Formula Proofs**: See [aphelios-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/aphelios-dps-calculation.md)
+*   **Combat Role & Mechanics**: Backline physical carry. Fires a physical blast in a 2-hex area (targeting clumps), and equips Chakrams (+3 base, +1 per hit) that add bonus damage on-hit for 7 seconds.
+*   **Key DPS Outputs**:
+    *   *Baseline (Unequipped) Total DPS*: **82.1 / 123.8 / 199.2**
+    *   *Well-Equipped (3-Item) Total DPS*: **410.9 / 622.6 / 993.0**
+*   **Aesthetic Balance Note**: Relies heavily on Chakram stack amplification, scaling exponentially with Attack Speed.
 
 ---
 
 ### 2. Azir ☀️
-
-#### ⚙️ Mechanics & Combat Nuance
-*   **Ability**: Passive: Every 3rd attack, Sand Soldiers deal magic damage. Active: Summons a Sand Soldier.
-*   **Cast Lockout**: 0.8s base.
-*   **Attacks to Cast**: 5 attacks (mana is 40 / 50).
-*   **Soldier Counts**: Modeled around an average of 2 active Sand Soldiers over a standard fight.
-
-#### 🧮 Baseline (Unequipped) Calculations
-*   **Stats**: AD = 30 | AS = 0.75 | AP = 100 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((5 + 0.8) / 0.75 = \mathbf{7.73\text{ seconds}}\)
-    *   Normal DPS = \((5 \times 30) / 7.73 \times 1.10 = \mathbf{21.3}\)
-    *   Spell DPS = \((110 \text{ base} \times 2 \text{ soldiers} \times 5 / 3) / 7.73 \times 1.10 = \mathbf{52.2}\)
-    *   Total DPS = \(21.3 + 52.2 = \mathbf{73.5}\)
-
-#### 🧮 Equipped Calculations (Guinsoo's Rageblade + Nashor's Tooth + Jeweled Gauntlet)
-*   **Stats (Average fight ramping)**: AD = 30 | AS = 1.30 | AP = 150 | Crit Chance = 40% (1.28x avg multiplier)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((5 + 0.8) / 1.30 = \mathbf{4.46\text{ seconds}}\)
-    *   Normal DPS = \((5 \times 30) / 4.46 \times 1.28 = \mathbf{43.0}\)
-    *   Spell DPS = \((110 \text{ base} \times 1.50 \text{ AP} \times 2 \text{ soldiers} \times 1.28 \text{ Crit} \times 5 / 3) / 4.46 = \mathbf{157.8}\)
-    *   Total DPS = \(43.0 + 157.8 = \mathbf{200.8}\)
+*   **Detailed Math & Formula Proofs**: See [azir-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/azir-dps-calculation.md)
+*   **Combat Role & Mechanics**: Backline AP summoner. Summons Sand Soldiers (max 3) who strike magic damage on every 3rd basic attack of Azir. Once 3 soldiers are active, subsequent casts deal direct magic damage.
+*   **Key DPS Outputs**:
+    *   *Baseline (Unequipped) Total DPS*: **75.8 / 112.2 / 684.4**
+    *   *Well-Equipped (3-Item) Total DPS*: **317.5 / 471.3 / 2927.3**
+*   **Aesthetic Balance Note**: Guinsoo's ramping shifts his AP modifier to 190 AP (with average 1.10 AS), enabling massive ramping output.
 
 ---
 
 ### 3. Gwen ✂️
-
-#### ⚙️ Mechanics & Combat Nuance
-*   **Ability**: Dashes and snips 3 times in a cone dealing magic damage. Every 3rd cast grants armor and MR.
-*   **Cast Lockout**: 1.0s base.
-*   **Attacks to Cast**: 4 attacks (mana is 0 / 35).
-
-#### 🧮 Baseline (Unequipped) Calculations
-*   **Stats**: AD = 55 | AS = 0.80 | AP = 100 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS (Assuming 2 Targets Hit Avg)**:
-    *   Cycle Duration = \((4 + 1.0) / 0.80 = \mathbf{6.25\text{ seconds}}\)
-    *   Normal DPS = \((4 \times 55) / 6.25 \times 1.10 = \mathbf{38.7}\)
-    *   Spell DPS = \((100 \text{ base} \times 3 \text{ snips} \times 2 \text{ targets}) / 6.25 \times 1.10 = \mathbf{105.6}\)
-    *   Total DPS = \(38.7 + 105.6 = \mathbf{144.3}\)
-
-#### 🧮 Equipped Calculations (Blue Buff + Jeweled Gauntlet + Giant Slayer)
-*   **Stats**: AD = 55 | AS = 0.80 | AP = 150 | Crit Chance = 40% (1.28x avg multiplier, +25% Giant Slayer amp)
-*   **Cycle & DPS (Blue Buff reduces mana to 25, requiring 3 attacks to cast)**:
-    *   Cycle Duration = \((3 + 1.0) / 0.80 = \mathbf{5.00\text{ seconds}}\)
-    *   Normal DPS = \((3 \times 55) / 5.00 \times 1.28 \text{ Crit} \times 1.25 \text{ Amp} = \mathbf{52.8}\)
-    *   Spell DPS = \((300 \text{ base} \times 1.50 \text{ AP} \times 2 \text{ targets}) \times 1.28 \text{ Crit} \times 1.25 \text{ Amp} / 5.00 = \mathbf{288.0}\)
-    *   Total DPS = \(52.8 + 288.0 = \mathbf{340.8}\)
+*   **Detailed Math & Formula Proofs**: See [gwen-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/gwen-dps-calculation.md)
+*   **Combat Role & Mechanics**: Melee AP carry. Dashes and snips 3 times in a cone, dealing magic damage. Every 3rd cast grants armor and MR.
+*   **Key DPS Outputs**:
+    *   *Baseline (Unequipped) Total DPS*: **131.2 / 197.1 / 463.4**
+    *   *Well-Equipped (3-Item) Total DPS*: **349.4 / 524.5 / 1324.0**
+*   **Aesthetic Balance Note**: Large cone hitbox makes her a premier frontline AP threat.
 
 ---
 
 ### 4. Kai'Sa 👾
-
-#### ⚙️ Mechanics & Combat Nuance
-*   **Ability**: Dashes and fires 15 missiles split across nearest 4 targets dealing magic damage.
-*   **Cast Lockout**: 1.5s base.
-*   **Attacks to Cast**: 12 attacks (mana is 40 / 120) / 8 attacks (equipped with Spear of Shojin).
-
-#### 🧮 Baseline (Unequipped) Calculations
-*   **Stats**: AD = 45 | AS = 0.80 | AP = 100 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((12 + 1.5) / 0.80 = \mathbf{16.88\text{ seconds}}\)
-    *   Normal DPS = \((12 \times 45) / 16.88 \times 1.10 = \mathbf{35.2}\)
-    *   Spell DPS = \((75 \text{ base} \times 15 \text{ missiles}) / 16.88 \times 1.10 = \mathbf{73.3}\)
-    *   Total DPS = \(35.2 + 73.3 = \mathbf{108.5}\)
-
-#### 🧮 Equipped Calculations (Spear of Shojin + Jeweled Gauntlet + Archangel's Staff)
-*   **Stats**: AD = 45 | AS = 0.92 | AP = 215 (Average: 100 + Shojin 25 + JG 20 + Archangel's +70 time-avg) | Crit Chance = 40% (1.28x avg multiplier, spell crits enabled)
-*   **Cycle & DPS (Spear of Shojin requires 8 attacks to cast)**:
-    *   Cycle Duration = \((8 + 1.5) / 0.92 = \mathbf{10.33\text{ seconds}}\)
-    *   Normal DPS = \((8 \times 45) / 10.33 \times 1.28 = \mathbf{44.6}\)
-    *   Spell DPS = \((75 \text{ base} \times 2.15 \text{ AP} \times 15 \text{ missiles}) \times 1.28 \text{ Crit} / 10.33 = \mathbf{299.8}\)
-    *   Total DPS = \(44.6 + 299.8 = \mathbf{344.4}\)
+*   **Detailed Math & Formula Proofs**: See [kaisa-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/kaisa-dps-calculation.md)
+*   **Combat Role & Mechanics**: Backline AP carry. Dashes and fires 15 magic missiles split across the nearest 4 targets.
+*   **Key DPS Outputs**:
+    *   *Baseline (Unequipped) Total DPS*: **98.7 / 146.9 / 338.4**
+    *   *Well-Equipped (3-Item) Total DPS*: **344.4 / 516.7 / 1349.4**
+*   **Aesthetic Balance Note**: Dash provides high survivability while Shojin optimizes cast cycles.
 
 ---
 
 ### 5. Lux ☀️
-
-#### ⚙️ Mechanics & Combat Nuance
-*   **Ability**: Channels a barrage of light at current target dealing magic damage over 3 seconds, reducing MR.
-*   **Cast Lockout**: 3.0s base (channel duration).
-*   **Attacks to Cast**: 4 attacks (mana is 0 / 40) / 3 attacks (equipped with Blue Buff).
-
-#### 🧮 Baseline (Unequipped) Calculations
-*   **Stats**: AD = 45 | AS = 0.70 | AP = 100 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((4 + 3.0) / 0.70 = \mathbf{8.71\text{ seconds}}\)
-    *   Normal DPS = \((4 \times 45) / 8.71 \times 1.10 = \mathbf{22.7}\)
-    *   Spell DPS = \(735 \text{ base} / 8.71 \times 1.10 = \mathbf{92.8}\)
-    *   Total DPS = \(22.7 + 92.8 = \mathbf{115.5}\)
-
-#### 🧮 Equipped Calculations (Blue Buff + Jeweled Gauntlet + Rabadon's Deathcap)
-*   **Stats**: AD = 45 | AS = 0.70 | AP = 200 (100 + BB 10 + JG 20 + Rabadon 70) | Crit Chance = 40% (1.28x avg multiplier, spell crits enabled)
-*   **Cycle & DPS (Blue Buff requires 3 attacks to cast)**:
-    *   Cycle Duration = \((3 + 3.0) / 0.70 = \mathbf{7.29\text{ seconds}}\)
-    *   Normal DPS = \((3 \times 45) / 7.29 \times 1.28 = \mathbf{23.7}\)
-    *   Spell DPS = \((735 \text{ base} \times 2.00 \text{ AP} \times 1.28 \text{ Crit}) / 7.29 = \mathbf{258.2}\)
-    *   Total DPS = \(23.7 + 258.2 = \mathbf{281.9}\)
+*   **Detailed Math & Formula Proofs**: See [lux-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/lux-dps-calculation.md)
+*   **Combat Role & Mechanics**: Backline AP burst carry. Channels magic damage barrage at current target over 3s, shredding MR.
+*   **Key DPS Outputs**:
+    *   *Baseline (Unequipped) Total DPS*: **105.0 / 157.4 / 362.0**
+    *   *Well-Equipped (3-Item) Total DPS*: **281.9 / 421.9 / 1019.1**
+*   **Aesthetic Balance Note**: High single-target melting capability paired with utility shred.
 
 ---
 
 ### 6. Yasuo 🌪️
-
-#### ⚙️ Mechanics & Combat Nuance
-*   **Ability**: Whirlwind knocks up and deals physical damage to target and slash splash damage to adjacent enemies.
-*   **Cast Lockout**: 1.2s base.
-*   **Attacks to Cast**: 6 attacks (mana is 50 / 110).
-*   **Splash Assumption**: Assuming slashes hit 2 targets total (1 main + 1 adjacent = 6.75x AD total).
-
-#### 🧮 Baseline (Unequipped) Calculations
-*   **Stats**: AD = 75 | AS = 0.80 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((6 + 1.2) / 0.80 = \mathbf{9.00\text{ seconds}}\)
-    *   Normal DPS = \((6 \times 75) / 9.00 \times 1.10 = \mathbf{55.0}\)
-    *   Spell DPS = \(6.75 \text{ AD} \times 75 \text{ AD} \times 1.10 / 9.00 = \mathbf{61.9}\)
-    *   Total DPS = \(55.0 + 61.9 = \mathbf{116.9}\)
-
-#### 🧮 Equipped Calculations (Infinity Edge + Deathblade + Bloodthirster)
-*   **Stats**: AD = 166 (+121% AD) | AS = 0.80 | Crit Chance = 60% (1.24x avg multiplier)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((6 + 1.2) / 0.80 = \mathbf{9.00\text{ seconds}}\)
-    *   Normal DPS = \((6 \times 166) / 9.00 \times 1.24 = \mathbf{137.2}\)
-    *   Spell DPS = \(6.75 \text{ AD} \times 166 \text{ AD} \times 1.24 / 9.00 = \mathbf{154.4}\)
-    *   Total DPS = \(137.2 + 154.4 = \mathbf{291.6}\)
+*   **Detailed Math & Formula Proofs**: See [yasuo-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/yasuo-dps-calculation.md)
+*   **Combat Role & Mechanics**: Melee physical carry. Whirlwind knocks up and slashes target + adjacent enemies (assumed 2 targets average).
+*   **Key DPS Outputs**:
+    *   *Baseline (Unequipped) Total DPS*: **89.0 / 134.2 / 204.9**
+    *   *Well-Equipped (3-Item) Total DPS*: **244.2 / 367.8 / 560.3**
+*   **Aesthetic Balance Note**: Heavy AD scaling makes physical spell crits extremely lethal.
 
 ---
 
 ### 7. Zeri ⚡
+*   **Detailed Math & Formula Proofs**: See [zeri-dps-calculation.md](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/calculations/zeri-dps-calculation.md)
+*   **Combat Role & Mechanics**: Backline physical carry. Executes targets below 10% HP. Active chains physical lightning to 3 additional targets.
+*   **Key DPS Outputs**:
+    *   *Baseline (Unequipped) Total DPS*: **112.0 / 169.0 / 251.7**
+    *   *Well-Equipped (3-Item) Total DPS*: **324.2 / 486.2 / 729.4**
+*   **Aesthetic Balance Note**: High active buff uptime ensures consistent multi-target physical output.
 
-#### ⚙️ Mechanics & Combat Nuance
-*   **Ability**: Passive: Execute enemies below 10% health. Active: Attacks chain physical lightning to 3 additional enemies for 8 seconds.
-*   **Cast Lockout**: 0.8s base.
-*   **Attacks to Cast**: 5 attacks (mana is 0 / 50).
-*   **Buff Uptime**: Active duration (8s) is longer than mana generation cycle (7.25s), resulting in 100% buff uptime.
-
-#### 🧮 Baseline (Unequipped) Calculations
-*   **Stats**: AD = 65 | AS = 0.80 | Crit Chance = 25% (1.10x avg multiplier)
-*   **Cycle & DPS (Assuming 4 Targets Hit Total = 2.5x AD total output)**:
-    *   Cycle Duration = \((5 + 0.8) / 0.80 = \mathbf{7.25\text{ seconds}}\)
-    *   Normal DPS = \((5 \times 65) / 7.25 \times 1.10 = \mathbf{49.3}\)
-    *   Spell DPS = \((5 \times 65 \times 1.5 \text{ splash ratio}) / 7.25 \times 1.10 = \mathbf{73.8}\)
-    *   Total DPS = \(49.3 + 73.8 = \mathbf{123.1}\)
-
-#### 🧮 Equipped Calculations (Infinity Edge + Last Whisper + Giant Slayer)
-*   **Stats**: AD = 94 (+45% AD) | AS = 1.00 | Crit Chance = 70% (1.28x avg multiplier, +25% Giant Slayer amp)
-*   **Cycle & DPS**:
-    *   Cycle Duration = \((5 + 0.8) / 1.00 = \mathbf{5.80\text{ seconds}}\)
-    *   Normal DPS = \((5 \times 94) / 5.80 \times 1.28 \text{ Crit} \times 1.25 \text{ Amp} = \mathbf{129.7}\)
-    *   Spell DPS = \((5 \times 94 \times 1.5 \text{ splash}) / 5.80 \times 1.28 \text{ Crit} \times 1.25 \text{ Amp} = \mathbf{194.5}\)
-    *   Total DPS = \(129.7 + 194.5 = \mathbf{324.2}\)

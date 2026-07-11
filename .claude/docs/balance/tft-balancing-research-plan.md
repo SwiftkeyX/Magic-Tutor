@@ -25,7 +25,7 @@ To establish a mathematically balanced combat system, we are dissecting TFT's me
 
 | Topic | Focus Area | Status | Target Application |
 | :--- | :--- | :---: | :--- |
-| **Topic 1** | Trait Synergies & Breakpoint Budgeting | **First pass applied** — breakpoint tables read live by `.claude/scripts/balance_report.py` §4; gold-value budgeting still pending | Validate and align Vertical/Horizontal trait weights |
+| **Topic 1** | Trait Synergies & Breakpoint Budgeting | **Comp-level pass applied** — breakpoint tables read live by `.claude/scripts/balance_report.py` §4; cross-set meta-comp pattern analysis in `tft-trait-synergy-patterns.md` (avg. active traits per comp, how hard each is pushed); gold-value budgeting still pending | Validate and align Vertical/Horizontal trait weights |
 | **Topic 2** | Ability Scaling & Spell Multipliers | **First pass applied** — skill/mana cycle analysis in `.claude/scripts/balance_report.py` §3; TFT-side spell-scaling research still pending | Design our future champion ability system |
 | **Topic 3** | Team Combat & Simulation Modeling | **Pending** | Upgrade `BalanceValidator.cs` to test group comps |
 | **Topic 4** | Itemization Math & Stat Modifiers | **Pending** | Set up rules for equipment and teacher upgrades |
@@ -41,7 +41,8 @@ To establish a mathematically balanced combat system, we are dissecting TFT's me
   * Map out the stat value of active traits in Set 9 (e.g., Bastion's flat Armor/MR, Sorcerer's flat AP, Challenger's Attack Speed).
   * Calculate the "gold value" of trait stats relative to base stats.
   * Research vertical vs. horizontal synergy tradeoffs (e.g., is running 6-Bastion mathematically superior to running 3-Bastion + 2-Invoker?).
-* **Magic School Application:** We need to ensure that hitting trait breakpoints (like Warden 4 or Striker 6) grants a balanced power spike that doesn't completely overshadow base champion stats or gold investments.
+  * ✅ **Done:** cross-set meta-comp pattern analysis — see `tft-trait-synergy-patterns.md`. Across all 56 published comps in Set 9/10/11, real comps run **3-5 active traits on average (3.84)**, the primary trait reaches its true max breakpoint only **11%** of the time, and **81%** of secondary/filler traits sit at their cheapest activation tier. The "6-Bastion vs. 3-Bastion + 2-Invoker" question above resolves empirically toward the latter shape — one trait pushed moderately + several cheap fillers, not several traits maxed at once.
+* **Magic School Application:** We need to ensure that hitting trait breakpoints (like Warden 4 or Striker 6) grants a balanced power spike that doesn't completely overshadow base champion stats or gold investments. When curating our own meta comps, target the empirical shape above (3-5 active traits, one pushed mid-to-high, rest at floor) rather than designs that max multiple traits simultaneously.
 
 ### Topic 2: Ability Scaling & Spell Multipliers
 * **Objective:** Understand how TFT balances a champion's spell output against their auto-attack damage, and how spell values scale with star level.
