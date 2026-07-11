@@ -50,8 +50,6 @@ All calculations are derived from first principles using base stats sourced dire
 | **Samira** | AD backliner, single-target focus | Not specify | 1★<br>2★<br>3★ | 65<br>98<br>146 | 0.77 | 47.8<br>72.9<br>107.4 | 45.4<br>69.2<br>107.4 | **93.2**<br>**142.1**<br>**214.8** |
 | **Tristana** (1.26 AS) | AD backliner, splash AOE (avg to 2 targets), single-focus | 15s | 1★<br>2★<br>3★ | 65<br>98<br>146 | 1.26 | 141.7<br>215.9<br>318.4 | 59.0<br>89.8<br>132.4 | **200.7**<br>**305.7**<br>**450.8** |
 | **Tristana** (1.63 AS) | AD backliner, splash AOE (avg to 2 targets), single-focus | 30s | 1★<br>2★<br>3★ | 65<br>98<br>146 | 1.63 | 175.5<br>267.3<br>394.2 | 76.3<br>116.3<br>171.4 | **251.8**<br>**383.6**<br>**565.6** |
-| **Viego** (Standard - 0.5s) | AP melee carry, single-target focus, stack scaling | 15s | 1★<br>2★<br>3★ | 58<br>88<br>131 | 0.75 | 49.7<br>75.4<br>112.3 | 45.3<br>68.0<br>102.9 | **95.0**<br>**143.4**<br>**215.2** |
-| **Viego** (Standard - 1.5s) | AP melee carry, single-target focus, stack scaling | 30s | 1★<br>2★<br>3★ | 58<br>88<br>131 | 0.75 | 49.7<br>75.4<br>112.3 | 62.5<br>93.7<br>141.4 | **112.2**<br>**169.1**<br>**253.7** |
 | **Viego** (RFC × 3 - 1.33s) | AP melee carry, single-target focus, stack scaling | 15s | 1★<br>2★<br>3★ | 45<br>68<br>101 | 1.49 | 83.8<br>126.6<br>188.1 | 90.5<br>135.7<br>204.6 | **174.3**<br>**262.3**<br>**392.7** |
 | **Viego** (RFC × 3 - 3.11s) | AP melee carry, single-target focus, stack scaling | 30s | 1★<br>2★<br>3★ | 45<br>68<br>101 | 1.49 | 83.8<br>126.6<br>188.1 | 156.8<br>235.2<br>353.7 | **240.6**<br>**361.8**<br>**541.8** |
 
@@ -178,9 +176,6 @@ All calculations are derived from first principles using base stats sourced dire
 *   **Baseline (Unequipped)**:
     *   15s Fight (0.5 stacks avg): 1★: **51.5** | 2★: **77.6** | 3★: **116.2**
     *   30s Fight (1.5 stacks avg): 1★: **64.9** | 2★: **97.7** | 3★: **146.3**
-*   **Well-Equipped (Standard - Gunblade + Titan's + JG)**:
-    *   15s Fight (0.5 stacks avg): 1★: **95.0** | 2★: **143.4** | 3★: **215.2**
-    *   30s Fight (1.5 stacks avg): 1★: **112.2** | 2★: **169.1** | 3★: **253.7**
 *   **Well-Equipped (RFC × 3)**:
     *   15s Fight (1.33 stacks avg): 1★: **174.3** | 2★: **262.3** | 3★: **392.7**
     *   30s Fight (3.11 stacks avg): 1★: **240.6** | 2★: **361.8** | 3★: **541.8**
