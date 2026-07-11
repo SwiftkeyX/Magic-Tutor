@@ -301,6 +301,15 @@ namespace MagicSchool.Battle
         {
             if (_battleRunning) { Debug.LogWarning("[AutoBattleResolver] Battle already running."); return; }
 
+            // GDD Core Rule 1: guard against being called outside the Battle phase.
+            // RunManager.Instance == null is the legitimate standalone/test scenario
+            // (BattleTestHarness / BattleTestMatchup — no RunManager in the scene).
+            if (RunManager.Instance != null && RunManager.Instance.CurrentPhase != RunPhase.Battle)
+            {
+                Debug.LogError($"[AutoBattleResolver] BeginBattle() called in phase {RunManager.Instance.CurrentPhase}; expected Battle. Aborting.");
+                return;
+            }
+
             _grid = GetComponent<HexGrid>();
             if (_grid == null) { Debug.LogError("[AutoBattleResolver] HexGrid component required on same GameObject."); return; }
 
@@ -394,7 +403,7 @@ namespace MagicSchool.Battle
                 foreach (var c in _combatants)
                     if (!c.IsDefeated && c.TricksterDashEnabled && !c.TricksterDashTriggered && c.CurrentHP < c.MaxHP * 0.50f)
                         dashCandidates.Add(c);
-                foreach (var c in dashCandidates) ExecuteTricksterDash(c);
+                foreach (var c in dashCandidates) TraitAbilityExecutor.ExecuteTricksterDash(this, c);
 
                 // Phase 4 — Trickster untargetable countdown
                 foreach (var c in _combatants)
@@ -808,83 +817,13 @@ namespace MagicSchool.Battle
             ApplyDamageAndCheckKill(null, target, damage, out _, tags: null, autoHandleKill: false);
         }
 
-        private void HandleKill(Combatant actor, Combatant target)
+        internal void HandleKill(Combatant actor, Combatant target)
         {
             _grid.ClearOccupant(target.Position);
             Debug.Log($"[AutoBattle] {target.DisplayName} DEFEATED");
             OnCombatantDefeated?.Invoke(target.Id);
             if (actor != null && actor.ElementalistExplosionPct > 0)
-                TriggerElementalistExplosion(actor, target);
-        }
-
-        private void TriggerElementalistExplosion(Combatant actor, Combatant killed)
-        {
-            var adjacent  = _grid.GetInRange(killed.Position, 1);
-            var secondary = new List<(Combatant a, Combatant t)>();
-
-            foreach (var coord in adjacent)
-            {
-                if (coord.Equals(killed.Position)) continue;
-
-                Combatant hit = null;
-                foreach (var c in _combatants)
-                    if (!c.IsDefeated && c.Position.Equals(coord) && c.IsPlayer != actor.IsPlayer)
-                    { hit = c; break; }
-                if (hit == null) continue;
-
-                int dmg = (int)(killed.MaxHP * actor.ElementalistExplosionPct);
-                if (!actor.ElementalistTrueDamage)
-                    dmg = Math.Max(1, (int)(dmg * (100f / (100 + hit.MR))));
-
-                // Explosion damage has always bypassed shields — preserved exactly (bypassShield: true).
-                dmg = ApplyDamageAndCheckKill(actor, hit, dmg, out _, tags: null, bypassShield: true, autoHandleKill: false);
-
-                Debug.Log($"[Trait] Elementalist explosion: {hit.DisplayName} -{dmg}");
-                OnCombatantActed?.Invoke(actor.Id, hit.Id, dmg, new List<string> { "EXPLOSION" });
-
-                if (hit.IsDefeated) secondary.Add((actor, hit));
-            }
-
-            foreach (var (a, t) in secondary) HandleKill(a, t);
-        }
-
-        private void ExecuteTricksterDash(Combatant c)
-        {
-            c.TricksterDashTriggered     = true;
-            c.TricksterUntargetable      = true;
-            c.TricksterUntargetableTicks = 12;  // 1.2s at 0.1s/tick (was 2 at 0.6s/tick)
-            c.TricksterBleedNextAttack   = c.TricksterBleedEnabled;
-
-            // Find deepest backline enemy target
-            Combatant backlineTarget = null;
-            int best = c.IsPlayer ? int.MinValue : int.MaxValue;
-            foreach (var x in _combatants)
-            {
-                if (x.IsDefeated || x.IsPlayer == c.IsPlayer) continue;
-                if ( c.IsPlayer && x.Position.Row > best) { best = x.Position.Row; backlineTarget = x; }
-                if (!c.IsPlayer && x.Position.Row < best) { best = x.Position.Row; backlineTarget = x; }
-            }
-            if (backlineTarget == null) return;
-
-            // Find open neighbor adjacent to backline target
-            HexCoord? dashDest = null;
-            foreach (var nb in HexCoord.GetNeighbors(backlineTarget.Position, HexGrid.Cols, HexGrid.Rows))
-                if (!_grid.IsOccupied(nb)) { dashDest = nb; break; }
-
-            if (!dashDest.HasValue)
-            {
-                c.TricksterUntargetableTicks = 0;
-                c.TricksterUntargetable      = false;
-                return;
-            }
-
-            _grid.ClearOccupant(c.Position);
-            var from   = c.Position;
-            c.Position = dashDest.Value;
-            _grid.SetOccupant(c.Position, c.Id);
-
-            Debug.Log($"[Trait] {c.DisplayName} Trickster Dash: {from} → {c.Position}");
-            OnCombatantMoved?.Invoke(c.Id, from, c.Position);
+                TraitAbilityExecutor.TriggerElementalistExplosion(this, actor, target);
         }
 
         // ── Debug helpers (editor/QA only) ───────────────────────────────────
