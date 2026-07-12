@@ -14,8 +14,8 @@ namespace MagicSchool.Battle
     {
         public static List<HexCoord> SelectTargetHexes(
             HexGrid grid,
-            AutoBattleResolver.Combatant caster,
-            IReadOnlyList<AutoBattleResolver.Combatant> all,
+            Combatant caster,
+            IReadOnlyList<Combatant> all,
             TargetBaseFilter filter,
             TargetPrioritySort[] sorts,
             int range,
@@ -39,7 +39,7 @@ namespace MagicSchool.Battle
         }
 
         private static List<HexCoord> ResolveBaseFilter(
-            HexGrid grid, AutoBattleResolver.Combatant caster, IReadOnlyList<AutoBattleResolver.Combatant> all,
+            HexGrid grid, Combatant caster, IReadOnlyList<Combatant> all,
             TargetBaseFilter filter, int range, TargetTeam targetTeam)
         {
             switch (filter)
@@ -70,7 +70,7 @@ namespace MagicSchool.Battle
         }
 
         private static List<HexCoord> EnemyHexesInRange(
-            HexGrid grid, AutoBattleResolver.Combatant caster, IReadOnlyList<AutoBattleResolver.Combatant> all, int range)
+            HexGrid grid, Combatant caster, IReadOnlyList<Combatant> all, int range)
         {
             var inRange = new HashSet<HexCoord>(grid.GetInRange(caster.Position, range));
             return all.Where(c => !c.IsDefeated && c.IsPlayer != caster.IsPlayer && inRange.Contains(c.Position))
@@ -79,7 +79,7 @@ namespace MagicSchool.Battle
         }
 
         private static List<HexCoord> AllyHexesInRange(
-            HexGrid grid, AutoBattleResolver.Combatant caster, IReadOnlyList<AutoBattleResolver.Combatant> all, int range)
+            HexGrid grid, Combatant caster, IReadOnlyList<Combatant> all, int range)
         {
             var inRange = new HashSet<HexCoord>(grid.GetInRange(caster.Position, range));
             return all.Where(c => !c.IsDefeated && c.IsPlayer == caster.IsPlayer && inRange.Contains(c.Position))
@@ -88,8 +88,8 @@ namespace MagicSchool.Battle
         }
 
         private static List<HexCoord> ApplySorts(
-            List<HexCoord> candidates, HexGrid grid, AutoBattleResolver.Combatant caster,
-            IReadOnlyList<AutoBattleResolver.Combatant> all, TargetPrioritySort[] sorts, int radius,
+            List<HexCoord> candidates, HexGrid grid, Combatant caster,
+            IReadOnlyList<Combatant> all, TargetPrioritySort[] sorts, int radius,
             TargetTeam targetTeam)
         {
             if (sorts == null) return candidates;
@@ -99,8 +99,8 @@ namespace MagicSchool.Battle
         }
 
         private static List<HexCoord> ApplyPrioritySort(
-            List<HexCoord> candidates, AutoBattleResolver.Combatant caster,
-            IReadOnlyList<AutoBattleResolver.Combatant> all, TargetPrioritySort sort, int radius,
+            List<HexCoord> candidates, Combatant caster,
+            IReadOnlyList<Combatant> all, TargetPrioritySort sort, int radius,
             TargetTeam targetTeam)
         {
             switch (sort)
@@ -146,17 +146,17 @@ namespace MagicSchool.Battle
             }
         }
 
-        private static float HpPctAt(HexCoord hex, IReadOnlyList<AutoBattleResolver.Combatant> all)
+        private static float HpPctAt(HexCoord hex, IReadOnlyList<Combatant> all)
         {
             var occupant = all.FirstOrDefault(c => !c.IsDefeated && c.Position.Equals(hex));
             if (occupant == null) return float.MaxValue;
             return (float)occupant.CurrentHP / occupant.MaxHP;
         }
 
-        private static bool IsEnemyOccupied(HexCoord hex, AutoBattleResolver.Combatant caster, IReadOnlyList<AutoBattleResolver.Combatant> all) =>
+        private static bool IsEnemyOccupied(HexCoord hex, Combatant caster, IReadOnlyList<Combatant> all) =>
             all.Any(c => !c.IsDefeated && c.IsPlayer != caster.IsPlayer && c.Position.Equals(hex));
 
-        private static bool IsAllyOccupied(HexCoord hex, AutoBattleResolver.Combatant caster, IReadOnlyList<AutoBattleResolver.Combatant> all) =>
+        private static bool IsAllyOccupied(HexCoord hex, Combatant caster, IReadOnlyList<Combatant> all) =>
             all.Any(c => !c.IsDefeated && c.IsPlayer == caster.IsPlayer && c.Position.Equals(hex));
     }
 }

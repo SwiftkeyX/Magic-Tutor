@@ -1,0 +1,1425 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5231ba0e0d5fd6e4da29d0c8feb48014, type: 3}
+  m_Name: ChampionRoster
+  m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.ChampionRoster
+  Champions:
+  - Id: ironclad
+    DisplayName: Ironclad
+    Cost: 1
+    Role: 0
+    VerticalTrait: 1
+    HorizontalTrait: 3
+    MaxHP: 650
+    ATK: 50
+    DEF: 45
+    MG: 0
+    MR: 45
+    CRIT: 2
+    Range: 1
+    AttackSpeed: 0.6
+    MaxMana: 80
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Iron Shield Slam
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1.2
+      SecondaryMultiplier: 0.4
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 3
+      FlatShieldAmount: 200
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: bloodhound
+    DisplayName: Bloodhound
+    Cost: 1
+    Role: 1
+    VerticalTrait: 2
+    HorizontalTrait: 2
+    MaxHP: 500
+    ATK: 55
+    DEF: 20
+    MG: 0
+    MR: 20
+    CRIT: 12
+    Range: 1
+    AttackSpeed: 0.75
+    MaxMana: 60
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Blood Frenzy
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 5
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0.4
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: pyromancer
+    DisplayName: Pyromancer
+    Cost: 1
+    Role: 1
+    VerticalTrait: 3
+    HorizontalTrait: 1
+    MaxHP: 480
+    ATK: 40
+    DEF: 20
+    MG: 65
+    MR: 20
+    CRIT: 8
+    Range: 2
+    AttackSpeed: 0.7
+    MaxMana: 90
+    StartingMana: 0
+    Skill:
+      Archetype: 2
+      SkillName: Fireball Blast
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 00000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 2.2
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0.5
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: windrunner
+    DisplayName: Windrunner
+    Cost: 2
+    Role: 1
+    VerticalTrait: 4
+    HorizontalTrait: 1
+    MaxHP: 600
+    ATK: 65
+    DEF: 20
+    MG: 0
+    MR: 20
+    CRIT: 14
+    Range: 3
+    AttackSpeed: 0.8
+    MaxMana: 100
+    StartingMana: 30
+    Skill:
+      Archetype: 3
+      SkillName: Gale Piercer
+      TargetTeam: 0
+      BaseFilter: 3
+      Sorts: 00000000
+      Range: 6
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 1
+      LockoutTicks: 2
+      OffenseMultiplier: 1.8
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: grovekeeper
+    DisplayName: Grove Keeper
+    Cost: 2
+    Role: 2
+    VerticalTrait: 3
+    HorizontalTrait: 3
+    MaxHP: 600
+    ATK: 40
+    DEF: 25
+    MG: 55
+    MR: 25
+    CRIT: 4
+    Range: 2
+    AttackSpeed: 0.65
+    MaxMana: 120
+    StartingMana: 0
+    Skill:
+      Archetype: 4
+      SkillName: Verdant Roots
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 04000000
+      Range: 0
+      Radius: 1
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1.2
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0
+      DurationTicks: 3
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 1
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: shadowblade
+    DisplayName: Shadowblade
+    Cost: 2
+    Role: 1
+    VerticalTrait: 2
+    HorizontalTrait: 4
+    MaxHP: 580
+    ATK: 65
+    DEF: 25
+    MG: 0
+    MR: 25
+    CRIT: 20
+    Range: 1
+    AttackSpeed: 0.8
+    MaxMana: 50
+    StartingMana: 0
+    Skill:
+      Archetype: 6
+      SkillName: Shadow Strike
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 01000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1.5
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: phalanx
+    DisplayName: Phalanx
+    Cost: 3
+    Role: 0
+    VerticalTrait: 1
+    HorizontalTrait: 2
+    MaxHP: 800
+    ATK: 60
+    DEF: 50
+    MG: 0
+    MR: 50
+    CRIT: 3
+    Range: 1
+    AttackSpeed: 0.6
+    MaxMana: 100
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Unbreakable Bastion
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 2
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 3
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0.25
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 3
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0.3
+      ReturnToOriginAfter: 0
+  - Id: stormbringer
+    DisplayName: Stormbringer
+    Cost: 3
+    Role: 2
+    VerticalTrait: 4
+    HorizontalTrait: 3
+    MaxHP: 700
+    ATK: 50
+    DEF: 25
+    MG: 65
+    MR: 25
+    CRIT: 7
+    Range: 3
+    AttackSpeed: 0.7
+    MaxMana: 80
+    StartingMana: 0
+    Skill:
+      Archetype: 5
+      SkillName: Chain Lightning
+      TargetTeam: 0
+      BaseFilter: 1
+      Sorts: 00000000
+      Range: 3
+      Radius: 0
+      BounceCount: 4
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1.4
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0
+      DurationTicks: 2
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 4
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: phantomassassin
+    DisplayName: Phantom Assassin
+    Cost: 4
+    Role: 1
+    VerticalTrait: 3
+    HorizontalTrait: 4
+    MaxHP: 750
+    ATK: 65
+    DEF: 30
+    MG: 90
+    MR: 30
+    CRIT: 22
+    Range: 2
+    AttackSpeed: 0.8
+    MaxMana: 110
+    StartingMana: 0
+    Skill:
+      Archetype: 6
+      SkillName: Phantom Flurry
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 03000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 3
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 3.2
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 1
+  - Id: dreadoverlord
+    DisplayName: Dread Overlord
+    Cost: 5
+    Role: 0
+    VerticalTrait: 1
+    HorizontalTrait: 4
+    MaxHP: 1000
+    ATK: 80
+    DEF: 60
+    MG: 0
+    MR: 60
+    CRIT: 4
+    Range: 1
+    AttackSpeed: 0.65
+    MaxMana: 150
+    StartingMana: 50
+    Skill:
+      Archetype: 4
+      SkillName: Dread Cataclysm
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 04000000
+      Range: 0
+      Radius: 2
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 2
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0
+      DurationTicks: 2
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 2
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0.4
+      ZoneDurationTicks: 5
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: aegis
+    DisplayName: Aegis
+    Cost: 1
+    Role: 0
+    VerticalTrait: 1
+    HorizontalTrait: 6
+    MaxHP: 650
+    ATK: 50
+    DEF: 45
+    MG: 0
+    MR: 45
+    CRIT: 2
+    Range: 1
+    AttackSpeed: 0.6
+    MaxMana: 80
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Shield Cover
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 03000000
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 3
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 1.5
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: wildcat
+    DisplayName: Wildcat
+    Cost: 1
+    Role: 1
+    VerticalTrait: 6
+    HorizontalTrait: 4
+    MaxHP: 500
+    ATK: 55
+    DEF: 20
+    MG: 0
+    MR: 20
+    CRIT: 12
+    Range: 1
+    AttackSpeed: 0.75
+    MaxMana: 60
+    StartingMana: 0
+    Skill:
+      Archetype: 6
+      SkillName: Claw Dash
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 00000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1.4
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 4
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0.2
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: cosmicsprite
+    DisplayName: Cosmic Sprite
+    Cost: 1
+    Role: 2
+    VerticalTrait: 5
+    HorizontalTrait: 1
+    MaxHP: 480
+    ATK: 40
+    DEF: 20
+    MG: 65
+    MR: 20
+    CRIT: 8
+    Range: 2
+    AttackSpeed: 0.7
+    MaxMana: 80
+    StartingMana: 0
+    Skill:
+      Archetype: 2
+      SkillName: Starlight Spark
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 00000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 1.8
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 15
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: novicecleric
+    DisplayName: Novice Cleric
+    Cost: 1
+    Role: 2
+    VerticalTrait: 5
+    HorizontalTrait: 5
+    MaxHP: 480
+    ATK: 40
+    DEF: 20
+    MG: 65
+    MR: 20
+    CRIT: 5
+    Range: 2
+    AttackSpeed: 0.7
+    MaxMana: 65
+    StartingMana: 0
+    Skill:
+      Archetype: 1
+      SkillName: Holy Blessing
+      TargetTeam: 1
+      BaseFilter: 2
+      Sorts: 03000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 2
+      ManaRestoreAmount: 0
+      CleansesStatus: 1
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: techscrapper
+    DisplayName: Tech Scrapper
+    Cost: 1
+    Role: 1
+    VerticalTrait: 2
+    HorizontalTrait: 7
+    MaxHP: 500
+    ATK: 55
+    DEF: 20
+    MG: 0
+    MR: 20
+    CRIT: 10
+    Range: 1
+    AttackSpeed: 0.75
+    MaxMana: 70
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Scrap Cleave
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1.3
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: sunwarden
+    DisplayName: Sun Warden
+    Cost: 2
+    Role: 0
+    VerticalTrait: 5
+    HorizontalTrait: 3
+    MaxHP: 800
+    ATK: 60
+    DEF: 50
+    MG: 0
+    MR: 50
+    CRIT: 2
+    Range: 1
+    AttackSpeed: 0.6
+    MaxMana: 90
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Solar Flare
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 1
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0
+      DurationTicks: 3
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 1.5
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: venomstalker
+    DisplayName: Venom Stalker
+    Cost: 2
+    Role: 1
+    VerticalTrait: 7
+    HorizontalTrait: 8
+    MaxHP: 600
+    ATK: 65
+    DEF: 20
+    MG: 0
+    MR: 20
+    CRIT: 14
+    Range: 1
+    AttackSpeed: 0.75
+    MaxMana: 75
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Toxic Bite
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1.5
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 5
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: forestsentinel
+    DisplayName: Forest Sentinel
+    Cost: 2
+    Role: 0
+    VerticalTrait: 6
+    HorizontalTrait: 6
+    MaxHP: 800
+    ATK: 60
+    DEF: 50
+    MG: 0
+    MR: 50
+    CRIT: 2
+    Range: 1
+    AttackSpeed: 0.6
+    MaxMana: 100
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Barkshield
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 2
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 3
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 3
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: voidmage
+    DisplayName: Void Mage
+    Cost: 2
+    Role: 1
+    VerticalTrait: 3
+    HorizontalTrait: 8
+    MaxHP: 600
+    ATK: 50
+    DEF: 20
+    MG: 75
+    MR: 20
+    CRIT: 8
+    Range: 2
+    AttackSpeed: 0.7
+    MaxMana: 80
+    StartingMana: 0
+    Skill:
+      Archetype: 2
+      SkillName: Void Sphere
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 00000000
+      Range: 0
+      Radius: 1
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 1.6
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 1
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: starweaver
+    DisplayName: Starweaver
+    Cost: 3
+    Role: 2
+    VerticalTrait: 5
+    HorizontalTrait: 5
+    MaxHP: 700
+    ATK: 50
+    DEF: 25
+    MG: 65
+    MR: 25
+    CRIT: 5
+    Range: 3
+    AttackSpeed: 0.7
+    MaxMana: 100
+    StartingMana: 0
+    Skill:
+      Archetype: 1
+      SkillName: Astral Cascade
+      TargetTeam: 1
+      BaseFilter: 2
+      Sorts: 03000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 1
+      LockoutTicks: 3
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 100
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 1.2
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: rustcolossus
+    DisplayName: Rust Colossus
+    Cost: 3
+    Role: 0
+    VerticalTrait: 6
+    HorizontalTrait: 7
+    MaxHP: 800
+    ATK: 60
+    DEF: 50
+    MG: 0
+    MR: 50
+    CRIT: 3
+    Range: 1
+    AttackSpeed: 0.6
+    MaxMana: 90
+    StartingMana: 0
+    Skill:
+      Archetype: 1
+      SkillName: Iron Fist
+      TargetTeam: 0
+      BaseFilter: 1
+      Sorts: 00000000
+      Range: 1
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 1.4
+      SecondaryMultiplier: 0.5
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 2
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 2
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: nightstalker
+    DisplayName: Night Stalker
+    Cost: 3
+    Role: 1
+    VerticalTrait: 7
+    HorizontalTrait: 4
+    MaxHP: 700
+    ATK: 60
+    DEF: 25
+    MG: 0
+    MR: 25
+    CRIT: 18
+    Range: 1
+    AttackSpeed: 0.75
+    MaxMana: 60
+    StartingMana: 0
+    Skill:
+      Archetype: 6
+      SkillName: Shadow Shroud
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 03000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 1.5
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: stormranger
+    DisplayName: Storm Ranger
+    Cost: 3
+    Role: 1
+    VerticalTrait: 4
+    HorizontalTrait: 7
+    MaxHP: 700
+    ATK: 60
+    DEF: 25
+    MG: 0
+    MR: 25
+    CRIT: 10
+    Range: 3
+    AttackSpeed: 0.75
+    MaxMana: 80
+    StartingMana: 0
+    Skill:
+      Archetype: 3
+      SkillName: Overcharge Beam
+      TargetTeam: 0
+      BaseFilter: 3
+      Sorts: 00000000
+      Range: 3
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 1.5
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: graveknight
+    DisplayName: Grave Knight
+    Cost: 4
+    Role: 0
+    VerticalTrait: 7
+    HorizontalTrait: 2
+    MaxHP: 1000
+    ATK: 80
+    DEF: 60
+    MG: 0
+    MR: 60
+    CRIT: 4
+    Range: 1
+    AttackSpeed: 0.65
+    MaxMana: 110
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Soul Drain
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 1
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 4
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: arcanesage
+    DisplayName: Arcane Sage
+    Cost: 4
+    Role: 1
+    VerticalTrait: 3
+    HorizontalTrait: 7
+    MaxHP: 750
+    ATK: 60
+    DEF: 30
+    MG: 90
+    MR: 30
+    CRIT: 18
+    Range: 2
+    AttackSpeed: 0.8
+    MaxMana: 95
+    StartingMana: 0
+    Skill:
+      Archetype: 4
+      SkillName: Chrono Shift
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 04000000
+      Range: 0
+      Radius: 2
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 2.5
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: voidranger
+    DisplayName: Void Ranger
+    Cost: 4
+    Role: 1
+    VerticalTrait: 4
+    HorizontalTrait: 8
+    MaxHP: 750
+    ATK: 90
+    DEF: 30
+    MG: 0
+    MR: 30
+    CRIT: 16
+    Range: 3
+    AttackSpeed: 0.8
+    MaxMana: 90
+    StartingMana: 0
+    Skill:
+      Archetype: 3
+      SkillName: Nether Arrow
+      TargetTeam: 0
+      BaseFilter: 3
+      Sorts: 00000000
+      Range: 3
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 2.2
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: divinepaladin
+    DisplayName: Divine Paladin
+    Cost: 4
+    Role: 2
+    VerticalTrait: 1
+    HorizontalTrait: 5
+    MaxHP: 750
+    ATK: 60
+    DEF: 30
+    MG: 90
+    MR: 30
+    CRIT: 4
+    Range: 1
+    AttackSpeed: 0.8
+    MaxMana: 100
+    StartingMana: 0
+    Skill:
+      Archetype: 7
+      SkillName: Guardian Shield
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 2
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 03000000
+      SecondaryHitsAll: 1
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 3
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 3.5
+      AttackSpeedBuffPct: 0
+      CrowdControl: 3
+      HealMultiplier: 1
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: cosmicleviathan
+    DisplayName: Cosmic Leviathan
+    Cost: 5
+    Role: 0
+    VerticalTrait: 5
+    HorizontalTrait: 6
+    MaxHP: 1000
+    ATK: 80
+    DEF: 60
+    MG: 0
+    MR: 60
+    CRIT: 4
+    Range: 1
+    AttackSpeed: 0.65
+    MaxMana: 150
+    StartingMana: 0
+    Skill:
+      Archetype: 4
+      SkillName: Supernova
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 04000000
+      Range: 0
+      Radius: 2
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 2.5
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 1
+      SplashPct: 0
+      DurationTicks: 2
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 2
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: reaper
+    DisplayName: Reaper
+    Cost: 5
+    Role: 1
+    VerticalTrait: 7
+    HorizontalTrait: 8
+    MaxHP: 900
+    ATK: 80
+    DEF: 30
+    MG: 0
+    MR: 30
+    CRIT: 22
+    Range: 1
+    AttackSpeed: 0.8
+    MaxMana: 80
+    StartingMana: 0
+    Skill:
+      Archetype: 6
+      SkillName: Death's Scythe
+      TargetTeam: 0
+      BaseFilter: 2
+      Sorts: 03000000
+      Range: 0
+      Radius: 0
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 1
+      OffenseMultiplier: 3.5
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 0
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0
+      CrowdControl: 0
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0
+  - Id: beastmaster
+    DisplayName: Beastmaster
+    Cost: 5
+    Role: 0
+    VerticalTrait: 6
+    HorizontalTrait: 3
+    MaxHP: 900
+    ATK: 80
+    DEF: 30
+    MG: 0
+    MR: 30
+    CRIT: 4
+    Range: 1
+    AttackSpeed: 0.8
+    MaxMana: 150
+    StartingMana: 50
+    Skill:
+      Archetype: 7
+      SkillName: Primal Roar
+      TargetTeam: 0
+      BaseFilter: 0
+      Sorts: 
+      Range: 0
+      Radius: 99
+      BounceCount: 0
+      HitCount: 1
+      SecondarySorts: 
+      SecondaryHitsAll: 0
+      IsChannel: 0
+      LockoutTicks: 2
+      OffenseMultiplier: 0
+      SecondaryMultiplier: 0
+      UsesMagicOffense: 0
+      SplashPct: 0
+      DurationTicks: 2
+      FlatShieldAmount: 0
+      ShieldPctOfMaxHP: 0
+      ShieldDefMultiplier: 0
+      AttackSpeedBuffPct: 0.3
+      CrowdControl: 2
+      HealMultiplier: 0
+      ManaRestoreAmount: 0
+      CleansesStatus: 0
+      DreadZoneDefShredPct: 0
+      ZoneDurationTicks: 0
+      InterceptPct: 0
+      ReturnToOriginAfter: 0

@@ -22,3 +22,4 @@ MonoBehaviour:
   - phalanx
   - shadowblade
   - stormbringer
+  _championRoster: {fileID: 11400000, guid: ab1d6e319208b544aa08161396935e42, type: 2}

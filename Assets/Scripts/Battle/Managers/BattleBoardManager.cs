@@ -89,9 +89,10 @@ namespace MagicSchool.Battle
             if (RunManager.Instance == null)
             {
                 // Standalone (BattleTest.unity, no RunManager): auto-start Placement Phase immediately.
-                // Reads GetCombatantSnapshots() — lazy-init fallback in AutoBattleResolver supplies
-                // ChampionRoster data in this context (per AutoBattleResolver.md). Uncapped squad size.
+                // EnsureCombatantsInitialized() supplies ChampionRoster data in this context
+                // (per AutoBattleResolver.md) if SetCombatants hasn't already been called. Uncapped squad size.
                 _maxSquadSize = int.MaxValue;
+                _resolver.EnsureCombatantsInitialized();
                 var snapshots = _resolver.GetCombatantSnapshots();
                 var students  = snapshots.Where(s => s.IsStudent).ToList();
                 foreach (var s in students)

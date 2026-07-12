@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace MagicSchool.Battle
 {
-    using Combatant = AutoBattleResolver.Combatant;
-
     // Switch-dispatched per-archetype resolution, mirroring TraitEffectApplier's static-
     // class style. Mutation (HP, mana, position, events) stays owned by AutoBattleResolver
     // via its internal helpers — this class only decides what to hit and how much.
@@ -346,7 +344,7 @@ namespace MagicSchool.Battle
             float rawOffense = (skill.UsesMagicOffense ? caster.MG : caster.ATK) * skill.OffenseMultiplier
                               + caster.DEF * skill.SecondaryMultiplier;
             int rawDefense = ctx.GetZoneShreddedDefense(target, skill.UsesMagicOffense ? target.MR : target.DEF);
-            return Math.Max(1, (int)(rawOffense * (100f / (100 + rawDefense))));
+            return CombatMath.ApplyMitigation(rawOffense, rawDefense);
         }
 
         private static void ApplyCrowdControl(Combatant target, SkillDefinition skill)

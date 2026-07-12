@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace MagicSchool.Battle
 {
-    using Combatant = AutoBattleResolver.Combatant;
-
     // Externalized static helpers for trait-reactive ability logic that fires during
     // battle resolution. Mirrors SkillArchetypeExecutor's pattern: receives ctx as the
     // first parameter and calls back into AutoBattleResolver's internal helpers so all
@@ -33,8 +31,8 @@ namespace MagicSchool.Battle
                 var hit = ctx.GetOccupantAt(coord);
                 if (hit == null || hit.IsPlayer == actor.IsPlayer) continue;
 
-                int dmg = (int)(killed.MaxHP * actor.ElementalistExplosionPct);
-                if (!actor.ElementalistTrueDamage)
+                int dmg = (int)(killed.MaxHP * actor.Elementalist.ExplosionPct);
+                if (!actor.Elementalist.TrueDamage)
                     dmg = Math.Max(1, (int)(dmg * (100f / (100 + hit.MR))));
 
                 // Explosion damage has always bypassed shields — preserved exactly (bypassShield: true).
@@ -56,10 +54,10 @@ namespace MagicSchool.Battle
         // and arms the bleed-on-next-attack flag.
         public static void ExecuteTricksterDash(AutoBattleResolver ctx, Combatant c)
         {
-            c.TricksterDashTriggered     = true;
-            c.TricksterUntargetable      = true;
-            c.TricksterUntargetableTicks = 12;  // 1.2s at 0.1s/tick (was 2 at 0.6s/tick)
-            c.TricksterBleedNextAttack   = c.TricksterBleedEnabled;
+            c.Trickster.DashTriggered     = true;
+            c.Trickster.Untargetable      = true;
+            c.Trickster.UntargetableTicks = 12;  // 1.2s at 0.1s/tick (was 2 at 0.6s/tick)
+            c.Trickster.BleedNextAttack   = c.Trickster.BleedEnabled;
 
             // Find deepest backline enemy target
             Combatant backlineTarget = null;
@@ -79,14 +77,73 @@ namespace MagicSchool.Battle
 
             if (!dashDest.HasValue)
             {
-                c.TricksterUntargetableTicks = 0;
-                c.TricksterUntargetable      = false;
+                c.Trickster.UntargetableTicks = 0;
+                c.Trickster.Untargetable      = false;
                 return;
             }
 
             var from = c.Position;
             ctx.MoveUnit(c, dashDest.Value);
             Debug.Log($"[Trait] {c.DisplayName} Trickster Dash: {from} → {c.Position}");
+        }
+
+        // ── Dreadknight low-HP shield ──────────────────────────────────────
+        // Ticked once per BattleLoop tick (AutoBattleResolver.TickDreadknightShield),
+        // once per combatant. One-time per combat, guarded by DreadknightShieldGranted.
+        public static void TickDreadknightShield(AutoBattleResolver ctx, Combatant c)
+        {
+            if (c.IsDefeated || !c.Dreadknight.ShieldEnabled || c.Dreadknight.ShieldGranted) return;
+            if (c.CurrentHP >= c.MaxHP * AutoBattleResolver.DreadknightShieldHpThresholdPct) return;
+
+            c.Shield += (int)(c.MaxHP * 0.25f);
+            c.Dreadknight.ShieldGranted = true;
+            Debug.Log($"[Trait] {c.DisplayName} Dreadknight Shield: +{(int)(c.MaxHP * 0.25f)}");
+        }
+
+        // ── Trickster untargetable countdown ───────────────────────────────
+        // Ticked once per BattleLoop tick (AutoBattleResolver.TickTricksterUntargetable),
+        // once per combatant. Counts down the post-dash untargetable window armed by
+        // ExecuteTricksterDash above.
+        public static void TickTricksterUntargetable(AutoBattleResolver ctx, Combatant c)
+        {
+            if (!c.Trickster.Untargetable) return;
+            c.Trickster.UntargetableTicks--;
+            if (c.Trickster.UntargetableTicks <= 0) c.Trickster.Untargetable = false;
+        }
+
+        // ── Kinetic mana tick ───────────────────────────────────────────────
+        // Ticked once per BattleLoop tick (AutoBattleResolver.TickKineticMana), across
+        // all combatants at once (every 3s = 30 ticks at 0.1s/tick). Mutates the
+        // resolver-owned kinetic counter and pending-bonus-action list via ctx.
+        public static void TickKineticMana(AutoBattleResolver ctx)
+        {
+            if (ctx.KineticEnabled)
+            {
+                ctx.KineticTickCounter++;
+                if (ctx.KineticTickCounter >= 30)
+                {
+                    ctx.KineticTickCounter = 0;
+                    foreach (var c in ctx.AllCombatants)
+                    {
+                        if (c.IsDefeated || !c.IsPlayer) continue;
+                        int gain = ctx.KineticManaPerInterval;
+                        if (ctx.KineticSupportExtraBonus && c.Role == ChampionRole.Support) gain += 10;
+                        ctx.SetMana(c, c.Mana + gain);
+                        Debug.Log($"[Trait][Kinetic] {c.DisplayName} +{gain} mana → {c.Mana}/{c.MaxMana}");
+                        if (c.Mana >= c.MaxMana) { ctx.SetMana(c, 0); ctx.PendingBonusActions.Add(c); }
+                    }
+                }
+            }
+        }
+
+        // ── Striker max-stack speed bonus ──────────────────────────────────
+        // Applied per-combatant during BattleLoop's action-progress accumulation.
+        // BP6 + Carry role: ActionInterval effectively −30% once Striker reaches 8 stacks.
+        public static float ApplyStrikerSpeedBonus(Combatant c, float gain)
+        {
+            if (c.Striker.MaxStackSpeedBonus && c.Role == ChampionRole.Carry && c.Striker.Stacks >= 8)
+                gain /= 0.70f;  // +42.9% at max Striker stacks
+            return gain;
         }
     }
 }

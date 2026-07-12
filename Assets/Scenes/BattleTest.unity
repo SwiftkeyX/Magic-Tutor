@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdc5d856592f3324cb941973075e88ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.HeroInfoPanel
-  _championRoster: {fileID: 1670095326}
+  _championRoster: {fileID: 11400000, guid: ab1d6e319208b544aa08161396935e42, type: 2}
   _enemyDatabase: {fileID: 1670095319}
 --- !u!114 &328798266
 MonoBehaviour:
@@ -655,7 +655,6 @@ GameObject:
   - component: {fileID: 1670095321}
   - component: {fileID: 1670095320}
   - component: {fileID: 1670095319}
-  - component: {fileID: 1670095326}
   - component: {fileID: 1670095325}
   - component: {fileID: 1670095327}
   m_Layer: 0
@@ -839,7 +838,7 @@ MonoBehaviour:
   _battleUnitPrefab: {fileID: 4953770828635532444, guid: 91548fef8835bb54f926b0b37860eaca, type: 3}
   _uiDocument: {fileID: 1670095327}
   _traitTracker: {fileID: 1670095325}
-  _championRoster: {fileID: 1670095326}
+  _championRoster: {fileID: 11400000, guid: ab1d6e319208b544aa08161396935e42, type: 2}
   _debugAutoStart: 0
   _debugPlayerStartHpPct: 1
 --- !u!114 &1670095322
@@ -854,6 +853,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ff5603cf38d1940a5e4f909141b893, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.AutoBattleResolver
+  _championRoster: {fileID: 11400000, guid: ab1d6e319208b544aa08161396935e42, type: 2}
 --- !u!114 &1670095323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -893,18 +893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de40c5a6e9a7fc439dadb3a6a027eec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.TraitTracker
---- !u!114 &1670095326
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1670095318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5231ba0e0d5fd6e4da29d0c8feb48014, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.ChampionRoster
 --- !u!114 &1670095327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -958,7 +946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicSchool.Battle.BattleTestHarness
   _resolver: {fileID: 1670095322}
-  _championRoster: {fileID: 1670095326}
+  _championRoster: {fileID: 11400000, guid: ab1d6e319208b544aa08161396935e42, type: 2}
   _matchup: {fileID: 11400000, guid: 3449116aa2c9e504d8930ee8a6ef7880, type: 2}
 --- !u!4 &1773384227
 Transform:

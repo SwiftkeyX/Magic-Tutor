@@ -218,6 +218,7 @@ MonoBehaviour:
   _promotionConfig: {fileID: 11400000, guid: 6ae3380f6ad961a4eb5aa66d968d9d03, type: 2}
   _studentConfig: {fileID: 11400000, guid: 5f806ece88386e84bb655328cf0b683b, type: 2}
   _trainingConfig: {fileID: 11400000, guid: 7ea3817dbd65b1e43b19c4a1701dbb08, type: 2}
+  _championRoster: {fileID: 11400000, guid: ab1d6e319208b544aa08161396935e42, type: 2}
 --- !u!114 &1270316928
 MonoBehaviour:
   m_ObjectHideFlags: 0
