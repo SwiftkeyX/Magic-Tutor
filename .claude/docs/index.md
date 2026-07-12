@@ -55,6 +55,11 @@ Game-balance framework, TFT reference data/math, and the research roadmap. Cross
 * [Tier 4 Carry DPS (Unified)](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tier-4-carry-dps.md)
 * [Tier 5 Carry DPS (Unified)](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/balance/tier-5-carry-dps.md)
 
+## Hero Design (`hero-design/`)
+Coverage/gap audits of our `SkillDefinition` schema against external reference champion kits. Cross-phase, ongoing.
+* [TFT Set 9 Skill Coverage Audit](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/hero-design/tft-set9-skill-coverage.md)
+* [TFT Set 9 Skill Coverage — Full Table](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/hero-design/tft-set9-skill-coverage-table.md)
+
 ## Other (`other/`)
 Cross-phase frameworks, onboarding resources, and general references.
 * [Architecture Overview](file:///c:/Organized%20Files/Working/Unity/Unity%20Project/Magic%20School/.claude/docs/other/architecture-overview.md)
